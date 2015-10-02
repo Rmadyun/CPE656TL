@@ -24,28 +24,34 @@
       <constraint type="must-start-on" time="20150928T000000Z"/>
     </task>
     <task id="2" name="Create System Requirements" note="" work="115200" start="20150928T000000Z" end="20151001T170000Z" work-start="20150928T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
-    <task id="3" name="Complete Hardware/Software Requirements" note="" work="288000" duration="288000" start="20151001T000000Z" end="20151010T170000Z" work-start="20151001T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-duration">
-      <constraint type="must-start-on" time="20151001T000000Z"/>
-    </task>
-    <task id="4" name="Complete SRS" note="" work="489600" start="20150928T000000Z" end="20151014T170000Z" work-start="20150928T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="3" name="Complete Configuration Management Document" note="" work="288000" start="20150928T000000Z" end="20151007T170000Z" work-start="20150928T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <constraint type="must-start-on" time="20150928T000000Z"/>
     </task>
-    <task id="5" name="Create Test Plan" note="" work="230400" start="20151014T000000Z" end="20151021T170000Z" work-start="20151014T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="4" name="Complete Software Process Document" note="" work="288000" start="20150928T000000Z" end="20151007T170000Z" work-start="20150928T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <constraint type="must-start-on" time="20150928T000000Z"/>
+    </task>
+    <task id="5" name="Complete Hardware/Software Requirements" note="" work="288000" duration="288000" start="20151001T000000Z" end="20151010T170000Z" work-start="20151001T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-duration">
+      <constraint type="must-start-on" time="20151001T000000Z"/>
+    </task>
+    <task id="6" name="Complete SRS" note="" work="489600" start="20150928T000000Z" end="20151014T170000Z" work-start="20150928T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <constraint type="must-start-on" time="20150928T000000Z"/>
+    </task>
+    <task id="7" name="Create Test Plan" note="" work="230400" start="20151014T000000Z" end="20151021T170000Z" work-start="20151014T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <constraint type="must-start-on" time="20151014T000000Z"/>
     </task>
-    <task id="6" name="Create Design Document" note="" work="432000" start="20151021T000000Z" end="20151104T170000Z" work-start="20151021T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="8" name="Create Design Document" note="" work="432000" start="20151021T000000Z" end="20151104T170000Z" work-start="20151021T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <constraint type="must-start-on" time="20151021T000000Z"/>
     </task>
-    <task id="7" name="Create Prototype" note="" work="633600" start="20151028T000000Z" end="20151118T170000Z" work-start="20151028T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="9" name="Create Prototype" note="" work="633600" start="20151028T000000Z" end="20151118T170000Z" work-start="20151028T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <constraint type="must-start-on" time="20151028T000000Z"/>
     </task>
-    <task id="8" name="Complete All Remaining Changes to Documentation" note="" work="86400" start="20151107T000000Z" end="20151109T170000Z" work-start="20151107T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="10" name="Complete All Remaining Changes to Documentation" note="" work="86400" start="20151107T000000Z" end="20151109T170000Z" work-start="20151107T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <constraint type="must-start-on" time="20151107T000000Z"/>
     </task>
-    <task id="9" name="Prototype Demo" note="" work="86400" start="20151117T000000Z" end="20151119T170000Z" work-start="20151117T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="11" name="Prototype Demo" note="" work="86400" start="20151117T000000Z" end="20151119T170000Z" work-start="20151117T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <constraint type="must-start-on" time="20151117T000000Z"/>
     </task>
-    <task id="10" name="Submit Materials" note="" work="28800" start="20151201T000000Z" end="20151201T170000Z" work-start="20151201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="12" name="Submit Materials" note="" work="28800" start="20151201T000000Z" end="20151201T170000Z" work-start="20151201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <constraint type="must-start-on" time="20151201T000000Z"/>
     </task>
   </tasks>
