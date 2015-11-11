@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>170</x>
+      <y>0</y>
+      <w>510</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>
+TrainTraxNav::TrainNavigationService
+
+--
+-TrainIds: List&lt;String&gt;
+-SwitchIds: List&lt;String&gt;
+--
+#SubscribeForTrainPositionEvents(trainId, subscriberCallback)
+#UnsubscribeFromTrainPositionEvents(trainId, subscriberCallback)
+#GetSwitchState(switchId) : SwitchState
+#ChangeSwitchState(switchId, switchState: SwitchState)
+--
+Responsibilities
+-- Estimate Position of Trains
+-- Control Switches</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>10</x>
+      <y>290</y>
+      <w>340</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainTraxNav::TrainMonitor
+--
+_-TrainId: String_
+_-LastKnownPosition: Coordinate_
+--
+#WaitForNextPositionUpdate() : Coordinate
+--
+Responsibilities
+-- Tracks the position of a given train</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>400</x>
+      <y>290</y>
+      <w>530</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainTraxNav::MotionDetectionUnit
+--
+_-TrainIdOfAttachedTrain: String_
+_-CollectedAccelerometerMeasurements: List&lt;AccelerometerMeasurement&gt;_
+_-CollectedGyroscopeMeasurements: List&lt;GyroscopeMeasurement&gt;_
+_-RfidTagDetectedNotifications: List&lt;RfidTagDetectedNotification&gt;_
+--
+GetNextAccelerometerMeasurement() : AccelerometerMeasurement
+GetNextGyroscopeMeasurement() : GyrosopeMeasurement
+GetNextRfidTagDetectedNotification() : RfidTagDetectedNotification
+--
+Responsibilities
+-- Collects Measurements from a remote Motion Detection Unit</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>10</x>
+      <y>530</y>
+      <w>390</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainTraxNav::TrackSwitch
+--
+_-SwitchId: String_
+_-CurrentState: SwitchState_
+--
+#ChangeState(switchState: SwitchState)
+#SubscribeForSwitchEvents(subscriberCallback)
+#UnsubscribeFromSwitchEvents(subscriberCallback)
+--
+Responsibilities
+-- Tracks the current state of a switch
+-- Controls a switch</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>420</x>
+      <y>530</y>
+      <w>390</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainTraxNav::TrainController
+--
+_-ControllerId: String_
+--
+#ChangeSwitch(switchId, switchState: SwitchState)
+--
+Responsibilities
+-- Communicates with Train Controller on the test bed
+-- Controls switches on the track
+-- Reports changes on the track</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>230</x>
+      <y>740</y>
+      <w>390</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainTraxNav::TrainNavigationRepository
+
+--
+#FindTrackMarkerPosition(tagId : String) : Coordinate
+#Save(estimate: TrainPositionEstimate)
+--
+Responsibilities
+-- Communicates with the Train Navigation Database
+-- Stores Train Position Estimates
+-- Stores the position of RFID Tags (i.e. Track Markers)</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

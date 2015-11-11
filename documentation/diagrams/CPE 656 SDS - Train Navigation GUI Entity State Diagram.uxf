@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>500</x>
+      <y>20</y>
+      <w>390</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainTraxGui::ViewModels::TrackSwitch
+--
+_-SwitchId: String_
+_-CurrentState: SwitchState_
+_-Position: Coordinate_
+--
+#ChangeState(switchState: SwitchState)
+#SubscribeForSwitchEvents(subscriberCallback)
+#UnsubscribeFromSwitchEvents(subscriberCallback)
+--
+Responsibilities
+-- Tracks the current state of a switch
+-- Controls a switch</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>20</x>
+      <y>240</y>
+      <w>390</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainTraxGui::ViewModels::TrackSection
+--
+_-Id: String_
+_-AdjacentSwitchesById: List&lt;String&gt;_
+_-EndpointOne: Coordinate_
+_-EndpointTwo: Coordinate_
+_-Height: Double_
+--
+Responsibilities
+-- Describes the composition of a section of track.
+-- Describes the geometry to the section of track.
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>480</x>
+      <y>240</y>
+      <w>390</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainTraxGui::ViewModels::Track
+--
+_-Id: String_
+_-Name: String_
+_-Description: String_
+_-Sections: List&lt;TrackSection&gt;_
+--
+#FindSectionsConnectedToSwitch(switchId)
+#FindSectionsAdjacentToSection(sectionId)
+--
+Responsibilities
+-- Describes the composition of the track.
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>440</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainTraxGui::ViewModels::TrainNavigationRepository
+
+--
+#FindTrainPath(trainId : String, range: DateRange) : TrainPath
+#FindTrackSwitches() : List&lt;TrackSwitch&gt;
+#FindTrackSections() : List&lt;TrackSection&gt;
+#FindTracks() : List&lt;Track&gt;
+#Save(track : Track)
+--
+Responsibilities
+-- Communicates with the Train Navigation Database
+-- Retrieves history of train movement
+-- Retrieves track geometry information
+-- Saves track geometry information.</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
