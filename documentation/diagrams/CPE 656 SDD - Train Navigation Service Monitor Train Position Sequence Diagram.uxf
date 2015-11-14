@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.SequenceDiagram</type>
+    <coordinates>
+      <x>0</x>
+      <y>60</y>
+      <w>1350</w>
+      <h>560</h>
+    </coordinates>
+    <panel_attributes>title: Monitor Train Position
+_TrainTraxNav:TrainNavigationService~id1_|_TrainTraxNav:TrainMonitor~id2_|_TrainTraxNav:MotionDetectionUnit~id3_|_TrainTraxNav:TrainNavigationDatabase~id4_
+id1-&gt;&gt;&gt;id2:id1,id2:WaitForNextPositionUpdate()
+id2-&gt;&gt;&gt;id3:id2,id3:ReadCollectedAccelerometerMeasurements()
+id3.&gt;id2:id3,id2:accelerometerMeasurements
+id2-&gt;&gt;&gt;id3:id2,id3:ReadCollectedGyroscopeMeasurements()
+id3.&gt;id2:id3,id2:gyroscopeMeasurements
+id2-&gt;&gt;&gt;id3:id2,id3:ReadCollectedRfidTagDetectedNotifications()
+id3.&gt;id2:id3,id2:rfidTagDetectedNotifications
+id2-&gt;&gt;&gt;id4:id2,id4:FindTrackMarkerPosition(rfidTagValue)
+id4.&gt;id2:id4,id2:rfidTagPosition
+id2-&gt;&gt;&gt;id4:id2,id4:Save(position)
+id2-&gt;&gt;&gt;id4:id2,id4:Save(accelerometerMeasurements)
+id2-&gt;&gt;&gt;id4:id2,id4:Save(gyroscopeMeasurements)
+id2-&gt;&gt;&gt;id4:id2,id4:Save(rfidTagDetectedNotifications)
+id2.&gt;id1:id2,id1: trainPosition
+id1-&gt;id1:id1:PublishTrainPositionEvent
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>880</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>Assumptions:
+Clients to the Service Are Already Subscribed to Train Position Events</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

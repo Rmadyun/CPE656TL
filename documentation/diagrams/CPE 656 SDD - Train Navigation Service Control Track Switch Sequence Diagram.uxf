@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.SequenceDiagram</type>
+    <coordinates>
+      <x>0</x>
+      <y>20</y>
+      <w>1290</w>
+      <h>320</h>
+    </coordinates>
+    <panel_attributes>title: Control Track Switch
+_Client Program~id0_|_TrainTraxNav:TrainNavigationService~id1_|_TrainTraxNav:TrackSwitch~id2_|_TrainTraxNav:TrainController~id3_
+id0-&gt;&gt;&gt;id1:id0,id1:ChangeSwitchState()
+
+id1-&gt;&gt;&gt;id2:id1,id2:ChangeState()
+id2-&gt;&gt;&gt;id3:id2,id3:ChangeSwitch()
+id3.&gt;id2:id3,id2
+id2-&gt;id2:id2:PublishSwitchEvent()
+id2.&gt;id1:id2,id1
+id1.&gt;id0:id1,id0
+
+
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

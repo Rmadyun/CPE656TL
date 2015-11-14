@@ -4,7 +4,7 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>600</x>
+      <x>650</x>
       <y>0</y>
       <w>510</w>
       <h>240</h>
@@ -18,6 +18,7 @@ TrainTraxNav::TrainNavigationService
 --
 #SubscribeForTrainPositionEvents(trainId, subscriberCallback)
 #UnsubscribeFromTrainPositionEvents(trainId, subscriberCallback)
+#PublishTrainPositionEvent(trainId, trainPosition:Coordinate)
 #GetSwitchState(switchId) : SwitchState
 #ChangeSwitchState(switchId, switchState: SwitchState)
 --
@@ -52,19 +53,16 @@ movement measurements</panel_attributes>
     <coordinates>
       <x>0</x>
       <y>610</y>
-      <w>530</w>
+      <w>580</w>
       <h>190</h>
     </coordinates>
     <panel_attributes>TrainTraxNav::MotionDetectionUnit
 --
 _-TrainIdOfAttachedTrain: String_
-_-CollectedAccelerometerMeasurements: List&lt;AccelerometerMeasurement&gt;_
-_-CollectedGyroscopeMeasurements: List&lt;GyroscopeMeasurement&gt;_
-_-RfidTagDetectedNotifications: List&lt;RfidTagDetectedNotification&gt;_
 --
-GetNextAccelerometerMeasurement() : AccelerometerMeasurement
-GetNextGyroscopeMeasurement() : GyrosopeMeasurement
-GetNextRfidTagDetectedNotification() : RfidTagDetectedNotification
+ReadCollectedAccelerometerMeasurements() : List&lt;AccelerometerMeasurement&gt;
+ReadCollectedGyroscopeMeasurements() : List&lt;GyrosopeMeasurement&gt;
+ReadCollectedRfidTagDetectedNotifications() : List&lt;RfidTagDetectedNotification&gt;
 --
 Responsibilities
 -- Collects Measurements from a remote Motion Detection Unit</panel_attributes>
@@ -73,7 +71,7 @@ Responsibilities
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1000</x>
+      <x>1090</x>
       <y>320</y>
       <w>390</w>
       <h>190</h>
@@ -86,6 +84,7 @@ _-CurrentState: SwitchState_
 #ChangeState(switchState: SwitchState)
 #SubscribeForSwitchEvents(subscriberCallback)
 #UnsubscribeFromSwitchEvents(subscriberCallback)
+#PublishSwitchEvent(switchId, switchState:SwitchState)
 --
 Responsibilities
 -- Monitors the current state of a switch
@@ -95,7 +94,7 @@ Responsibilities
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1010</x>
+      <x>1100</x>
       <y>610</y>
       <w>390</w>
       <h>190</h>
@@ -115,19 +114,19 @@ Responsibilities
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>540</x>
+      <x>610</x>
       <y>610</y>
       <w>450</w>
       <h>210</h>
     </coordinates>
-    <panel_attributes>TrainTraxNav::TrainNavigationRepository
+    <panel_attributes>TrainTraxNav::TrainNavigationDatabase
 
 --
 #FindTrackMarkerPosition(tagId : String) : Coordinate
 #Save(estimate: TrainPositionEstimate)
-#Save(accelerometerMeasurement: AccelerometerMeasurement)
-#Save(accelerometerMeasurement: GyroscopeMeasurement)
-#Save(accelerometerMeasurement: RfidTagDetectedNotification)
+#Save(accelerometerMeasurements: List&lt;AccelerometerMeasurement&gt;)
+#Save(gyroscopeMeasurements: List&lt;GyroscopeMeasurement&gt;)
+#Save(rfidTagDetectedNotifications: List&lt;RfidTagDetectedNotification&gt;)
 --
 Responsibilities
 -- Communicates with the Train Navigation Database
@@ -141,22 +140,22 @@ Responsibilities
     <coordinates>
       <x>510</x>
       <y>230</y>
-      <w>340</w>
+      <w>390</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;90.0;10.0;50.0;320.0;50.0;320.0;10.0</additional_attributes>
+    <additional_attributes>10.0;90.0;10.0;50.0;370.0;50.0;370.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>820</x>
+      <x>870</x>
       <y>230</y>
-      <w>410</w>
+      <w>450</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>390.0;90.0;390.0;50.0;10.0;50.0;10.0;10.0</additional_attributes>
+    <additional_attributes>430.0;90.0;430.0;50.0;10.0;50.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
@@ -174,16 +173,16 @@ Responsibilities
     <coordinates>
       <x>500</x>
       <y>500</y>
-      <w>270</w>
+      <w>340</w>
       <h>130</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>250.0;110.0;250.0;60.0;10.0;60.0;10.0;10.0</additional_attributes>
+    <additional_attributes>320.0;110.0;320.0;60.0;10.0;60.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1200</x>
+      <x>1290</x>
       <y>500</y>
       <w>30</w>
       <h>130</h>
@@ -239,7 +238,7 @@ Train Movement Measurements</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>1210</x>
+      <x>1310</x>
       <y>530</y>
       <w>200</w>
       <h>70</h>

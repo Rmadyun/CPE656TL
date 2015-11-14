@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>10</x>
+      <y>420</y>
+      <w>210</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainTraxNav::Coordinate
+--
+_-X: Double_
+_-Y: Double_
+--
+Responsibilities
+-- Describes the location
+of an object on the test bed</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>430</x>
+      <y>420</y>
+      <w>210</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Enum&gt;&gt;
+TrainTraxNav::SwitchState
+--
+_-Normal: Long_
+_-Bypass: Long_
+--
+Responsibilities
+-- Describes the modes used
+by a switch to redirect traffic
+on a train track</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>20</y>
+      <w>330</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainTraxNav::AccelerometerMeasurement
+--
+_-X: Double_
+_-Y: Double_
+_-Z: Double_
+_TimeMeasured: DateTime_
+--
+Responsibilities
+-- Describes the acceleration measured from 
+forces acting on a device. Measured in meters
+per second squared.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>340</x>
+      <y>20</y>
+      <w>310</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainTraxNav::GyroscopeMeasurement
+--
+_-X: Double_
+_-Y: Double_
+_-Z: Double_
+_TimeMeasured: DateTime_
+--
+Responsibilities
+-- Describes the angular speed measured
+from movement of a device. Measured in
+radians per second.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>180</x>
+      <y>220</y>
+      <w>330</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainTraxNav::RfidTagDetectedNotification
+--
+_-RfidTagValue: String_
+_-TimeDetected: DateTime_
+--
+Responsibilities
+-- Describes an event where a device comes in range
+of a RFID Tag</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
