@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.SequenceDiagram</type>
+    <coordinates>
+      <x>160</x>
+      <y>60</y>
+      <w>970</w>
+      <h>320</h>
+    </coordinates>
+    <panel_attributes>title: IMU Sampling
+_MDU:MeasurementRelay~id1_|_MDU:ImuDriver~id2_|_MDU:MeasurementQueue~id3_|_MDU:WifiDriver~id4_
+id2-/&gt;id1:Measurement Rcvd
+id1-&gt;&gt;&gt;id3:id1,id3:Enqueue
+id1.&gt;id3:id1,id3
+id3-&gt;&gt;&gt;id1:id1,id3:Dequeue
+id3.&gt;id1:id1,id3
+id1-&gt;id4:id1,id4:Transmit Measurement
+id4.&gt;id1:id1,id4:Transmit Result</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

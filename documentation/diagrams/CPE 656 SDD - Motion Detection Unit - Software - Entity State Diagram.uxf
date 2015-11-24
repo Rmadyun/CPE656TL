@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>720</x>
+      <y>10</y>
+      <w>390</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>MotionDetectionUnit::MeasurementRelay
+--
+-subscribers: List&lt;MeasurementSubscribers&gt;
+--
+#ListenForNewMeasurements()
+#ForwardMeasurements()
+--
+Responsibilities
+-- Forwards Collected Measurements to Remote Clients
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>370</x>
+      <y>410</y>
+      <w>400</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>MotionDetectionUnit::MeasurementQueue
+--
+#Enqueue(rfidTagDetected : Measurement)
+#Enqueue(accelerometerMeasurement : Measurement)
+#Enqueue(gyroscopeMeasurement: Measurement)
+#Dequeue() : Measurement
+--
+Responsibilities
+-- Stores collected measurements</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1120</x>
+      <y>410</y>
+      <w>340</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>MotionDetectionUnit:ImuDriver
+--
+#WaitForMeasurement(): Measurement
+#Configure()
+--
+Responsibilities
+-- Communicates with IMU hardware</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>790</x>
+      <y>410</y>
+      <w>300</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>MotionDetectionUnit::RfidReaderDriver
+--
+#WaitForNextRfidTag() : Measurement
+--
+Responsibilities
+-- Communicates with RFID Reader</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>20</x>
+      <y>410</y>
+      <w>330</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>MotionDetectionUnit::WifiDriver
+--
+#WaitForNextMessage(): Message
+#SendMessage(message : Message)
+--
+Responsibilities
+-- Communicates with the Wireless Module</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>10</y>
+      <w>360</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>MotionDetectionUnit::CommandListener
+--
+#ListenForNextCommand() : Command
+#NotifySubscribers(command : Command)
+--
+Responsibilities
+-- Notifies subscribers of commands issued from 
+remote machines.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>980</x>
+      <y>190</y>
+      <w>30</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;220.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1050</x>
+      <y>190</y>
+      <w>180</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>160.0;220.0;160.0;80.0;10.0;80.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>550</x>
+      <y>190</y>
+      <w>400</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;220.0;10.0;80.0;380.0;80.0;380.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>230</x>
+      <y>190</y>
+      <w>690</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;220.0;10.0;70.0;670.0;70.0;670.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>140</x>
+      <y>190</y>
+      <w>30</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;220.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>990</x>
+      <y>300</y>
+      <w>120</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>Measurement
+Retrieval</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1100</x>
+      <y>230</y>
+      <w>120</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>Measurement
+Retrieval</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>570</x>
+      <y>290</y>
+      <w>180</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>Storage</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>350</x>
+      <y>230</y>
+      <w>200</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Measurement Forwarding</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>160</x>
+      <y>220</y>
+      <w>100</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Commands</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
