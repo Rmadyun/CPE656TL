@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>320</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;TrainPosition&gt;&gt;
+TrainNavDb::Table
+--
+#Find(id)
+#Add(entry:TrainPosition)
+#Remove(id)
+#Update(entry: TrainPosition)
+#FindAll() : List&lt;TrainPosition&gt;
+--
+Responsibilities
+-- Stores history of train movement for test</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>350</x>
+      <y>0</y>
+      <w>320</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;AccelerometerMeasurement&gt;&gt;
+TrainNavDb::Table
+--
+#Find(id)
+#Add(entry:AccelerometerMeasurement)
+#Remove(id)
+#Update(entry: AccelerometerMeasurement)
+#FindAll() : List&lt;AccelerometerMeasurement&gt;
+--
+Responsibilities
+-- Stores raw accelerometer measurements
+for relay in test</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>700</x>
+      <y>0</y>
+      <w>320</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;GyroscopeMeasurement&gt;&gt;
+TrainNavDb::Table
+--
+#Find(id)
+#Add(entry:GyroscopeMeasurement)
+#Remove(id)
+#Update(entry: GyroscopeMeasurement)
+#FindAll() : List&lt;GyroscopeMeasurement&gt;
+--
+Responsibilities
+-- Stores raw gyroscope measurements for
+replay in test</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>330</x>
+      <y>560</y>
+      <w>400</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainNavDb::DatabaseEngine
+--
+#SendSqlCommand(sqlCommand:String): String
+#SendSqlQuery(sqlQuery: String) : String
+--
+Responsibilities
+-- Communicates with Database Engine</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>150</x>
+      <y>180</y>
+      <w>310</w>
+      <h>400</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>290.0;380.0;290.0;330.0;160.0;330.0;160.0;70.0;10.0;70.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>620</x>
+      <y>180</y>
+      <w>30</w>
+      <h>400</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;380.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>640</x>
+      <y>180</y>
+      <w>130</w>
+      <h>400</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;380.0;10.0;80.0;110.0;80.0;110.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>80</x>
+      <y>180</y>
+      <w>30</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>280</y>
+      <w>260</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainNavDb::TrainPosition
+--
+_-TrainId: String_
+_-X: Double_
+_-Y: Double_
+_-Z: Double_
+_-TimeMeasured: DateTime_
+--
+Responsibilities
+-- Represents the position of a train
+on the test bed at a given point in
+time</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>320</x>
+      <y>280</y>
+      <w>300</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainNavDb::AccelerometerMeasurement
+--
+_-X: Double_
+_-Y: Double_
+_-Z: Double_
+_-TimeMeasured: DateTime_
+--
+Responsibilities
+-- Represents a single point
+on the test bed</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>460</x>
+      <y>180</y>
+      <w>30</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>730</x>
+      <y>280</y>
+      <w>260</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainNavDb::GyroscopeMeasurement
+--
+_-X: Double_
+_-Y: Double_
+_-Z: Double_
+_-TimeMeasured: DateTime_
+--
+Responsibilities
+-- Represents a single gyroscope
+measurement</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>850</x>
+      <y>180</y>
+      <w>30</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>650</x>
+      <y>480</y>
+      <w>200</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Read/Write Table Entries</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>450</x>
+      <y>470</y>
+      <w>200</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Read/Write Table Entries</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>230</x>
+      <y>510</y>
+      <w>200</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Read/Write Table Entries</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1050</x>
+      <y>0</y>
+      <w>320</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;RfidTagDetectedNotification&gt;&gt;
+TrainNavDb::Table
+--
+#Find(id)
+#Add(entry:RfidTagDetectedNotification)
+#Remove(id)
+#Update(entry: RfidTagDetectedNotification)
+#FindAll() : List&lt;RfidTagDetectedNotification&gt;
+--
+Responsibilities
+-- Stores RFID Tag Detection History for
+replay in test</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1200</x>
+      <y>180</y>
+      <w>30</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1080</x>
+      <y>280</y>
+      <w>320</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainNavDb::RfidTagDetectedNotification
+--
+_-RfidTagId: String_
+_-TimeDetected: DateTime_
+--
+Responsibilities
+-- Represents an event where a RFID tag
+was detected</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>690</x>
+      <y>180</y>
+      <w>400</w>
+      <h>400</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;380.0;10.0;340.0;380.0;340.0;380.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>1080</x>
+      <y>480</y>
+      <w>200</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Read/Write Table Entries</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

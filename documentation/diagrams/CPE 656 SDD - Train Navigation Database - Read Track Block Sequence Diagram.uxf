@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.SequenceDiagram</type>
+    <coordinates>
+      <x>180</x>
+      <y>60</y>
+      <w>910</w>
+      <h>230</h>
+    </coordinates>
+    <panel_attributes>title: Read Track Block
+_Client~id1_|_&lt;&lt;TrainBlock&gt;&gt;TrainNavDb:Table~id2_|_TrainNavDb:DatabaseEngine~id3_
+id1-&gt;&gt;id2:id1,id2: Find(id)
+id2-&gt;&gt;&gt;id3:id2,id3: SendSqlQuery()
+id3.&gt;id2:id2,id3:SQL Response String
+id2.&gt;id1:id1,id2:TrackBlock
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

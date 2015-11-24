@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>320</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;TrackBlock&gt;&gt;
+TrainNavDb::Table
+--
+#Find(id)
+#Add(entry:TrackBlock)
+#Remove(id)
+#Update(entry: TrackBlock)
+#FindAll() : List&lt;TrackBlock&gt;
+--
+Responsibilities
+-- Stores information about track blocks</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>350</x>
+      <y>0</y>
+      <w>320</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;TrackPoint&gt;&gt;
+TrainNavDb::Table
+--
+#Find(id)
+#Add(entry:TrackPoint)
+#Remove(id)
+#Update(entry: TrackPoint)
+#FindAll() : List&lt;TrackPoint&gt;
+--
+Responsibilities
+-- Stores information about points on the
+track</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>700</x>
+      <y>0</y>
+      <w>320</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;AdjacentPoint&gt;&gt;
+TrainNavDb::Table
+--
+#Find(id)
+#Add(entry:AdjacentPoint)
+#Remove(id)
+#Update(entry: AdjacentPoint)
+#FindAll() : List&lt;AdjacentPoint&gt;
+--
+Responsibilities
+-- Stores information necessary to create a 
+graph from points on the track.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>330</x>
+      <y>560</y>
+      <w>400</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainNavDb::DatabaseEngine
+--
+#SendSqlCommand(sqlCommand:String): String
+#SendSqlQuery(sqlQuery: String) : String
+--
+Responsibilities
+-- Communicates with Database Engine</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>150</x>
+      <y>180</y>
+      <w>310</w>
+      <h>400</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>290.0;380.0;290.0;330.0;160.0;330.0;160.0;70.0;10.0;70.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>620</x>
+      <y>180</y>
+      <w>30</w>
+      <h>400</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;380.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>680</x>
+      <y>180</y>
+      <w>90</w>
+      <h>400</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;380.0;10.0;70.0;70.0;70.0;70.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>80</x>
+      <y>180</y>
+      <w>30</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>280</y>
+      <w>260</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainNavDb::TrackBlock
+--
+_-BlockId: String_
+_-BlockName: String_
+--
+Responsibilities
+-- Represents a single track block
+on the test bed</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>350</x>
+      <y>280</y>
+      <w>260</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainNavDb::TrackPoint
+--
+_-PointId: String_
+_-PointName: String_
+_-Type_
+_-location: Coordinate_
+_-BlockId: String_
+--
+Responsibilities
+-- Represents a single point
+on the test bed</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>460</x>
+      <y>180</y>
+      <w>30</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>730</x>
+      <y>280</y>
+      <w>260</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainNavDb::AdjacentPoint
+--
+_-LinkId: String_
+_-PointId: String_
+_-AdjacentPointId: String_
+--
+Responsibilities
+-- Represents a link between two
+adjacent points on the test bed.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>850</x>
+      <y>180</y>
+      <w>30</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>700</x>
+      <y>520</y>
+      <w>200</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Read/Write Table Entries</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>450</x>
+      <y>470</y>
+      <w>200</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Read/Write Table Entries</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>230</x>
+      <y>510</y>
+      <w>200</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Read/Write Table Entries</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
