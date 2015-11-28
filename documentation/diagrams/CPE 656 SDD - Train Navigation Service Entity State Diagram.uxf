@@ -140,11 +140,11 @@ Responsibilities
     <coordinates>
       <x>510</x>
       <y>230</y>
-      <w>390</w>
+      <w>370</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;90.0;10.0;50.0;370.0;50.0;370.0;10.0</additional_attributes>
+    <additional_attributes>10.0;90.0;10.0;50.0;350.0;50.0;350.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
@@ -162,11 +162,11 @@ Responsibilities
     <coordinates>
       <x>270</x>
       <y>500</y>
-      <w>260</w>
+      <w>230</w>
       <h>130</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;110.0;10.0;60.0;240.0;60.0;240.0;10.0</additional_attributes>
+    <additional_attributes>10.0;110.0;10.0;60.0;210.0;60.0;210.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
@@ -226,7 +226,7 @@ Responsibilities
   <element>
     <id>Text</id>
     <coordinates>
-      <x>250</x>
+      <x>230</x>
       <y>520</y>
       <w>260</w>
       <h>70</h>

@@ -121,11 +121,11 @@ group=2</panel_attributes>
     <coordinates>
       <x>190</x>
       <y>250</y>
-      <w>210</w>
+      <w>190</w>
       <h>130</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>190.0;110.0;190.0;60.0;10.0;60.0;10.0;10.0</additional_attributes>
+    <additional_attributes>170.0;110.0;170.0;60.0;10.0;60.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>

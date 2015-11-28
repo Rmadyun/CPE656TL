@@ -72,22 +72,22 @@
     <coordinates>
       <x>190</x>
       <y>50</y>
-      <w>200</w>
+      <w>180</w>
       <h>120</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;100.0;10.0;70.0;180.0;70.0;180.0;10.0</additional_attributes>
+    <additional_attributes>10.0;100.0;10.0;70.0;160.0;70.0;160.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
       <x>90</x>
       <y>170</y>
-      <w>130</w>
+      <w>110</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;90.0;10.0;60.0;110.0;60.0;110.0;10.0</additional_attributes>
+    <additional_attributes>10.0;90.0;10.0;60.0;90.0;60.0;90.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
@@ -125,8 +125,8 @@
   <element>
     <id>Text</id>
     <coordinates>
-      <x>370</x>
-      <y>80</y>
+      <x>410</x>
+      <y>90</y>
       <w>80</w>
       <h>30</h>
     </coordinates>
@@ -136,8 +136,8 @@
   <element>
     <id>Text</id>
     <coordinates>
-      <x>200</x>
-      <y>190</y>
+      <x>220</x>
+      <y>200</y>
       <w>80</w>
       <h>30</h>
     </coordinates>
@@ -148,6 +148,28 @@
     <id>Text</id>
     <coordinates>
       <x>550</x>
+      <y>200</y>
+      <w>80</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Controls</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>220</x>
+      <y>90</y>
+      <w>80</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Controls</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>100</x>
       <y>200</y>
       <w>80</w>
       <h>30</h>
