@@ -4,7 +4,7 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>550</x>
+      <x>510</x>
       <y>250</y>
       <w>100</w>
       <h>30</h>
@@ -15,7 +15,7 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>400</x>
+      <x>360</x>
       <y>490</y>
       <w>100</w>
       <h>30</h>
@@ -26,7 +26,7 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>390</x>
+      <x>350</x>
       <y>250</y>
       <w>100</w>
       <h>30</h>
@@ -37,8 +37,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>760</x>
-      <y>250</y>
+      <x>680</x>
+      <y>310</y>
       <w>130</w>
       <h>50</h>
     </coordinates>
@@ -49,19 +49,19 @@ Station</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>640</x>
+      <x>600</x>
       <y>250</y>
-      <w>140</w>
-      <h>30</h>
+      <w>100</w>
+      <h>100</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;120.0;10.0</additional_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0;40.0;80.0;80.0;80.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>670</x>
-      <y>240</y>
+      <x>640</x>
+      <y>270</y>
       <w>100</w>
       <h>70</h>
     </coordinates>
@@ -71,7 +71,7 @@ Station</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>570</x>
+      <x>530</x>
       <y>490</y>
       <w>100</w>
       <h>30</h>
@@ -82,7 +82,7 @@ Station</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>760</x>
+      <x>720</x>
       <y>150</y>
       <w>120</w>
       <h>30</h>
@@ -93,40 +93,18 @@ Station</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>590</x>
-      <y>170</y>
-      <w>250</w>
-      <h>100</h>
+      <x>620</x>
+      <y>430</y>
+      <w>140</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;80.0;10.0;40.0;230.0;40.0;230.0;10.0</additional_attributes>
+    <additional_attributes>10.0;70.0;120.0;70.0;120.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>660</x>
-      <y>180</y>
-      <w>100</w>
-      <h>70</h>
-    </coordinates>
-    <panel_attributes>Monitors</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>660</x>
-      <y>290</y>
-      <w>170</w>
-      <h>230</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;210.0;150.0;210.0;150.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Text</id>
-    <coordinates>
-      <x>720</x>
+      <x>680</x>
       <y>480</y>
       <w>100</w>
       <h>70</h>
@@ -137,7 +115,7 @@ Station</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>490</x>
+      <x>450</x>
       <y>490</y>
       <w>100</w>
       <h>30</h>
@@ -148,7 +126,7 @@ Station</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>500</x>
+      <x>460</x>
       <y>470</y>
       <w>100</w>
       <h>70</h>
@@ -159,7 +137,7 @@ Station</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>550</x>
+      <x>510</x>
       <y>330</y>
       <w>100</w>
       <h>30</h>
@@ -170,7 +148,7 @@ Station</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>590</x>
+      <x>550</x>
       <y>270</y>
       <w>30</w>
       <h>80</h>
@@ -181,7 +159,7 @@ Station</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>610</x>
+      <x>570</x>
       <y>290</y>
       <w>100</w>
       <h>70</h>
@@ -192,7 +170,7 @@ Station</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>240</x>
+      <x>200</x>
       <y>270</y>
       <w>330</w>
       <h>100</h>
@@ -203,7 +181,7 @@ Station</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>280</x>
+      <x>240</x>
       <y>250</y>
       <w>130</w>
       <h>30</h>
@@ -214,7 +192,7 @@ Station</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>170</x>
+      <x>130</x>
       <y>250</y>
       <w>120</w>
       <h>30</h>
@@ -227,18 +205,18 @@ bg=gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>130</x>
+      <x>90</x>
       <y>150</y>
       <w>650</w>
       <h>140</h>
     </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
+    <panel_attributes>lt=-&gt;</panel_attributes>
     <additional_attributes>630.0;10.0;10.0;10.0;10.0;120.0;40.0;120.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>350</x>
+      <x>310</x>
       <y>140</y>
       <w>100</w>
       <h>70</h>
@@ -249,7 +227,7 @@ bg=gray</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>430</x>
+      <x>390</x>
       <y>330</y>
       <w>100</w>
       <h>70</h>
@@ -260,7 +238,7 @@ bg=gray</panel_attributes>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>300</x>
+      <x>260</x>
       <y>240</y>
       <w>100</w>
       <h>70</h>
@@ -271,19 +249,87 @@ bg=gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>220</x>
-      <y>260</y>
-      <w>730</w>
-      <h>330</h>
+      <x>180</x>
+      <y>270</y>
+      <w>700</w>
+      <h>320</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>670.0;10.0;710.0;10.0;710.0;310.0;10.0;310.0;10.0;20.0</additional_attributes>
+    <additional_attributes>620.0;140.0;680.0;140.0;680.0;300.0;10.0;300.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Text</id>
     <coordinates>
-      <x>820</x>
+      <x>780</x>
       <y>540</y>
+      <w>100</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>Controls</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>770</x>
+      <y>220</y>
+      <w>80</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>JMRI
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>680</x>
+      <y>390</y>
+      <w>120</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>Track Switch
+Controller</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>810</x>
+      <y>180</y>
+      <w>100</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>Controls</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>800</x>
+      <y>170</y>
+      <w>30</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;50.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>780</x>
+      <y>270</y>
+      <w>30</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;40.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>790</x>
+      <y>280</y>
       <w>100</w>
       <h>70</h>
     </coordinates>
