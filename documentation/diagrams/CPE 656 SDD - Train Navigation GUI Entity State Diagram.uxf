@@ -93,4 +93,25 @@ Responsibilities
 -- Saves track geometry information.</panel_attributes>
     <additional_attributes/>
   </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>240</x>
+      <y>440</y>
+      <w>390</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>TrainTraxGui::ViewModels::Train
+--
+_-TrainId: String_
+_-Position: Coordinate_
+--
+#ListenForTrainPositionUpdates()
+#SubscribeForTrainEvents(subscriberCallback)
+#UnsubscribeFromTrainEvents(subscriberCallback)
+--
+Responsibilities
+-- Tracks the current position of the train</panel_attributes>
+    <additional_attributes/>
+  </element>
 </diagram>

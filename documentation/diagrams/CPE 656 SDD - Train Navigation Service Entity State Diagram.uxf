@@ -21,6 +21,7 @@ TrainTraxNav::TrainNavigationService
 #PublishTrainPositionEvent(trainId, trainPosition:Coordinate)
 #GetSwitchState(switchId) : SwitchState
 #ChangeSwitchState(switchId, switchState: SwitchState)
+#ListenForTrainPositionUpdates(trainId)
 --
 Responsibilities
 -- Estimate Position of Trains

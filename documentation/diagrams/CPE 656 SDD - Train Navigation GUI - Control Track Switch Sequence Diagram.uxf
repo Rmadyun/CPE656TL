@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.SequenceDiagram</type>
+    <coordinates>
+      <x>120</x>
+      <y>60</y>
+      <w>800</w>
+      <h>470</h>
+    </coordinates>
+    <panel_attributes>title: Control Track Switch
+_View:TrainMonitorView~id1_|_ViewModel:TrackSwitch~id2_|_Model:TrainNavigationService~id3_
+id1-&gt;&gt;id2:id1,id2: SubscribeForSwitchEvents
+id2.&gt;id1:id1,id2:Subscription
+
+id1-&gt;id1:id1:ListenForSwitchEvents
+id1-&gt;&gt;id2:id1,id2:ChangeSwitchState
+id2-&gt;&gt;id3:id2,id3:ChangeSwitchState
+id3.&gt;id2:id2,id3
+id2.&gt;id1:id1,id2
+id2-&gt;id2:id2:CheckForSwitchUpdate
+id2-&gt;&gt;id3:id2,id3:GetSwitchState
+id3.&gt;id2:id3,id2:SwitchState
+
+
+id2-/&gt;id1:Switch State Update Event
+
+id1-&gt;id1:id1:UpdateView</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

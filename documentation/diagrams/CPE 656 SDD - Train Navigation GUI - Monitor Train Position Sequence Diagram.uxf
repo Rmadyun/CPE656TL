@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.SequenceDiagram</type>
+    <coordinates>
+      <x>120</x>
+      <y>60</y>
+      <w>800</w>
+      <h>380</h>
+    </coordinates>
+    <panel_attributes>title: Monitor Train Position
+_View:TrainMonitorView~id1_|_ViewModel:Train~id2_|_Model:TrainNavigationService~id3_
+id1-&gt;&gt;id2:id1,id2: SubscribeForTrainEvents
+id2.&gt;id1:id1,id2:Subscription
+
+id2-&gt;&gt;id3:id2,id3:SubscribeForTrainPositionEvents
+id3.&gt;id2:id3,id2:Subscription
+
+id2-&gt;id2:id2:ListenForTrainEvents
+id1-&gt;id1:id1:ListenForTrainEvents
+
+id3-/&gt;id2:Train Position Update Event
+id2-/&gt;id1:Train Position Update Event
+
+id1-&gt;id1:id1:UpdateView</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
