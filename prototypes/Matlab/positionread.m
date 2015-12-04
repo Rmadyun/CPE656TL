@@ -3,27 +3,9 @@
 #Corey Sanders
 #Script is responsible for estimating the position of an object based on collected IMU measurements.
 
-#gyroscopeFile="/home/death/nexus7Measurements/StaticGyroscopeMeasurements.csv";
-#accelerometerFile="/home/death/nexus7Measurements/StaticAccelerometerMeasurements.csv";
-#positionFile="/home/death/nexus7Measurements/StaticAccelerometerMeasurements.csv";
-
-gyroscopeFile="/home/death/nexus7Measurements/XAxisRotationNexus7GyroscopeMeasurements.csv";
-accelerometerFile="/home/death/nexus7Measurements/XAxisRotationNexus7AccelerometerMeasurements.csv";
-positionFile="/home/death/nexus7Measurements/XAxisRotationNexus7PositionCalculation.csv";
-
-
-#function retval = convertToInertialFrameFromBodyFrame(bodyFrameInEulerAngles, initialInertialFrameInEulerAngles) 
-# p = bodyFrameInEulerAngles(1, 1);
-# q = bodyFrameInEulerAngles(2, 1);
-# r = bodyFrameInEulerAngles(3, 1);
-# fee = initialInertialFrameInEulerAngles(1,1);
-# theta = initialInertialFrameInEulerAngles(2, 1);
-# aroundX = p + q*sin(fee)*tan(theta) + r*cos(fee)*tan(theta);
-# aroundY = q*cos(fee) - r*sin(fee);
-# aroundZ = q*sin(fee)/cos(theta) + r*cos(fee)/cos(theta);
-
-# retval = [ aroundX aroundY aroundZ];
-#endfunction
+gyroscopeFile="./test_data/XAxisRotationNexus7GyroscopeMeasurements.csv";
+accelerometerFile="./test_data/XAxisRotationNexus7AccelerometerMeasurements.csv";
+positionFile="./test_data/XAxisRotationNexus7PositionCalculation.csv";
 
    function retval = convertToInertialFrameFromBodyFrame (bodyFrameEulerAngleVector, initialBodyOrientationOnInertialFrameEulerAngleVector)
      tempVar = ones(3,1);
