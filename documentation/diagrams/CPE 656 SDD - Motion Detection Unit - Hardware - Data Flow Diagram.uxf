@@ -7,7 +7,7 @@
       <x>460</x>
       <y>280</y>
       <w>100</w>
-      <h>30</h>
+      <h>40</h>
     </coordinates>
     <panel_attributes>IMU</panel_attributes>
     <additional_attributes/>
@@ -16,11 +16,11 @@
     <id>UMLClass</id>
     <coordinates>
       <x>170</x>
-      <y>50</y>
+      <y>40</y>
       <w>390</w>
-      <h>30</h>
+      <h>40</h>
     </coordinates>
-    <panel_attributes>Motherboard</panel_attributes>
+    <panel_attributes>Arduino</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -29,7 +29,7 @@
       <x>330</x>
       <y>280</y>
       <w>100</w>
-      <h>30</h>
+      <h>40</h>
     </coordinates>
     <panel_attributes>RFID Reader</panel_attributes>
     <additional_attributes/>
@@ -40,9 +40,10 @@
       <x>160</x>
       <y>280</y>
       <w>100</w>
-      <h>30</h>
+      <h>40</h>
     </coordinates>
-    <panel_attributes>Wireless</panel_attributes>
+    <panel_attributes>Wireless
+Module</panel_attributes>
     <additional_attributes/>
   </element>
   <element>

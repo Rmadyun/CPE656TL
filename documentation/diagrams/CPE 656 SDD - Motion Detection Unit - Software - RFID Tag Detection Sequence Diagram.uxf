@@ -13,11 +13,11 @@
 _MDU:MeasurementRelay~id1_|_MDU:RfidTagDetectorDriver~id2_|_MDU:MeasurementQueue~id3_|_MDU:WifiDriver~id4_
 id2-/&gt;id1:Measurement Rcvd
 id1-&gt;&gt;&gt;id3:id1,id3:Enqueue
-id1.&gt;id3:id1,id3
-id3-&gt;&gt;&gt;id1:id1,id3:Dequeue
+id3.&gt;id1:id1,id3
+id1-&gt;&gt;&gt;id3:id1,id3:Dequeue
 id3.&gt;id1:id1,id3
 id1-&gt;id4:id1,id4:Transmit Measurement
-id4.&gt;id1:id1,id4:Transmit Result</panel_attributes>
+id4.&gt;id1:id1,id4:Transmit Attempt Outcome (Success/ErrorCode)</panel_attributes>
     <additional_attributes/>
   </element>
 </diagram>

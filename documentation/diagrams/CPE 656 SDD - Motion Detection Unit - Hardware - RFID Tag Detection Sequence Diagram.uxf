@@ -6,16 +6,16 @@
     <coordinates>
       <x>270</x>
       <y>100</y>
-      <w>540</w>
+      <w>570</w>
       <h>230</h>
     </coordinates>
     <panel_attributes>title: RFID Tag Detected
-_Motherboard~id1_|_RFID Reader~id2_|_Wireless~id3_
+_Arduino~id1_|_RFID Reader~id2_|_Wireless Module~id3_
 
 id2-/&gt;id1:RFID Tag Detected Message
 id1-&gt;&gt;&gt;id3:id1,id3:Transmit RFID Tag Detected Notification
-id3.&gt;id1:id1,id3:Transmit Result
-id1-&gt;id1:id1:self</panel_attributes>
+id3.&gt;id1:id1,id3:Transmit Attempt Outcome (Success/ErrorCode)
+id1-&gt;id1:id1:Listen for New Messages</panel_attributes>
     <additional_attributes/>
   </element>
 </diagram>
