@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.SequenceDiagram</type>
+    <coordinates>
+      <x>10</x>
+      <y>60</y>
+      <w>810</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>title: Read Motion Detection Unit Measurements
+_Motion Detection Unit (Hardware)~id0_|_TrainTraxNav:MotionDetectionUnit (Service)~id1_
+id1-&gt;id1:id1:ListenForNewMeasurements()
+id0-/&gt;id1:id0,id1:Accelerometer Measurements
+id1-&gt;id1:id1:AddToCollectedMeasurements()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

@@ -64,6 +64,7 @@ _-TrainIdOfAttachedTrain: String_
 ReadCollectedAccelerometerMeasurements() : List&lt;AccelerometerMeasurement&gt;
 ReadCollectedGyroscopeMeasurements() : List&lt;GyrosopeMeasurement&gt;
 ReadCollectedRfidTagDetectedNotifications() : List&lt;RfidTagDetectedNotification&gt;
+ListenForNewMeasurements()
 --
 Responsibilities
 -- Collects Measurements from a remote Motion Detection Unit</panel_attributes>
