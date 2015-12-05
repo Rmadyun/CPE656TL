@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS Track_Point (
     y DOUBLE PRECISION DEFAULT 0,
     z DOUBLE PRECISION DEFAULT 0,
     block_id int(32) DEFAULT NULL,
+    tag_name varchar(256) DEFAULT "",
     PRIMARY KEY(point_id)
     );
 

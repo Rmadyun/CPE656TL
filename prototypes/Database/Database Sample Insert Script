@@ -3,23 +3,23 @@ VALUES ('U-52,4-16');
 INSERT INTO Track_Block (block_name)
 VALUES ('U-55,1-10');
 
-INSERT INTO Track_Point (point_name, type, x, y, z, block_id)
-VALUES ('00', 'RFID', 9.29, 17.53, 0, 1);
+INSERT INTO Track_Point (point_name, type, x, y, z, block_id, tag_name)
+VALUES ('00', 'RFID', 9.29, 17.53, 0, 1, "");
 
-INSERT INTO Track_Point (point_name, type, x, y, z, block_id)
-VALUES ('00V', 'Orientation', 9.06, 17.79, 0, 1);
+INSERT INTO Track_Point (point_name, type, x, y, z, block_id, tag_name)
+VALUES ('00V', 'Orientation', 9.06, 17.79, 0, 1, "");
 
-INSERT INTO Track_Point (point_name, type, x, y, z, block_id)
-VALUES ('01', 'RFID', 15.84, 10.90, 0, 1);
+INSERT INTO Track_Point (point_name, type, x, y, z, block_id, tag_name)
+VALUES ('01', 'RFID', 15.84, 10.90, 0, 1, "");
 
-INSERT INTO Track_Point (point_name, type, x, y, z, block_id)
-VALUES ('01V', 'Orientation', 15.42, 11.55, 0, 1);
+INSERT INTO Track_Point (point_name, type, x, y, z, block_id, tag_name)
+VALUES ('01V', 'Orientation', 15.42, 11.55, 0, 1, "");
 
-INSERT INTO Track_Point (point_name, type, x, y, z, block_id)
-VALUES ('02', 'RFID', 24.63, 8.88, 0, 2);
+INSERT INTO Track_Point (point_name, type, x, y, z, block_id, tag_name)
+VALUES ('02', 'RFID', 24.63, 8.88, 0, 2, "");
 
-INSERT INTO Track_Point (point_name, type, x, y, z, block_id)
-VALUES ('02V', 'Orientation', 24.31, 8.82, 0, 2);
+INSERT INTO Track_Point (point_name, type, x, y, z, block_id, tag_name)
+VALUES ('02V', 'Orientation', 24.31, 8.82, 0, 2, "");
 
 INSERT INTO Adjacent_Points (point_id, adjacent_point_id)
 VALUES (1,2);
