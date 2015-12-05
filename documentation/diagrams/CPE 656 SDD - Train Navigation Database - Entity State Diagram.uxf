@@ -160,6 +160,7 @@ _-PointName: String_
 _-Type_
 _-location: Coordinate_
 _-BlockId: String_
+_-TagName: String_
 --
 Responsibilities
 -- Represents a single point

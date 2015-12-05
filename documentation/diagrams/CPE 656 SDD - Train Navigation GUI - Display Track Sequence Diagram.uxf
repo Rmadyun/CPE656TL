@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="13.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.SequenceDiagram</type>
+    <coordinates>
+      <x>0</x>
+      <y>30</y>
+      <w>1650</w>
+      <h>410</h>
+    </coordinates>
+    <panel_attributes>title: Display Track
+_View:MainMenuView~id1_|_ViewModel:TrainNavigationRepository~id2_|_Model:&lt;TrackBlock&gt;Table~id3_|_Model:&lt;TrackPoint&gt;Table~id4_|_Model:&lt;AdjacentPoint&gt;Table~id5_
+id1-&gt;&gt;id2:id1,id2:FindTracks()
+id2-&gt;id3:id2,id3:Find():TrackBlock
+id3.&gt;id2:id2,id3:TrackBlock
+id2-&gt;id4:id2,id4:Find():TrackPoint
+id4.&gt;id2:id2,id4:TrackPoint
+id2-&gt;id5:id2,id5:Find():AdjacentPoint
+id5.&gt;id2:id2,id5:AdjacentPoint
+id2.&gt;id1:id1,id2:Track
+id1-&gt;id1:GenerateTrackGraphFromPoints
+id1-&gt;id1:UpdateView
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
