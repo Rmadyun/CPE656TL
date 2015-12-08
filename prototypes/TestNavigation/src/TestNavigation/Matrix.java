@@ -147,6 +147,28 @@ public class Matrix {
 		
 		return identityMatrix;
 	}
+	
+	public Matrix round(){
+		return round(8);
+	}
+	
+	public Matrix round(int numberOfDigitsPrecision){
+		return round(this, numberOfDigitsPrecision);
+	}
+	
+	public static Matrix round(Matrix matrix, int numberOfDigitsPrecision){
+		Matrix roundedMatrix = new Matrix(matrix.getNumberOfRows(), matrix.getNumberOfColumns());
+		
+		for(int i = 0; i < matrix.numberOfRows; i++)
+		{
+			for(int j = 0; j < matrix.numberOfColumns; j++){
+				roundedMatrix.matrix[i][j] = Calculate.round(matrix.matrix[i][j], numberOfDigitsPrecision);
+			}
+		}
+		
+		return roundedMatrix;
+	}
+	
 
 	///Returns the number of columns in the matrix
 	public int getNumberOfColumns(){
