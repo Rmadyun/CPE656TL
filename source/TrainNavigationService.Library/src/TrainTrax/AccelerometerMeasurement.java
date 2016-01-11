@@ -1,5 +1,7 @@
 package TrainTrax;
 
+import java.util.Calendar;
+
 /**
  * @author death
  *Class represents a single measurement taken from an accelerometer
@@ -7,43 +9,48 @@ package TrainTrax;
  */
 public class AccelerometerMeasurement {
 
-	private double metersPerSecondSquaredAlongXAxis;
-	private double metersPerSecondSquaredAlongYAxis;
-	private double metersPerSecondSquaredAlongZAxis;
+	private Acceleration accelerationMeasurement;
 	private double numberOfSecondsSinceLastMeasurement;
+	private Calendar timeMeasured;
 	
-	///Constructor
-	public AccelerometerMeasurement(double metersPerSecondSquaredAlongXAxis,
-			double metersPerSecondSquaredAlongYAxis,
-			double metersPerSecondSquaredAlongZAxis,
-			double numberOfSecondsSinceLastMeasurement){
+	/**
+	 * Constructor
+	 * @param accelerationMeasurement Measurement of acceleration from the accelerometer
+	 * @param numberOfSecondsSinceLastMeasurement Number of seconds that elapsed between this measurement and the previous measurement 
+	 * @param timeMeasured Time that accelerometer measurement was taken.
+	 */
+	public AccelerometerMeasurement(Acceleration accelerationMeasurement,
+			double numberOfSecondsSinceLastMeasurement,
+			Calendar timeMeasured){
 		
-		this.metersPerSecondSquaredAlongXAxis = metersPerSecondSquaredAlongXAxis;
-		this.metersPerSecondSquaredAlongYAxis = metersPerSecondSquaredAlongYAxis;
-		this.metersPerSecondSquaredAlongZAxis = metersPerSecondSquaredAlongZAxis;
+		this.accelerationMeasurement = accelerationMeasurement;
 		this.numberOfSecondsSinceLastMeasurement = numberOfSecondsSinceLastMeasurement;
+		this.timeMeasured = timeMeasured;
 	}
-	
-	///Describes the acceleration from the original position
-	///along the X axis of the body frame in meters per second squared
-	public double getMetersPerSecondSquaredAlongXAxis(){
-		return metersPerSecondSquaredAlongXAxis;
+		
+
+    /**
+     * Measurement of acceleration from the accelerometer
+     * @return Measurement of acceleration from the accelerometer
+     */
+	public Acceleration getAccelerationMeasurement() {
+		return accelerationMeasurement;
 	}
 
-	///Describes the acceleration from the original position
-	///along the Y axis of the body frame in meters per second squared
-	public double getMetersPerSecondSquaredAlongYAxis() {
-		return metersPerSecondSquaredAlongYAxis;
+	/**
+	 * Describes the time that the accelerometer measurement was taken
+	 * @return Time that measurement was taken
+	 */
+	public Calendar getTimeMeasured(){
+		return timeMeasured;
 	}
 	
-	///Describes the acceleration from the original position
-	///along the Z axis of the body frame in meters per second squared
-	public double getMetersPerSecondSquaredAlongZAxis() {
-		return metersPerSecondSquaredAlongZAxis;
-	}
-
-	///Describes the number of seconds that have elapsed since the
-	///the last reported measurement.
+	/**
+	 * Describes the number of seconds that have elapsed since the
+	 * the last reported measurement.
+	 * @return Number of seconds that have elapsed since the
+	 * the last reported measurement.
+	 */
 	public double getNumberOfSecondsSinceLastMeasurement(){
 		return numberOfSecondsSinceLastMeasurement;
 	}
