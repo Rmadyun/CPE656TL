@@ -171,7 +171,7 @@ public class RotationMonitor {
         		rotatedZ = 0;
         	}
         	
-        	correctedMeasurement = new GyroscopeMeasurement(rotatedX, rotatedY, rotatedZ, measurement.getNumberOfSecondsSinceLastMeasurement());
+        	correctedMeasurement = new GyroscopeMeasurement(rotatedX, rotatedY, rotatedZ, measurement.getNumberOfSecondsSinceLastMeasurement(), measurement.getTimeMeasured());
         	
         	//Convert measurement into a quaternion
         	Quat4d deltaQuaternion = convertToQuaternion(correctedMeasurement);

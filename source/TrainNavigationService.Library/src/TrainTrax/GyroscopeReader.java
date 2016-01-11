@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class GyroscopeReader {
@@ -24,6 +25,7 @@ public class GyroscopeReader {
 			final int rotationAroundYColumnIndex = 1;
 			final int rotationAroundZColumnIndex = 2;
 			final int timeColumnIndex = 3;
+			double measurementTimeInSeconds = 0;
 			
 			FileReader fr = new FileReader(filename);
 			BufferedReader reader = new BufferedReader(fr);
@@ -49,8 +51,14 @@ public class GyroscopeReader {
 						double rotationAroundY = Double.parseDouble(segments[rotationAroundYColumnIndex]);
 						double rotationAroundZ = Double.parseDouble(segments[rotationAroundZColumnIndex]);
 						double deltaTimeInSeconds = Double.parseDouble(segments[timeColumnIndex]);
+						
+						measurementTimeInSeconds += deltaTimeInSeconds;
+						
+						Calendar timeMeasured = Calendar.getInstance();
+						
+						timeMeasured.setTimeInMillis((long)(measurementTimeInSeconds*1000));
 
-						GyroscopeMeasurement gyroscopeMeasurement = new GyroscopeMeasurement(rotationAroundX, rotationAroundY, rotationAroundZ, deltaTimeInSeconds);
+						GyroscopeMeasurement gyroscopeMeasurement = new GyroscopeMeasurement(rotationAroundX, deltaTimeInSeconds, rotationAroundY, rotationAroundZ, timeMeasured);
 
 						gyroscopeMeasurements.add(gyroscopeMeasurement);
 					}
