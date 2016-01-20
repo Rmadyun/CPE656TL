@@ -1,6 +1,7 @@
 package TrainTrax;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -9,14 +10,15 @@ public class TestNavigationProgram {
 
 	private static void TestSampleRotation(){
 		List<GyroscopeMeasurement> measurements = new ArrayList<GyroscopeMeasurement>();
-		EulerAngleRotation initialBodyFrameOrientation = new EulerAngleRotation(0,0,0);		
+		EulerAngleRotation initialBodyFrameOrientation = new EulerAngleRotation(0,0,0);	
+		Calendar timeMeasured = Calendar.getInstance();
 		
 		int numberOfSamples = 100;
 	    double degreeChange = Math.PI/2;
 	    double degreeChangePerSample = degreeChange/numberOfSamples;
 	    
 	    for(int i = 0; i < numberOfSamples; i++){
-	    	GyroscopeMeasurement measurement = new GyroscopeMeasurement(degreeChangePerSample, 0, 0, 1);
+	    	GyroscopeMeasurement measurement = new GyroscopeMeasurement(degreeChangePerSample, 0, 0, 1, timeMeasured);
 
 	    	measurements.add(measurement);
 	    }
@@ -94,17 +96,17 @@ public class TestNavigationProgram {
 			lastReportedTotalBodyFrameRotation = rotationMonitor.waitForNextRotationUpdate();
 			
 			//Adjust rotation to inertial frame
-			EulerAngleRotation inertialFrameRotation = RotationMonitor.convertRotationFromBodyFrameToNedFrame(lastReportedTotalBodyFrameRotation, initialBodyFrameOrientation);
+			EulerAngleRotation inertialFrameRotation = RotationUtilities.convertRotationFromBodyFrameToNedFrame(lastReportedTotalBodyFrameRotation, initialBodyFrameOrientation);
 			
 			System.out.println(String.format("%f radians around Earth x axis", inertialFrameRotation.getRadiansRotationAlongXAxis()));
 			System.out.println(String.format("%f radians around Earth y axis", inertialFrameRotation.getRadiansRotationAlongYAxis()));
 			System.out.println(String.format("%f radians around Earth z axis", inertialFrameRotation.getRadiansRotationAlongZAxis()));
 			
-			Quat4d initialRotationQuaternion = RotationMonitor.convertFromEulerAngleToQuaternion(initialBodyFrameOrientation.getRadiansRotationAlongXAxis(),
+			Quat4d initialRotationQuaternion = RotationUtilities.convertFromEulerAngleToQuaternion(initialBodyFrameOrientation.getRadiansRotationAlongXAxis(),
 					initialBodyFrameOrientation.getRadiansRotationAlongYAxis(),
 					initialBodyFrameOrientation.getRadiansRotationAlongZAxis());
 			
-			Quat4d bodyFrameRotationQuaternion = RotationMonitor.convertFromEulerAngleToQuaternion(inertialFrameRotation.getRadiansRotationAlongXAxis(),
+			Quat4d bodyFrameRotationQuaternion = RotationUtilities.convertFromEulerAngleToQuaternion(inertialFrameRotation.getRadiansRotationAlongXAxis(),
 					inertialFrameRotation.getRadiansRotationAlongYAxis(),
 					inertialFrameRotation.getRadiansRotationAlongZAxis());
 			
@@ -112,7 +114,7 @@ public class TestNavigationProgram {
 			
 			System.out.println("Estimate Earth orientation by attempting to use only quaternions");
 			
-			EulerAngleRotation compositeEulerAngleRotation = RotationMonitor.convertFromQuaternionToEulerAngle(compositeRotationQuaternion);
+			EulerAngleRotation compositeEulerAngleRotation = RotationUtilities.convertFromQuaternionToEulerAngle(compositeRotationQuaternion);
 			
 			PrintRotation(compositeEulerAngleRotation);
 		}
@@ -154,7 +156,7 @@ public class TestNavigationProgram {
 		testVector.setValue(1, 0, 1);
 		testVector.setValue(2, 0, 0);
 		
-		Matrix rotationMatrix = NavigationEngine.createRotationMatrix(new EulerAngleRotation(Math.PI/2, 0, 0));
+		Matrix rotationMatrix = RotationUtilities.createRotationMatrix(new EulerAngleRotation(Math.PI/2, 0, 0));
 		
 		Matrix expectedRotatedVector = new Matrix(3, 1);
 		expectedRotatedVector.setValue(0, 0, 0); //x
@@ -242,10 +244,10 @@ public class TestNavigationProgram {
 	 */
 	public static void main(String[] args) {
 		
-		Quat4d initialInertialFrameOrientation = RotationMonitor.convertFromEulerAngleToQuaternion(0, 0, Math.PI/2);
+		Quat4d initialInertialFrameOrientation = RotationUtilities.convertFromEulerAngleToQuaternion(0, 0, Math.PI/2);
 		Quat4d bodyFrameToInertialFrameQuaternion = initialInertialFrameOrientation.inverse();
 		Quat4d initialBodyFrameOrientation = initialInertialFrameOrientation.multiply(initialInertialFrameOrientation.inverse());
-		Quat4d finalBodyFrameOrientation = RotationMonitor.convertFromEulerAngleToQuaternion(0, Math.PI/2, 0);
+		Quat4d finalBodyFrameOrientation = RotationUtilities.convertFromEulerAngleToQuaternion(0, Math.PI/2, 0);
 		Quat4d finalInertialFrameOrientation = finalBodyFrameOrientation.multiply(bodyFrameToInertialFrameQuaternion);
 		
 		//System.out.println("Calculate final inertial frame orientation");
