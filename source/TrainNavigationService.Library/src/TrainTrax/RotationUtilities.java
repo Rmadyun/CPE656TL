@@ -143,14 +143,17 @@ public class RotationUtilities {
 	  * Converts a measurement of rotation along the object's body frame into
 	  * the North, East, Down (NED) Earth-fixed inertial reference frame.
 	  * Formal expressed from:
-	  * http://www.chrobotics.com/library/understanding-euler-angles
+	  * http://www.chrobotics.com/library/understanding-euler-angsin pi/2les
 	  * @param currentBodyFrameOrientation
 	  * @param initialInertialFrameOrientation The initial orientation of the device body frame coordinate axes relative to the
 	  * NED inertial frame axes.
 	  * @return Euler Angle representation of the rotation of the target object along the NED inertial reference frame.
+	 * @throws IllegalArgumentException Throws exception if the rotation of the device include rotation in the gimbal lock range:
+	 * 90 degrees pitch (rotation along the y-axis). 
 	  */
-	 public static EulerAngleRotation convertRotationFromBodyFrameToNedFrame(EulerAngleRotation currentBodyFrameOrientation, EulerAngleRotation initialInertialFrameOrientation){
-			//Adjust rotation to inertial frame
+	 public static EulerAngleRotation convertRotationFromBodyFrameToNedFrame(EulerAngleRotation currentBodyFrameOrientation, EulerAngleRotation initialInertialFrameOrientation) throws IllegalArgumentException{
+		 
+		    //Adjust rotation to inertial frame
 			double p = currentBodyFrameOrientation.getRadiansRotationAlongXAxis();
 			double q = currentBodyFrameOrientation.getRadiansRotationAlongYAxis();
 			double r = currentBodyFrameOrientation.getRadiansRotationAlongZAxis();
@@ -159,6 +162,14 @@ public class RotationUtilities {
 			double aroundX = p + q*Math.sin(fee)*Math.tan(theta) + r*Math.cos(fee)*Math.tan(theta);
 			double aroundY = q*Math.cos(fee) - r*Math.sin(fee);
 			double aroundZ = q*Math.sin(fee)/Math.cos(theta) + r*Math.cos(fee)/Math.cos(theta);
+			
+		    double tolerance = 0.1;
+		    double gimbalLockMin = (Math.PI/2) - tolerance;
+		    double gimbalLockMax = (Math.PI/2) + tolerance;
+			 
+		     if(theta <= gimbalLockMax && theta >= gimbalLockMin){
+		    	 throw new IllegalArgumentException("Orientation of the device is in the gimbal lock range: 90 degrees around y-axis");
+		     }
 			
 			EulerAngleRotation currentInertialFrameRotation = new EulerAngleRotation(aroundX, aroundY, aroundZ);
 			
@@ -273,11 +284,12 @@ public class RotationUtilities {
 	 * NED inertial frame axes.
 	 * @param measurements Collection of measurements from a gyroscope attached to the target object
 	 * @return Euler angle representation of the orientation of an object relative to the NED inertial reference frame
+	 * @throws IllegalArgumentException  Throws exception if NED transformation cannot be performed.
 	 */
-	public static EulerAngleRotation calculateNedOrientation(EulerAngleRotation initialInertialFrameOrientation, List<GyroscopeMeasurement> measurements){
+	public static EulerAngleRotation calculateNedOrientation(EulerAngleRotation initialInertialFrameOrientation, List<GyroscopeMeasurement> measurements) throws IllegalArgumentException{
 		EulerAngleRotation nedOrientation = null;
 		//Assuming that the initial body frame orientation is aligned with the body frame axes.
-		EulerAngleRotation initialBodyFrameOrientation = new EulerAngleRotation(0, 0, 0);
+		EulerAngleRotation initialBodyFrameOrientation =  new EulerAngleRotation(0, 0, 0);
 		EulerAngleRotation currentBodyFrameOrientation = initialBodyFrameOrientation;
 		
 		//Update the body frame orientation
@@ -287,7 +299,13 @@ public class RotationUtilities {
 		
 		//Calculate the NED Earth-fixed inertial reference frame representation of the orientation
 		
-		nedOrientation = RotationUtilities.convertRotationFromBodyFrameToNedFrame(currentBodyFrameOrientation, initialInertialFrameOrientation);
+		nedOrientation = convertRotationFromBodyFrameToNedFrame(currentBodyFrameOrientation, initialInertialFrameOrientation);
+		
+		//adds in the inertial frame initial orientation
+		
+		nedOrientation = new EulerAngleRotation(nedOrientation.getRadiansRotationAlongXAxis() + initialInertialFrameOrientation.getRadiansRotationAlongXAxis(),
+				nedOrientation.getRadiansRotationAlongYAxis() + initialInertialFrameOrientation.getRadiansRotationAlongYAxis(),
+				nedOrientation.getRadiansRotationAlongZAxis() + initialInertialFrameOrientation.getRadiansRotationAlongZAxis());
 		
 		return nedOrientation;
 	}

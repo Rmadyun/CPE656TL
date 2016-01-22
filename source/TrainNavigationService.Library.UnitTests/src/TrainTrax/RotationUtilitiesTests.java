@@ -33,18 +33,85 @@ public class RotationUtilitiesTests {
 	}
 
 	@Test
-	public void testCalculateNedOrientation() {		
+	public void testCalculateNedOrientationWhenRotationAlongXAxis() {		
+        double tolerance = 0.05;
 
-		EulerAngleRotation initialInertialFrameOrientation = new EulerAngleRotation(0, Math.PI/2, 0);
+		EulerAngleRotation initialInertialFrameOrientation = new EulerAngleRotation(Math.PI/2, 0, 0);
+		EulerAngleRotation totalBodyFrameRotation = new EulerAngleRotation(0, Math.PI/4, 0);
+		List<GyroscopeMeasurement> gyroscopeMeasurements = generateGyroscopeMeasurements(totalBodyFrameRotation, 10);
+		
+		EulerAngleRotation nedOrientation = RotationUtilities.calculateNedOrientation(initialInertialFrameOrientation, gyroscopeMeasurements);
+		
+		//What is expected is that the rotation along the body frame y-axis gets interpreted
+		//as a rotation along the NED frame z-axis since the object is rotated 90 degrees along the
+		//NED X-axis.
+		
+		assertEquals(nedOrientation.getRadiansRotationAlongXAxis(), Math.PI/2, tolerance);
+		assertEquals(nedOrientation.getRadiansRotationAlongYAxis(), 0, tolerance);
+		assertEquals(nedOrientation.getRadiansRotationAlongZAxis(), Math.PI/4, tolerance);
+	}
+	
+	@Test
+	public void testCalculateNedOrientationWhenRotationAlongYAxis() {		
+        double tolerance = 0.05;
+
+		EulerAngleRotation initialInertialFrameOrientation = new EulerAngleRotation(0, Math.PI, 0);
+		EulerAngleRotation totalBodyFrameRotation = new EulerAngleRotation(0, Math.PI/4, 0);
+		List<GyroscopeMeasurement> gyroscopeMeasurements = generateGyroscopeMeasurements(totalBodyFrameRotation, 10);
+		
+		EulerAngleRotation nedOrientation = RotationUtilities.calculateNedOrientation(initialInertialFrameOrientation, gyroscopeMeasurements);
+		
+		//What is expected is that the rotation along the body frame y-axis gets interpreted
+		//as a rotation along the NED frame z-axis since the object is rotated 90 degrees along the
+		//NED X-axis.
+		
+		assertEquals(nedOrientation.getRadiansRotationAlongXAxis(), 0, tolerance);
+		assertEquals(nedOrientation.getRadiansRotationAlongZAxis(), 0, tolerance);
+		assertEquals(nedOrientation.getRadiansRotationAlongYAxis(), -Math.PI/4, tolerance);
+	}
+	
+	@Test
+	public void testCalculateNedOrientationWhenRotationAlongZAxis() {		
+        double tolerance = 0.05;
+
+		EulerAngleRotation initialInertialFrameOrientation = new EulerAngleRotation(0, 0, Math.PI/2);
 		EulerAngleRotation totalBodyFrameRotation = new EulerAngleRotation(Math.PI/4, 0, 0);
 		List<GyroscopeMeasurement> gyroscopeMeasurements = generateGyroscopeMeasurements(totalBodyFrameRotation, 10);
 		
 		EulerAngleRotation nedOrientation = RotationUtilities.calculateNedOrientation(initialInertialFrameOrientation, gyroscopeMeasurements);
 		
 		//What is expected is that the rotation along the body frame x-axis gets interpreted
-		//as a rotation along the NED frame z-axis since the object is rotated 90 degrees along the
-		//NED Y-axis.
-		assertTrue(nedOrientation.getRadiansRotationAlongZAxis() != 0);
+		//as a rotation along the NED frame y-axis since the object is rotated 90 degrees along the
+		//NED z-axis.
+		
+		//TODO: Figure out why this test failes. a yaw of 90 degrees should have it so that x and y axes are inverted.
+		
+		//We need to assume that pitch (theta) is the change along the body y-axis after a 
+		//yaw along the z inertial frame(when z is also the body frame)
+		
+		assertEquals(nedOrientation.getRadiansRotationAlongXAxis(), 0, tolerance);
+		assertEquals(nedOrientation.getRadiansRotationAlongYAxis(), Math.PI/4, tolerance);
+		assertEquals(nedOrientation.getRadiansRotationAlongZAxis(), Math.PI/2, tolerance);
+	}
+	
+	@Test
+	public void testCalculateNedOrientationWhenGimbalLockPresent() {		
+        EulerAngleRotation initialInertialFrameOrientation = new EulerAngleRotation(0, Math.PI/2, 0);
+		EulerAngleRotation totalBodyFrameRotation = new EulerAngleRotation(0, Math.PI/4, 0);
+		List<GyroscopeMeasurement> gyroscopeMeasurements = generateGyroscopeMeasurements(totalBodyFrameRotation, 10);
+		
+
+		//Test gimbal lock scenario
+		
+		try{
+			RotationUtilities.calculateNedOrientation(initialInertialFrameOrientation, gyroscopeMeasurements);
+			fail("Exception not thrown calculating orientation in gimbal lock region.");
+		}
+		catch(IllegalArgumentException exception){
+			
+		}
+		
+		
 	}
 
 }
