@@ -73,7 +73,8 @@ public class TestNavigationProgram {
 		final String filename = "/home/death/Documents/CPE656/fullRotation_Nexus_7_09_18_15.csv";
 		GyroscopeReader gyroscopeReader = new GyroscopeReader(filename);
 		List<GyroscopeMeasurement> measurements = gyroscopeReader.getGyroscopeMeasurements();
-		EulerAngleRotation initialBodyFrameOrientation = new EulerAngleRotation(Math.PI/2,0,0);		
+		//EulerAngleRotation initialBodyFrameOrientation = new EulerAngleRotation(Math.PI/2,0,0);		
+		EulerAngleRotation initialBodyFrameOrientation = new EulerAngleRotation(0,Math.PI/3, 0);
 
 		final int numberOfSamples = measurements.size();
 		TestGyroscope testGyroscope = new TestGyroscope(measurements);
@@ -168,7 +169,7 @@ public class TestNavigationProgram {
 		//Check using the NED Local Earth Reference Frame
 		//Heading North is Positive
 		//Heading East is Positive
-		//Heading into the Earth is Positive (So going in the air is negative)
+		//Heading into the Earth is Positive (So going in the airTestMeasurementCsv is negative)
 		
 		Matrix rotatedVector =  rotationMatrix.multiply(testVector).round();
 		
@@ -253,8 +254,10 @@ public class TestNavigationProgram {
 		//System.out.println("Calculate final inertial frame orientation");
 		//PrintRotation(RotationMonitor.convertFromQuaternionToEulerAngle(finalInertialFrameOrientation));
 		
-		TestRotationOfVectorUsingEulerAngleDerivedRotationMatrix();
-		TestLinearInterpolation();
+		//TestRotationOfVectorUsingEulerAngleDerivedRotationMatrix();
+		//TestLinearInterpolation();
+		
+		TestMeasurementCsv();
 		
 		/*EulerAngleRotation rotation = RotationMonitor.convertFromQuaternionToEulerAngle(prod);
 		

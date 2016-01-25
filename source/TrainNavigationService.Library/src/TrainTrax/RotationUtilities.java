@@ -310,6 +310,208 @@ public class RotationUtilities {
 		return nedOrientation;
 	}
 	
+	public static EulerAngleRotation calculateNedOrientation2(EulerAngleRotation initialInertialFrameOrientation, List<GyroscopeMeasurement> measurements) throws IllegalArgumentException{
+		EulerAngleRotation nedOrientation = null;
+		//Assuming that the initial body frame orientation is aligned with the body frame axes.
+		EulerAngleRotation initialBodyFrameOrientation =  new EulerAngleRotation(0, 0, 0);
+		EulerAngleRotation currentBodyFrameOrientation = initialBodyFrameOrientation;
+		Matrix inertialFrameToBodyFrameMatrix = createRotationMatrix(initialInertialFrameOrientation);
+
+		
+		//Update the body frame orientation
+		for( GyroscopeMeasurement gyroscopeMeasurement : measurements){
+			currentBodyFrameOrientation = calculateOrientation(gyroscopeMeasurement, currentBodyFrameOrientation, null);
+		}
+		
+		//Calculate the NED Earth-fixed inertial reference frame representation of the orientation
+		
+		nedOrientation = currentBodyFrameOrientation; //convertRotationFromBodyFrameToNedFrame(currentBodyFrameOrientation, initialInertialFrameOrientation);
+		
+		ThreeDimensionalSpaceVector inertialFrameDisplacement = RotationUtilities.changeToInertialFrame(nedOrientation.ToThreeDimensionalSpaceVector(nedOrientation), inertialFrameToBodyFrameMatrix);
+		nedOrientation = new EulerAngleRotation(inertialFrameDisplacement);
+		
+		//adds in the inertial frame initial orientation
+		
+		nedOrientation = new EulerAngleRotation(nedOrientation.getRadiansRotationAlongXAxis() + initialInertialFrameOrientation.getRadiansRotationAlongXAxis(),
+				nedOrientation.getRadiansRotationAlongYAxis() + initialInertialFrameOrientation.getRadiansRotationAlongYAxis(),
+				nedOrientation.getRadiansRotationAlongZAxis() + initialInertialFrameOrientation.getRadiansRotationAlongZAxis());
+		
+		return nedOrientation;
+	}
+	
+	public static Matrix calculateNedRotationMatrix(EulerAngleRotation initialInertialFrameOrientation, List<GyroscopeMeasurement> measurements) throws IllegalArgumentException{
+		
+		Matrix inertialFrameToBodyFrameMatrix = createRotationMatrix(initialInertialFrameOrientation);
+		Matrix gyroSignalTransformMatrix = new Matrix(3,3);
+		Matrix updatedBodyFrameToNedMatrix = inertialFrameToBodyFrameMatrix;
+		
+/*		for(GyroscopeMeasurement gyroscopeMeasurement : measurements){
+
+			double dt = gyroscopeMeasurement.getNumberOfSecondsSinceLastMeasurement();
+			double dz = gyroscopeMeasurement.getRadiansRotationPerSecondAlongZAxis()*dt;
+			double dy = gyroscopeMeasurement.ge	public static EulerAngleRotation calculateNedOrientation(EulerAngleRotation initialInertialFrameOrientation, List<GyroscopeMeasurement> measurements) throws IllegalArgumentException{
+		EulerAngleRotation nedOrientation = null;
+		//Assuming that the initial body frame orientation is aligned with the body frame axes.
+		EulerAngleRotation initialBodyFrameOrientation =  new EulerAngleRotation(0, 0, 0);
+		EulerAngleRotation currentBodyFrameOrientation = initialBodyFrameOrientation;
+		
+		//Update the body frame orientation
+		for( GyroscopeMeasurement gyroscopeMeasurement : measurements){
+			currentBodyFrameOrientation = calculateOrientation(gyroscopeMeasurement, currentBodyFrameOrientation, null);
+		}
+		
+		//Calculate the NED Earth-fixed inertial reference frame representation of the orientation
+		
+		nedOrientation = convertRotationFromBodyFrameToNedFrame(currentBodyFrameOrientation, initialInertialFrameOrientation);
+		
+		//adds in the inertial frame initial orientation
+		
+		nedOrientation = new EulerAngleRotation(nedOrientation.getRadiansRotationAlongXAxis() + initialInertialFrameOrientation.getRadiansRotationAlongXAxis(),
+				nedOrientation.getRadiansRotationAlongYAxis() + initialInertialFrameOrientation.getRadiansRotationAlongYAxis(),
+				nedOrientation.getRadiansRotationAlongZAxis() + initialInertialFrameOrientation.getRadiansRotationAlongZAxis());
+		
+		return nedOrientation;
+	}tRadiansRotationPerSecondAlongYAxis()*dt;
+			double dx = gyroscopeMeasurement.getRadiansRotationPerSecondAlongXAxis()*dt;
+
+			gyroSignalTransformMatrix.setValue(0,  0, 1);
+			gyroSignalTransformMatrix.setValue(0,  1,  -1*dz);
+			gyroSignalTransformMatrix.setValue(0, 2, dy);
+			gyroSignalTransformMatrix.setValue(1,  0, dz);
+			gyroSignalTransformMatrix.setValue(1,  1,  1);
+			gyroSignalTransformMatrix.setValue(1, 2, -1*dx);
+			gyroSignalTransformMatrix.setValue(2,  0, -1*dy);
+			gyroSignalTransformMatrix.setValue(2,  1,  dx);
+			gyroSignalTransformMatrix.setValue(2, 2, 1);
+			
+			updatedBodyFrameToNedMatrix = updatedBodyFrameToNedMatrix.multiply(gyroSignalTransformMatrix);
+		} */
+		
+		//Assuming that the initial body frame orientation is aligned with the body frame axes.
+		EulerAngleRotation initialBodyFrameOrientation =  new EulerAngleRotation(0, 0, 0);
+		EulerAngleRotation currentBodyFrameOrientation = initialBodyFrameOrientation;
+		
+		//Update the body frame orientation
+		for( GyroscopeMeasurement gyroscopeMeasurement : measurements){
+			//currentBodyFrameOrientation = calculateOrientation(gyroscopeMeasurement, currentBodyFrameOrientation, null);
+		double gdt = gyroscopeMeasurement.getNumberOfSecondsSinceLastMeasurement();
+		double gdx = gyroscopeMeasurement.getRadiansRotationPerSecondAlongXAxis()*gdt;
+		double gdy = gyroscopeMeasurement.getRadiansRotationPerSecondAlongYAxis()*gdt;
+		double gdz = gyroscopeMeasurement.getRadiansRotationPerSecondAlongZAxis()*gdt;
+		
+		currentBodyFrameOrientation = new EulerAngleRotation(gdx, gdy, gdz);
+		
+		double dz = currentBodyFrameOrientation.getRadiansRotationAlongZAxis();
+		double dy = currentBodyFrameOrientation.getRadiansRotationAlongYAxis();
+		double dx = currentBodyFrameOrientation.getRadiansRotationAlongXAxis();
+
+		gyroSignalTransformMatrix.setValue(0,  0, 1);
+		gyroSignalTransformMatrix.setValue(0,  1,  -1*dz);
+		gyroSignalTransformMatrix.setValue(0, 2, dy);
+		gyroSignalTransformMatrix.setValue(1,  0, dz);
+		gyroSignalTransformMatrix.setValue(1,  1,  1);
+		gyroSignalTransformMatrix.setValue(1, 2, -1*dx);
+		gyroSignalTransformMatrix.setValue(2,  0, -1*dy);
+		gyroSignalTransformMatrix.setValue(2,  1,  dx);
+		gyroSignalTransformMatrix.setValue(2, 2, 1);
+		
+		updatedBodyFrameToNedMatrix = updatedBodyFrameToNedMatrix.multiply(gyroSignalTransformMatrix);
+		}
+		
+		//updatedBodyFrameToNedMatrix = inertialFrameToBodyFrameMatrix.add(updatedBodyFrameToNedMatrix);
+		
+		return updatedBodyFrameToNedMatrix;
+	}
+	
+	public static Matrix calculateNedRotationMatrix2(EulerAngleRotation initialInertialFrameOrientation, List<GyroscopeMeasurement> measurements) throws IllegalArgumentException{
+		
+		Matrix inertialFrameToBodyFrameMatrix = createRotationMatrix(initialInertialFrameOrientation);
+		Matrix gyroSignalTransformMatrix = new Matrix(3,3);
+		Matrix updatedBodyFrameToNedMatrix = inertialFrameToBodyFrameMatrix;
+		
+/*		for(GyroscopeMeasurement gyroscopeMeasurement : measurements){
+
+			double dt = gyroscopeMeasurement.getNumberOfSecondsSinceLastMeasurement();
+			double dz = gyroscopeMeasurement.getRadiansRotationPerSecondAlongZAxis()*dt;
+			double dy = gyroscopeMeasurement.ge	public static EulerAngleRotation calculateNedOrientation(EulerAngleRotation initialInertialFrameOrientation, List<GyroscopeMeasurement> measurements) throws IllegalArgumentException{
+		EulerAngleRotation nedOrientation = null;
+		//Assuming that the initial body frame orientation is aligned with the body frame axes.
+		EulerAngleRotation initialBodyFrameOrientation =  new EulerAngleRotation(0, 0, 0);
+		EulerAngleRotation currentBodyFrameOrientation = initialBodyFrameOrientation;
+		
+		//Update the body frame orientation
+		for( GyroscopeMeasurement gyroscopeMeasurement : measurements){
+			currentBodyFrameOrientation = calculateOrientation(gyroscopeMeasurement, currentBodyFrameOrientation, null);
+		}
+		
+		//Calculate the NED Earth-fixed inertial reference frame representation of the orientation
+		
+		nedOrientation = convertRotationFromBodyFrameToNedFrame(currentBodyFrameOrientation, initialInertialFrameOrientation);
+		
+		//adds in the inertial frame initial orientation
+		
+		nedOrientation = new EulerAngleRotation(nedOrientation.getRadiansRotationAlongXAxis() + initialInertialFrameOrientation.getRadiansRotationAlongXAxis(),
+				nedOrientation.getRadiansRotationAlongYAxis() + initialInertialFrameOrientation.getRadiansRotationAlongYAxis(),
+				nedOrientation.getRadiansRotationAlongZAxis() + initialInertialFrameOrientation.getRadiansRotationAlongZAxis());
+		
+		return nedOrientation;
+	}tRadiansRotationPerSecondAlongYAxis()*dt;
+			double dx = gyroscopeMeasurement.getRadiansRotationPerSecondAlongXAxis()*dt;
+
+			gyroSignalTransformMatrix.setValue(0,  0, 1);
+			gyroSignalTransformMatrix.setValue(0,  1,  -1*dz);
+			gyroSignalTransformMatrix.setValue(0, 2, dy);
+			gyroSignalTransformMatrix.setValue(1,  0, dz);
+			gyroSignalTransformMatrix.setValue(1,  1,  1);
+			gyroSignalTransformMatrix.setValue(1, 2, -1*dx);
+			gyroSignalTransformMatrix.setValue(2,  0, -1*dy);
+			gyroSignalTransformMatrix.setValue(2,  1,  dx);
+			gyroSignalTransformMatrix.setValue(2, 2, 1);
+			
+			updatedBodyFrameToNedMatrix = updatedBodyFrameToNedMatrix.multiply(gyroSignalTransformMatrix);
+		} */
+		
+		//Assuming that the initial body frame orientation is aligned with the body frame axes.
+		EulerAngleRotation initialBodyFrameOrientation =  new EulerAngleRotation(0, 0, 0);
+		EulerAngleRotation currentBodyFrameOrientation = initialBodyFrameOrientation;
+		
+		//Update the body frame orientation
+		for( GyroscopeMeasurement gyroscopeMeasurement : measurements){
+			currentBodyFrameOrientation = calculateOrientation(gyroscopeMeasurement, currentBodyFrameOrientation, null);		
+		}
+		
+		double dz = currentBodyFrameOrientation.getRadiansRotationAlongZAxis();
+		double dy = currentBodyFrameOrientation.getRadiansRotationAlongYAxis();
+		double dx = currentBodyFrameOrientation.getRadiansRotationAlongXAxis();
+
+		gyroSignalTransformMatrix.setValue(0,  0, 1);
+		gyroSignalTransformMatrix.setValue(0,  1,  -1*dz);
+		gyroSignalTransformMatrix.setValue(0, 2, dy);
+		gyroSignalTransformMatrix.setValue(1,  0, dz);
+		gyroSignalTransformMatrix.setValue(1,  1,  1);
+		gyroSignalTransformMatrix.setValue(1, 2, -1*dx);
+		gyroSignalTransformMatrix.setValue(2,  0, -1*dy);
+		gyroSignalTransformMatrix.setValue(2,  1,  dx);
+		gyroSignalTransformMatrix.setValue(2, 2, 1);
+		
+		updatedBodyFrameToNedMatrix = updatedBodyFrameToNedMatrix.multiply(gyroSignalTransformMatrix);
+		
+		Matrix bodyFrameOrientationMatrixVector = new Matrix(3,1);
+		
+		//Convert body frame vector into a matrix
+		//bodyFrameOrientationMatrixVector.setValue(0, 0,  currentBodyFrameOrientation.getRadiansRotationAlongZAxis());
+		//bodyFrameOrientationMatrixVector.setValue(1, 0,  currentBodyFrameOrientation.getRadiansRotationAlongYAxis());
+		//bodyFrameOrientationMatrixVector.setValue(2, 0,  currentBodyFrameOrientation.getRadiansRotationAlongXAxis());
+		
+		bodyFrameOrientationMatrixVector = RotationUtilities.createRotationMatrix(currentBodyFrameOrientation);
+		
+		updatedBodyFrameToNedMatrix = inertialFrameToBodyFrameMatrix.multiply(bodyFrameOrientationMatrixVector);
+		
+		//updatedBodyFrameToNedMatrix = inertialFrameToBodyFrameMatrix.add(updatedBodyFrameToNedMatrix);
+		
+		return updatedBodyFrameToNedMatrix;
+	}
+	
 	/**
 	 * Converts an acceleration measurement from the body frame to Earth-fixed inertial reference frame
 	 * @param measurement Measurement to convert
