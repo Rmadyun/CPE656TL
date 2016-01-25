@@ -21,4 +21,8 @@
         android:background="#CCCfff"
         android:layout_gravity="right" />
 
+    <edu.uah.cpe.traintrax.MyView
+        android:id="@+id/myview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>
