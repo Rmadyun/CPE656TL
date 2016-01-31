@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<project name="Train Trax Implementation Schedule" company="" manager="" phase="" project-start="20160111T000000Z" mrproject-version="2" calendar="1">
+  <properties/>
+  <phases/>
+  <calendars>
+    <day-types>
+      <day-type id="0" name="Working" description="A default working day"/>
+      <day-type id="1" name="Nonworking" description="A default non working day"/>
+      <day-type id="2" name="Use base" description="Use day from base calendar"/>
+    </day-types>
+    <calendar id="1" name="Default">
+      <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="0" sun="0"/>
+      <overridden-day-types>
+        <overridden-day-type id="0">
+          <interval start="0800" end="1200"/>
+          <interval start="1300" end="1700"/>
+        </overridden-day-type>
+      </overridden-day-types>
+      <days/>
+    </calendar>
+  </calendars>
+  <tasks>
+    <task id="1" name="Create Motion Detection Unit" note="" work="1411200" start="20160111T000000Z" end="20160207T170000Z" work-start="20160111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="2" name="Measure Acceleration" note="" work="201600" start="20160111T000000Z" end="20160117T170000Z" work-start="20160111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+      <task id="3" name="Measure Angular Velocity" note="" work="201600" start="20160111T000000Z" end="20160117T170000Z" work-start="20160111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+      <task id="4" name="Read RFID Tags" note="" work="201600" start="20160118T000000Z" end="20160124T170000Z" work-start="20160118T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="must-start-on" time="20160118T000000Z"/>
+      </task>
+      <task id="5" name="Remote Machine Communication" note="" work="403200" start="20160118T000000Z" end="20160131T170000Z" work-start="20160118T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="must-start-on" time="20160118T000000Z"/>
+      </task>
+      <task id="6" name="Report Acceleration" note="" work="201600" start="20160131T170000Z" end="20160207T170000Z" work-start="20160201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <predecessors>
+          <predecessor id="1" predecessor-id="5" type="FS"/>
+          <predecessor id="1" predecessor-id="2" type="FS"/>
+        </predecessors>
+      </task>
+      <task id="7" name="Report Angular Velocity" note="" work="201600" start="20160131T170000Z" end="20160207T170000Z" work-start="20160201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <predecessors>
+          <predecessor id="1" predecessor-id="5" type="FS"/>
+          <predecessor id="1" predecessor-id="3" type="FS"/>
+        </predecessors>
+      </task>
+    </task>
+    <task id="8" name="Create Train Navigation GUI" note="" work="2217600" start="20160111T000000Z" end="20160320T170000Z" work-start="20160111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="9" name="Display Position of the Train" note="" work="201600" start="20160215T000000Z" end="20160221T170000Z" work-start="20160215T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160215T000000Z"/>
+      </task>
+      <task id="10" name="Display Track Map" note="" work="403200" start="20160111T000000Z" end="20160124T170000Z" work-start="20160111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+      <task id="11" name="Display Track Switches" note="" work="403200" start="20160125T000000Z" end="20160207T170000Z" work-start="20160125T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="must-start-on" time="20160125T000000Z"/>
+      </task>
+      <task id="12" name="Display RFID Tags" note="" work="201600" start="20160208T000000Z" end="20160214T170000Z" work-start="20160208T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160208T000000Z"/>
+      </task>
+      <task id="13" name="Display Train Speed" note="" work="201600" start="20160215T000000Z" end="20160221T170000Z" work-start="20160215T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160215T000000Z"/>
+      </task>
+      <task id="14" name="Control Track Switches" note="" work="403200" start="20160222T000000Z" end="20160306T170000Z" work-start="20160222T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160222T000000Z"/>
+      </task>
+      <task id="15" name="Display Train Prediction &amp; History" note="" work="403200" start="20160307T000000Z" end="20160320T170000Z" work-start="20160307T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160307T000000Z"/>
+      </task>
+    </task>
+    <task id="16" name="Create Train Navigation Service" note="" work="3024000" start="20160111T000000Z" end="20160403T170000Z" work-start="20160111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="17" name="Calculate Position of the Train" note="" work="1209600" start="20160111T000000Z" end="20160228T170000Z" work-start="20160111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="18" name="Calculate Orientation" note="" work="201600" start="20160111T000000Z" end="20160117T170000Z" work-start="20160111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="19" name="Calculate Position from RFID Tag" note="" work="201600" start="20160201T000000Z" end="20160207T170000Z" work-start="20160201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="start-no-earlier-than" time="20160201T000000Z"/>
+        </task>
+        <task id="20" name="Calculate Train Acceleration" note="" work="201600" start="20160208T000000Z" end="20160214T170000Z" work-start="20160208T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="start-no-earlier-than" time="20160208T000000Z"/>
+        </task>
+        <task id="21" name="Calculate Train Velocity" note="" work="201600" start="20160208T000000Z" end="20160214T170000Z" work-start="20160208T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="start-no-earlier-than" time="20160208T000000Z"/>
+        </task>
+        <task id="22" name="Calculate Position from IMU Measurements" note="" work="403200" start="20160215T000000Z" end="20160228T170000Z" work-start="20160215T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="start-no-earlier-than" time="20160215T000000Z"/>
+        </task>
+      </task>
+      <task id="23" name="Read RFID Tags from MDU" note="" work="201600" start="20160208T000000Z" end="20160214T170000Z" work-start="20160208T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160208T000000Z"/>
+      </task>
+      <task id="24" name="Read Acceleration from MDU" note="" work="201600" start="20160215T000000Z" end="20160221T170000Z" work-start="20160215T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160215T000000Z"/>
+      </task>
+      <task id="25" name="Read Angular Velocity from MDU" note="" work="201600" start="20160215T000000Z" end="20160221T170000Z" work-start="20160215T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160215T000000Z"/>
+      </task>
+      <task id="26" name="Save Train Positions" note="" work="201600" start="20160229T000000Z" end="20160306T170000Z" work-start="20160229T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160229T000000Z"/>
+      </task>
+      <task id="27" name="Change Track Switch" note="" work="403200" start="20160307T000000Z" end="20160320T170000Z" work-start="20160307T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160307T000000Z"/>
+      </task>
+      <task id="28" name="Detect Train Moving Forward" note="" work="201600" start="20160321T000000Z" end="20160327T170000Z" work-start="20160321T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160321T000000Z"/>
+      </task>
+      <task id="29" name="Detect Train Stopped" note="" work="201600" start="20160321T000000Z" end="20160327T170000Z" work-start="20160321T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160321T000000Z"/>
+      </task>
+      <task id="30" name="Detect Train Moving Backward" note="" work="201600" start="20160328T000000Z" end="20160403T170000Z" work-start="20160328T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160328T000000Z"/>
+      </task>
+    </task>
+    <task id="31" name="Create Train Navigation Database" note="" work="2419200" start="20160111T000000Z" end="20160403T170000Z" work-start="20160111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="32" name="Report RFID Tag Position" note="" work="1209600" start="20160111T000000Z" end="20160321T170000Z" work-start="20160111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="33" name="Enter Remaining RFID Tag Position (Up to 80 %)" note="" work="604800" start="20160301T000000Z" end="20160321T170000Z" work-start="20160301T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="start-no-earlier-than" time="20160301T000000Z"/>
+        </task>
+        <task id="34" name="Collect RFID Tag Positions for Sample Track" note="" work="403200" start="20160111T000000Z" end="20160124T170000Z" work-start="20160111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+        <task id="35" name="Lookup RFID Tag Position" note="" work="201600" start="20160201T000000Z" end="20160207T170000Z" work-start="20160201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="start-no-earlier-than" time="20160201T000000Z"/>
+        </task>
+      </task>
+      <task id="36" name="Report Track Switch Position" note="" work="201600" start="20160201T000000Z" end="20160207T170000Z" work-start="20160201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="37" name="Enter Track Switch Positions" note="" work="201600" start="20160201T000000Z" end="20160207T170000Z" work-start="20160201T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+          <constraint type="start-no-earlier-than" time="20160201T000000Z"/>
+        </task>
+      </task>
+      <task id="38" name="Save Accelerometer Measurements" note="" work="201600" start="20160307T000000Z" end="20160313T170000Z" work-start="20160307T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160307T000000Z"/>
+      </task>
+      <task id="39" name="Save Angular Velocity Measurements" note="" work="201600" start="20160307T000000Z" end="20160313T170000Z" work-start="20160307T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160307T000000Z"/>
+      </task>
+      <task id="40" name="Save RFID Tag Detected Events" note="" work="201600" start="20160314T000000Z" end="20160320T170000Z" work-start="20160314T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160314T000000Z"/>
+      </task>
+      <task id="41" name="Save Train Identifiers" note="" work="201600" start="20160328T000000Z" end="20160403T170000Z" work-start="20160328T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160328T000000Z"/>
+      </task>
+      <task id="42" name="Save Train Speed" note="" work="201600" start="20160321T000000Z" end="20160327T170000Z" work-start="20160321T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <constraint type="start-no-earlier-than" time="20160321T000000Z"/>
+      </task>
+    </task>
+  </tasks>
+  <resource-groups/>
+  <resources/>
+  <allocations/>
+</project>
