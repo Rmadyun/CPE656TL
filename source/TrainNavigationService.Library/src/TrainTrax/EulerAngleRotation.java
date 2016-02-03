@@ -95,5 +95,48 @@ public class EulerAngleRotation {
 
 		return new EulerAngleRotation(threeDimensionalSpaceVector);
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(radiansRotationAlongXAxis);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(radiansRotationAlongYAxis);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(radiansRotationAlongZAxis);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EulerAngleRotation other = (EulerAngleRotation) obj;
+		if (Double.doubleToLongBits(radiansRotationAlongXAxis) != Double
+				.doubleToLongBits(other.radiansRotationAlongXAxis))
+			return false;
+		if (Double.doubleToLongBits(radiansRotationAlongYAxis) != Double
+				.doubleToLongBits(other.radiansRotationAlongYAxis))
+			return false;
+		if (Double.doubleToLongBits(radiansRotationAlongZAxis) != Double
+				.doubleToLongBits(other.radiansRotationAlongZAxis))
+			return false;
+		return true;
+	}
+	
+	
 	
 }
