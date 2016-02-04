@@ -15,14 +15,14 @@ public class DatabaseTestProgram {
         
         TrackPointRepository trackPointRepository = new TrackPointRepository(mySqlDatabaseAdapter);
         
-        List<TrackPoint> allEntries = trackPointRepository.findAll();
-        TrackPoint secondEntry = trackPointRepository.find("2");
+        List<RepositoryEntry<TrackPoint>> allEntries = trackPointRepository.findAll();
+        RepositoryEntry<TrackPoint> secondEntry = trackPointRepository.find("2");
         
-        TrackPoint newTrackPoint = new TrackPoint(-1, "Name", "Point", 1, 1, 1, "2", "Tag");
+        TrackPoint newTrackPoint = new TrackPoint("Name", "Point", 1, 1, 1, "2", "Tag");
         
-        String assignedId = trackPointRepository.add(newTrackPoint);
+        RepositoryEntry<TrackPoint> addedEntry = trackPointRepository.add(newTrackPoint);
  
-        trackPointRepository.remove(assignedId);
+        trackPointRepository.remove(addedEntry.getId());
         
 	}
 

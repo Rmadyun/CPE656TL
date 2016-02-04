@@ -16,14 +16,14 @@ public interface RepositoryInterface<TData> {
 	 * @param id Unique identifier for the entry
 	 * @return Returns the requested entry or null if not found.
 	 */
-	TData find(String id);
+	RepositoryEntry<TData> find(String id);
 	
 	/**
 	 * Adds a new entry into the repository
 	 * @param entry Entry that needs to be added
 	 * @return Unique identifier for the entry
 	 */
-	String add(TData entry);
+	RepositoryEntry<TData> add(TData entry);
 	
 	/**
 	 * Removes an entry from the repository
@@ -42,5 +42,5 @@ public interface RepositoryInterface<TData> {
 	 * Returns all known entries in the repository
 	 * @return All known entries in the repository
 	 */
-	List<TData> findAll();
+	List<RepositoryEntry<TData>> findAll();
 }
