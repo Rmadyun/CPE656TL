@@ -58,11 +58,7 @@ public class GyroscopeReader {
 						
 						timeMeasured.setTimeInMillis((long)(measurementTimeInSeconds*1000));
 
-<<<<<<< HEAD
 						GyroscopeMeasurement gyroscopeMeasurement = new GyroscopeMeasurement(rotationAroundX, rotationAroundY, rotationAroundZ, deltaTimeInSeconds, timeMeasured);
-=======
-						GyroscopeMeasurement gyroscopeMeasurement = new GyroscopeMeasurement(rotationAroundX, deltaTimeInSeconds, rotationAroundY, rotationAroundZ, timeMeasured);
->>>>>>> master
 
 						gyroscopeMeasurements.add(gyroscopeMeasurement);
 					}

@@ -313,7 +313,7 @@ public class RotationUtilitiesTests {
 		//Test gimbal lock scenario
 		
 		try{
-			RotationUtilities.calculateNedOrientation(initialInertialFrameOrientation, gyroscopeMeasurements);
+			EulerAngleRotation newOrientation = RotationUtilities.calculateNedOrientation(initialInertialFrameOrientation, gyroscopeMeasurements);
 			fail("Exception not thrown calculating orientation in gimbal lock region.");
 		}
 		catch(IllegalArgumentException exception){

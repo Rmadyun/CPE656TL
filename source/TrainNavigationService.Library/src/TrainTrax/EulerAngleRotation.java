@@ -11,17 +11,12 @@ public class EulerAngleRotation {
 	private double radiansRotationAlongYAxis;
 	private double radiansRotationAlongZAxis;
 	
-<<<<<<< HEAD
-	
 	/**
 	 * Constructor
 	 * @param radiansRotationAlongXAxis
 	 * @param radiansRotationAlongYAxis
 	 * @param radiansRotationAlongZAxis
 	 */
-=======
-	///Constructor
->>>>>>> master
 	public EulerAngleRotation(double radiansRotationAlongXAxis,
 			double radiansRotationAlongYAxis,
 			double radiansRotationAlongZAxis){
@@ -31,7 +26,6 @@ public class EulerAngleRotation {
 		this.radiansRotationAlongZAxis = radiansRotationAlongZAxis;
 	}
 	
-<<<<<<< HEAD
 	/**
 	 * Constructor
 	 * @param threeDimensionalSpaceVector
@@ -43,8 +37,6 @@ public class EulerAngleRotation {
 				threeDimensionalSpaceVector.getZ());
 	}
 
-=======
->>>>>>> master
 	///Describes the degree of rotation from the original position
 	///along the X axis of the reference frame in radians
 	public double getRadiansRotationAlongXAxis(){
@@ -78,8 +70,7 @@ public class EulerAngleRotation {
     			Calculate.round(eulerAngleRotation.getRadiansRotationAlongYAxis(), numberOfFloatingPointDigits),
     			Calculate.round(eulerAngleRotation.getRadiansRotationAlongZAxis(), numberOfFloatingPointDigits));
     }
-<<<<<<< HEAD
-    
+
 	/**
 	 * Converts the class instance into a generic three-dimensional space
 	 * vector to use for calculations
@@ -144,9 +135,5 @@ public class EulerAngleRotation {
 			return false;
 		return true;
 	}
-	
-	
-=======
->>>>>>> master
 	
 }
