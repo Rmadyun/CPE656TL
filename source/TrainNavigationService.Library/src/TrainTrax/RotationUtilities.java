@@ -1,7 +1,10 @@
 package TrainTrax;
 
+<<<<<<< HEAD
 import java.util.List;
 
+=======
+>>>>>>> master
 /**
  * Helper class for frequently performed operations involving rotating
  * objects
@@ -9,6 +12,7 @@ import java.util.List;
  *
  */
 public class RotationUtilities {
+<<<<<<< HEAD
 	
 	private final static double ANGULAR_RATE_THRESHOLD = 0.01;
 	
@@ -492,6 +496,28 @@ public class RotationUtilities {
 		inertialFrameVector = new ThreeDimensionalSpaceVector(inertialFrameMatrixVector.getValue(0, 0),
 				inertialFrameMatrixVector.getValue(1,0),
 				inertialFrameMatrixVector.getValue(2, 0));
+=======
+
+	/**
+	 * Converts a vector from the body frame to the inertial frame
+	 * @param bodyFrameVector
+	 * @param bodyFrameToInertialFrameRotationMatrix
+	 * @return
+	 */
+	public static ThreeDimensionalSpaceVector changeToInertialFrame(ThreeDimensionalSpaceVector bodyFrameVector, Matrix bodyFrameToInertialFrameRotationMatrix){
+		ThreeDimensionalSpaceVector inertialFrameVector;
+		Matrix accelerationVector = new Matrix(3,1);
+		
+		accelerationVector.setValue(0, 0,  bodyFrameVector.getX());
+		accelerationVector.setValue(1, 0,  bodyFrameVector.getY());
+		accelerationVector.setValue(2, 0,  bodyFrameVector.getZ());
+		
+		Matrix adjustedAccelerationVector = bodyFrameToInertialFrameRotationMatrix.multiply(accelerationVector).round();
+		
+		inertialFrameVector = new ThreeDimensionalSpaceVector(adjustedAccelerationVector.getValue(0, 0),
+				adjustedAccelerationVector.getValue(1,0),
+				adjustedAccelerationVector.getValue(2, 0));
+>>>>>>> master
 		
 		return inertialFrameVector;
 	}
@@ -524,6 +550,7 @@ public class RotationUtilities {
 	    return rotationMatrix;
 	}
 	
+<<<<<<< HEAD
 	/**
 	 * Calculates the orientation of an object related to the North-East-Down (NED) Earth-fixed inertial reference frame
 	 * @param initialInertialFrameOrientation The initial orientation of the device body frame coordinate axes relative to the
@@ -583,4 +610,6 @@ public class RotationUtilities {
 	
 	
 	
+=======
+>>>>>>> master
 }
