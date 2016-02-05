@@ -36,7 +36,7 @@ public class TrackPointReader {
 		        	
 		        }
 		        
-		        trackPoint = new TrackPoint(pointId, pointName, type,
+		        trackPoint = new TrackPoint(pointName, type,
 		        		x, y, z, blockId, tagName);
 				
 			 }
@@ -87,7 +87,7 @@ public class TrackPointReader {
 		        	
 		        }
 		        
-		        trackPoint = new TrackPoint(pointId, pointName, type,
+		        trackPoint = new TrackPoint(pointName, type,
 		        		x, y, z, blockId, tagName);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
