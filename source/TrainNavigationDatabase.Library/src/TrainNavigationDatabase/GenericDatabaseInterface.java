@@ -26,7 +26,7 @@ public interface GenericDatabaseInterface {
      * Requests for an entry to be added into the database
      * @param tableName Name of the table that the entry belongs to.
      * @param databaseEntry Entry to update
-     * @return 
+     * @return ID of the key associated with the added entry.
      */
 	int sendAdd(String tableName, DatabaseEntry databaseEntry);
 	

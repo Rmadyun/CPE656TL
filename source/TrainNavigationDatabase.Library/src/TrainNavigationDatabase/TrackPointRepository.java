@@ -15,7 +15,7 @@ import TrainNavigationDatabase.TrackPoint;
  * @author Corey Sanders
  *
  */
-public class TrackPointRepository implements RepositoryInterface<TrackPoint>, FilteredSearchInterface<RepositoryEntry<TrackPoint>, TrackPointSearchCriteria> {
+public class TrackPointRepository implements FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> {
 	
 	private static final String TrackPointTable = "Track_Point";
     private static final String PointIdColumn = "point_id";

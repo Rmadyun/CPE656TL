@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Generic interface for performing a filtered search for
  * items
- * @author death
+ * @author Corey Sanders
  *
  * @param <TData> Type of items that are retrieved from the search
  * @param <TSearchCriteria> Type use to describe which items can be 

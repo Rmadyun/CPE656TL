@@ -35,34 +35,66 @@ public class TrackPointSearchCriteria {
 		this.tagName = tagName;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getName(){
 		return name;
 	}
 	
+	/**
+	 * 
+	 * @param name
+	 */
 	public void setName(String name){
 		this.name = name;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getType(){
 		return type;
 	}
 	
+	/**
+	 * 
+	 * @param type
+	 */
 	public void setType(String type){
 		this.type = type;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getBlockId(){
 		return blockId;
 	}
 	
+	/**
+	 * 
+	 * @param blockId
+	 */
 	public void setBlockId(String blockId){
 		this.blockId = blockId;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getTagName(){
 		return tagName;
 	}
 	
+	/**
+	 * 
+	 * @param tagName
+	 */
 	public void setTagName(String tagName) {
 		this.tagName = tagName;
 	}
