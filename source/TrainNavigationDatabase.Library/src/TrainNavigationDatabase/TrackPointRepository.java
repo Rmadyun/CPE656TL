@@ -5,7 +5,6 @@ import java.util.List;
 import TrainNavigationDatabase.DatabaseEntry;
 import TrainNavigationDatabase.GenericDatabaseInterface;
 import TrainNavigationDatabase.KeyValuePair;
-import TrainNavigationDatabase.RepositoryInterface;
 import TrainNavigationDatabase.TrackPoint;
 
 
@@ -37,27 +36,6 @@ public class TrackPointRepository implements FilteredSearchRepositoryInterface<T
 		this.databaseInterface = databaseInterface;
 	}
 	
-    /**
-     * Searches for the value for TrackPointRepositorya particular column in a database entry 
-     * @param databaseEntry Entry to search in
-     * @param columnName Name associated with the column
-     * @return value of the column. Returns null if not found.
-     */
-	private static String findColumnValue(DatabaseEntry databaseEntry,
-			String columnName) {
-		String columnValue = null;
-
-		for (KeyValuePair kvp : databaseEntry.getColumns()) {
-			if (kvp.getKey().equals(columnName)) {
-				columnValue = kvp.getValue();
-				break;
-			}
-		}
-
-		return columnValue;
-	}
-    
-	
 	/**
 	 * Converts a DatabaseEntry into a TrackPoint object
 	 * @param databaseEntry Entry to convert
@@ -69,19 +47,19 @@ public class TrackPointRepository implements FilteredSearchRepositoryInterface<T
 		TrackPoint trackPoint = null;
 
 		try {
-			String pointName = findColumnValue(databaseEntry, PointNameColumn);
-			String type = findColumnValue(databaseEntry, TypeColumn);
-			double x = Double.parseDouble(findColumnValue(databaseEntry,
+			String pointName = DatabaseEntry.findColumnValue(databaseEntry, PointNameColumn);
+			String type = DatabaseEntry.findColumnValue(databaseEntry, TypeColumn);
+			double x = Double.parseDouble(DatabaseEntry.findColumnValue(databaseEntry,
 					XColumn));
-			double y = Double.parseDouble(findColumnValue(databaseEntry,
+			double y = Double.parseDouble(DatabaseEntry.findColumnValue(databaseEntry,
 					YColumn));
-			double z = Double.parseDouble(findColumnValue(databaseEntry,
+			double z = Double.parseDouble(DatabaseEntry.findColumnValue(databaseEntry,
 					ZColumn));
-			String blockId = findColumnValue(databaseEntry, BlockIdColumn);
+			String blockId = DatabaseEntry.findColumnValue(databaseEntry, BlockIdColumn);
 			String tagName = "";
 
 			try {
-				tagName = findColumnValue(databaseEntry, TagNameColumn);
+				tagName = DatabaseEntry.findColumnValue(databaseEntry, TagNameColumn);
 			} catch (Exception exception) {
 
 			}
@@ -96,7 +74,8 @@ public class TrackPointRepository implements FilteredSearchRepositoryInterface<T
 		return trackPoint;
 	}
 	
-	 /* Converts a TrackPoint object into a DatabaseEntry object
+    /**
+     * Converts a TrackPoint object into a DatabaseEntry object
 	 * @param databaseEntry Entry to convert
 	 * @return DatabaseEntry object that is representative of the values
 	 * assigned to the TrackPoint object. Returns null if the entry
@@ -187,7 +166,7 @@ public class TrackPointRepository implements FilteredSearchRepositoryInterface<T
 		
 		for(DatabaseEntry databaseEntry : results){
 			TrackPoint trackPoint = convertToTrackPoint(databaseEntry);
-			String id = findColumnValue(databaseEntry, PointIdColumn);
+			String id = DatabaseEntry.findColumnValue(databaseEntry, PointIdColumn);
 			
 			RepositoryEntry<TrackPoint> repositoryEntry = new RepositoryEntry<TrackPoint>(id, trackPoint);
 			
@@ -234,7 +213,7 @@ public class TrackPointRepository implements FilteredSearchRepositoryInterface<T
 		for(DatabaseEntry databaseEntry : results) {
 
 			TrackPoint trackPoint = convertToTrackPoint(databaseEntry);
-			String id = findColumnValue(databaseEntry, PointIdColumn);
+			String id = DatabaseEntry.findColumnValue(databaseEntry, PointIdColumn);
 			
 			RepositoryEntry<TrackPoint> repositoryEntry = new RepositoryEntry<TrackPoint>(id, trackPoint);
 			matches.add(repositoryEntry);

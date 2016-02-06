@@ -9,15 +9,15 @@ package TrainNavigationDatabase;
  */
 public class AdjacentPointSearchCriteria {
 
-	private int pointId;
-	private int adjacentPointId;
+	private String pointId;
+	private String adjacentPointId;
 
 	/**
 	 * Constructor
 	 * @param pointId
 	 * @param adjacentPointId
 	 */
-	public AdjacentPointSearchCriteria(int pointId, int adjacentPointId){
+	public AdjacentPointSearchCriteria(String pointId, String adjacentPointId){
 		this.pointId = pointId;
 		this.adjacentPointId = adjacentPointId;
 	}
@@ -26,7 +26,7 @@ public class AdjacentPointSearchCriteria {
 	 * 
 	 * @return
 	 */
-	public int getPointId(){
+	public String getPointId(){
 		return pointId;
 	}
 	
@@ -42,7 +42,7 @@ public class AdjacentPointSearchCriteria {
 	 * 
 	 * @return
 	 */
-	public int getAdjacenPointId(){
+	public String getAdjacenPointId(){
 		return adjacentPointId;
 	}
 	
