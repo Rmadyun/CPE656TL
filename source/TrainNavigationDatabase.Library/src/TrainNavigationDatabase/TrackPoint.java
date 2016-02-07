@@ -70,4 +70,68 @@ public class TrackPoint {
 		return tagName;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((blockId == null) ? 0 : blockId.hashCode());
+		result = prime * result
+				+ ((pointName == null) ? 0 : pointName.hashCode());
+		result = prime * result + ((tagName == null) ? 0 : tagName.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(x);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(z);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TrackPoint other = (TrackPoint) obj;
+		if (blockId == null) {
+			if (other.blockId != null)
+				return false;
+		} else if (!blockId.equals(other.blockId))
+			return false;
+		if (pointName == null) {
+			if (other.pointName != null)
+				return false;
+		} else if (!pointName.equals(other.pointName))
+			return false;
+		if (tagName == null) {
+			if (other.tagName != null)
+				return false;
+		} else if (!tagName.equals(other.tagName))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(	other.type))
+			return false;
+		if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x))
+			return false;
+		if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.y))
+			return false;
+		if (Double.doubleToLongBits(z) != Double.doubleToLongBits(other.z))
+			return false;
+		return true;
+	}
+
+	
 }
