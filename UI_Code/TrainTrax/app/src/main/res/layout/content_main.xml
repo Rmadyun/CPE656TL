@@ -17,21 +17,20 @@
 
 
     <Button
-        android:layout_width="189dp"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="82dp"
         android:text="Monitor Train"
         android:textColor="#ffffff"
         android:background="?attr/colorPrimary"
         android:id="@+id/btnMonitor"
         android:onClick="onMonitorButtonClicked"
-        android:layout_gravity="right"
-        android:layout_weight="0.26" />
+        android:layout_gravity="right" />
 
     <edu.uah.cpe.traintrax.MyView
         android:id="@+id/myview"
         android:layout_width="match_parent"
         android:layout_height="598dp"
-        android:layout_weight="1.83" />
+        android:layout_weight="0.84" />
 
 
 </LinearLayout>

@@ -18,7 +18,8 @@ import java.util.ArrayList;
 
 
     public class MyView extends View {
-        edu.uah.cpe.traintrax.TrackDiagram TrackDig = new edu.uah.cpe.traintrax.TrackDiagram();
+        //set for 12 temp coordinates
+        edu.uah.cpe.traintrax.TrackDiagram TrackDig = new edu.uah.cpe.traintrax.TrackDiagram(32);
 
         private ArrayList<Rect> rectangles = new ArrayList<Rect>();
 
@@ -42,40 +43,11 @@ import java.util.ArrayList;
             paint.setColor(Color.WHITE);
 
             if (!TrackDig.GetNavData()) {
-                //draw error diagram
-                // <ImageView
-                // android:layout_width="fill_parent"
-                // android:layout_height="wrap_content"
-                //android:src="@drawable/image_name" />
 
-                //ImageView iv = (ImageView)findViewById(v);
-                //iv.setImageResource(R.drawable.trackgeo);
-
-                //Drawable d = getResources().getDrawable(R.drawable.trackgeo);
-                //d.setBounds(left, top, right, bottom);
-                //d.draw(canvas);
-                //canvas.drawPicture(R.drawable.trackgeo);
-
-
+                /* Display error image and message on screen */
 
             Bitmap error_screen = BitmapFactory.decodeResource(getResources(),
                     R.drawable.trackgeo);
-
-
-           /* final int maxSize = 400;
-            int outWidth;
-            int outHeight;
-            int inWidth = error_screen.getWidth();
-            int inHeight = error_screen.getHeight();
-            if (inWidth > inHeight) {
-                outWidth = maxSize;
-                outHeight = (inHeight * maxSize) / inWidth;
-            } else {
-                outHeight = maxSize;
-                outWidth = (inWidth * maxSize) / inHeight;
-
-                Bitmap resizedBitmap = Bitmap.createScaledBitmap(error_screen, outWidth, outHeight, false); */
-
                 //canvas.drawColor(Color.BLACK);
                 //canvas.drawBitmap(MyBitmap, null, rectangle, null)
                 canvas.drawBitmap(error_screen, null, new Rect(0, 50, 2300, 1100), null);
@@ -100,63 +72,73 @@ import java.util.ArrayList;
             radius = 100;
             canvas.drawPaint(paint);
 
-            //Add Rectangles method, will replace the coordinates in here with the ArrayLists once
+            //Add Path, will replace the coordinates in here with the ArrayLists once
             // the TrackDiagram model class works correctly
-
-            //addrectangle(float left, float top, float right, float bottom)
-            rectangles.add(new Rect(30, 50, 200, 1100));
-            rectangles.add(new Rect(200, 50, 2200, 200));
-            rectangles.add(new Rect(200, 950, 2200, 1100));
-            rectangles.add(new Rect(2000, 50, 2200, 1100));;
 
             //Use Color.parseColor to define HTML colors
             paint.setColor(Color.parseColor("#CCCfff"));
 
              // optional method of just adding the rectangles directly from the coordinates
 
-            //drawRect(float left, float top, float right, float bottom, Paint paint)
 
-            /*canvas.drawRect(30, 50, 200, 1100, paint);
-            canvas.drawRect(200, 50, 2200, 200, paint);
-            canvas.drawRect(200, 950, 2200, 1100, paint);
-            canvas.drawRect(2000, 50, 2200, 1100, paint); */
+            paint.setStrokeWidth(100);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setColor(Color.GREEN);
+            Path path = new Path();
 
-            //startX = 20;
-            //startY = 100;
-            //stopX = 140;
-            //stopY = 30;
+            // get default values for Track Diagram
+            int xmax = TrackDig.getXmax();
+            int ymax = TrackDig.getYmax();
+            int xpixel = TrackDig.getXpixel();
+            int ypixel = TrackDig.getYpixel();
+            int num_coords = TrackDig.getnumCoords();
 
-            paint.setStrokeWidth(2000);
-            int startx = 50;
-            int starty = 90;
-            int endx = 150;
-            int endy = 360;
-           // canvas.drawLine(startx, starty, endx, endy, paint);
-            canvas.drawLine(44, 27, 41, 22, paint);
-            canvas.drawLine(36, 18, 41, 22, paint);
-           /* canvas.drawLine(41, 22, 36, 18, paint);
-            canvas.drawLine(36, 18, 31, 16, paint);
-            canvas.drawLine(31, 16, 25, 16, paint);
-            canvas.drawLine(25, 16, 20, 19, paint);
-            canvas.drawLine(20, 19, 16, 23, paint);
-            canvas.drawLine(16, 23, 14, 28, paint);
-            canvas.drawLine(14, 28, 14, 34, paint);
-            canvas.drawLine(14, 34, 17, 40, paint);
-            canvas.drawLine(17, 40, 20, 44, paint);
-            canvas.drawLine(20, 44, 23, 49, paint);
-            canvas.drawLine(23, 49, 28, 50, paint);
-            canvas.drawLine(28, 50, 33, 46, paint);
-            canvas.drawLine(33, 46, 38, 43, paint);
-            canvas.drawLine(38, 43, 42, 39, paint);
-            canvas.drawLine(42, 39, 44, 33, paint);
-            canvas.drawLine(44, 33, 44, 27, paint); */
+            for (int i = 0; i < num_coords; i++ )
+            {
+                /* Get the X position and why position of the line */
+                Float xcord = (Float) TrackDig.getXPosition(i);
+                Float ycord = (Float) TrackDig.getYPosition(i);
+
+                //x = (x/xmax) * screen resolution
+                /* scale coordinates to resolution size */
+                xcord = (xcord/xmax) * xpixel;
+                ycord = (ycord/ymax) * ypixel;
+
+            //set the initial path to the first point
+            if (i == 0)
+                path.moveTo(xcord, ycord);
+
+            if (i > 0)
+                path.lineTo(xcord, ycord);
+
+            }
+
+            canvas.drawPath(path, paint);
 
 
+            /**************************temp hard codes for track diagram
+            //x max = 80, y max = 90
+            //nexus 10 = 2500 X 1600   21 inches by 14
+             p.moveTo(960, 280);// 31, 16
+             p.lineTo(780, 280); // 25, 16
+             p.lineTo(625, 330); // 20, 19
+             p.lineTo(500, 400); // 16, 23
+             p.lineTo(430, 490); // 14, 28
+             p.lineTo(430, 600); // 14, 34
+             p.lineTo(530, 710); // 17, 40
 
+
+            p.lineTo(625, 780); // 20, 44
+            p.lineTo(710, 870); // 23, 49
+            p.lineTo(870, 880); // 28, 50
+            p.lineTo(1030, 810); // 33, 46
+            p.lineTo(1180, 760); // 38, 43 */
 
           //  for (Rect rect : rectangles) {
             //  canvas.drawRect(rect, paint);
            // }
+
+
         }
     }
 

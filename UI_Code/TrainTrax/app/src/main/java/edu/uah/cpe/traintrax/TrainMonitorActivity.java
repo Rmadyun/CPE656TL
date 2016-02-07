@@ -14,7 +14,7 @@ public class TrainMonitorActivity extends AppCompatActivity {
     final String module = "MainActivity";
     final Context context = this;
     //private ListView listView;
-    edu.uah.cpe.traintrax.TrackSwitch switchdata = new edu.uah.cpe.traintrax.TrackSwitch();
+    //edu.uah.cpe.traintrax.TrackSwitch switchdata = new edu.uah.cpe.traintrax.TrackSwitch();
 
 
     @Override
