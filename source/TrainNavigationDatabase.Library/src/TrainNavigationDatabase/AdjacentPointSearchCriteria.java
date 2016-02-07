@@ -33,7 +33,7 @@ public class AdjacentPointSearchCriteria {
 	/**
 	 * @param pointId 
 	 */
-	public void setPointId(int pointId) {
+	public void setPointId(String pointId) {
 		this.pointId = pointId;
 	}
 
@@ -50,7 +50,7 @@ public class AdjacentPointSearchCriteria {
 	 * 
 	 * @param adjacentPointId
 	 */
-	public void setAdjacentPointId(int adjacentPointId) {
+	public void setAdjacentPointId(String adjacentPointId) {
 		this.adjacentPointId = adjacentPointId;
 	}
 

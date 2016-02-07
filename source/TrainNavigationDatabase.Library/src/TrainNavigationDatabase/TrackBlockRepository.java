@@ -106,7 +106,10 @@ public class TrackBlockRepository implements FilteredSearchRepositoryInterface<T
 
 	@Override
 	public void update(String id, TrackBlock entry) {
-		// TODO Auto-generated method stub
+		DatabaseEntry databaseEntry = convertToDatabaseEntry(entry);
+		KeyValuePair primaryKey = new KeyValuePair(BlockIdColumn, id);
+		
+		databaseInterface.sendUpdate(TrackBlockTable, databaseEntry, primaryKey);
 		
 	}
 

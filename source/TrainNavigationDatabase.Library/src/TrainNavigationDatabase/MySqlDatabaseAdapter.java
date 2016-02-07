@@ -251,6 +251,54 @@ public class MySqlDatabaseAdapter implements GenericDatabaseInterface {
 	}
 
 	@Override
+	public void sendUpdate(String tableName, DatabaseEntry databaseEntry,
+			KeyValuePair primaryKey) {
+		
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append("UPDATE ");
+		queryBuilder.append(tableName);
+		queryBuilder.append(" SET ");
+		int numColumns = databaseEntry.getColumns().size();
+		String idConstraint = "";
+		int indexOfLastColumnInEntry = numColumns - 1;
+		
+		String keyColumnName = primaryKey.getKey();
+		if(numColumns > 0 && databaseEntry.getColumns().get(numColumns-1).equals(keyColumnName)){
+			indexOfLastColumnInEntry--;
+		}
+
+		for (int i = 0; i < numColumns; i++) {
+			KeyValuePair kvp = databaseEntry.getColumns().get(i);
+
+			//Ignore the primary key column if present
+			if (!kvp.getKey().equals(keyColumnName)) {
+				String assignmentString = "";
+
+				assignmentString += kvp.getKey();
+				assignmentString += "=";
+				assignmentString += kvp.getValue();
+
+				if (i < (indexOfLastColumnInEntry)) {
+					assignmentString += ", ";
+				}
+
+				queryBuilder.append(assignmentString);
+			}
+		}
+
+	    idConstraint = " WHERE " + primaryKey.getKey() + "=" + primaryKey.getValue();
+
+		if (!idConstraint.isEmpty()) {
+			//queryBuilder.append("\n");
+			queryBuilder.append(idConstraint);
+
+			String queryString = queryBuilder.toString();
+
+			runUpdate(queryString);
+		}
+	}
+
+	@Override
 	public void sendDelete(String queryString) {
 		runUpdate(queryString);
 	}

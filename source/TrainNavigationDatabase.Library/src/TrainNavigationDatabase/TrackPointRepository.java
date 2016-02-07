@@ -152,8 +152,10 @@ public class TrackPointRepository implements FilteredSearchRepositoryInterface<T
 
 	@Override
 	public void update(String id, TrackPoint entry) {
-		// TODO Auto-generated method stub
+		DatabaseEntry databaseEntry = convertToDatabaseEntry(entry);
+		KeyValuePair primaryKey = new KeyValuePair(PointIdColumn, id);
 		
+		databaseInterface.sendUpdate(TrackPointTable, databaseEntry, primaryKey);		
 	}
 
 	@Override

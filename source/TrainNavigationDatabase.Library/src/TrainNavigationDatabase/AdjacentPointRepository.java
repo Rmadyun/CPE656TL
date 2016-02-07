@@ -112,7 +112,10 @@ public class AdjacentPointRepository implements FilteredSearchRepositoryInterfac
 
 	@Override
 	public void update(String id, AdjacentPoint entry) {
-		// TODO Auto-generated method stub
+		DatabaseEntry databaseEntry = convertToDatabaseEntry(entry);
+		KeyValuePair primaryKey = new KeyValuePair(ListIdColumn, id);
+		
+		databaseInterface.sendUpdate(AdjacentPointTable, databaseEntry, primaryKey);
 		
 	}
 

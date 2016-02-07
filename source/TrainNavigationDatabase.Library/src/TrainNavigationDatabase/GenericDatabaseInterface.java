@@ -25,7 +25,7 @@ public interface GenericDatabaseInterface {
     /**
      * Requests for an entry to be added into the database
      * @param tableName Name of the table that the entry belongs to.
-     * @param databaseEntry Entry to update
+     * @param databaseEntry Entry to add
      * @return ID of the key associated with the added entry.
      */
 	int sendAdd(String tableName, DatabaseEntry databaseEntry);
@@ -35,6 +35,16 @@ public interface GenericDatabaseInterface {
 	 * @param queryString SQL query to use to define the entries to remove
 	 */
 	void sendDelete(String queryString);
+
+	/**
+	 * Requests for an entry to be updated within the database
+     * @param tableName Name of the table that the entry belongs to.
+     * @param databaseEntry Entry to update
+	 * @param primaryKey Column that acts as the primary key
+	 * of the table.
+	 */
+	void sendUpdate(String tableName, DatabaseEntry databaseEntry,
+			KeyValuePair primaryKey);
     
     
 }

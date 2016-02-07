@@ -21,6 +21,10 @@ public class DatabaseTestProgram {
         TrackPoint newTrackPoint = new TrackPoint("Name", "Point", 1, 1, 1, "2", "Tag");
         
         RepositoryEntry<TrackPoint> addedEntry = trackPointRepository.add(newTrackPoint);
+        
+        TrackPoint updatedTrackPoint = new TrackPoint("Name", "Point", 2, 2, 2, "2", "Tag");
+        
+        trackPointRepository.update(addedEntry.getId(), updatedTrackPoint);
  
         trackPointRepository.remove(addedEntry.getId());
         

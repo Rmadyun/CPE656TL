@@ -125,7 +125,10 @@ public class TrackSwitchRepository implements FilteredSearchRepositoryInterface<
 
 	@Override
 	public void update(String id, TrackSwitch entry) {
-		// TODO Auto-generated method stub
+		DatabaseEntry databaseEntry = convertToDatabaseEntry(entry);
+		KeyValuePair primaryKey = new KeyValuePair(SwitchIdColumn, id);
+		
+		databaseInterface.sendUpdate(TrackSwitchTable, databaseEntry, primaryKey);
 		
 	}
 
