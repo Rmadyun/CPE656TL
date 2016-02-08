@@ -55,6 +55,21 @@ public class TrackPointRepositoryTests extends FilteredSearchRepositoryInterface
 	}
 	
 	@Test
+	public void TestRemoveWithInvalidId(){
+		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> repository = createRepository();
+		
+		TestRemoveWithInvalidId(repository);
+	}
+	
+	@Test
+	public void TestUpdateWithInvalidId(){
+		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> repository = createRepository();
+		TrackPoint newEntry = createNewEntry();
+		
+		TestUpdateWithInvalidId(repository, newEntry);
+	}
+	
+	@Test
 	public void TestUpdate(){
 		
 		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> repository = createRepository();
@@ -71,7 +86,7 @@ public class TrackPointRepositoryTests extends FilteredSearchRepositoryInterface
 		TrackPoint newEntry = createNewEntry();
 		
 		TestFindById(repository, newEntry);
-	}		//cleanup
+	}
 	
 	@Test
 	public void TestRemove(){
@@ -81,5 +96,16 @@ public class TrackPointRepositoryTests extends FilteredSearchRepositoryInterface
 		
 		TestRemove(repository, newEntry);
 	}
+	
+	@Test
+	public void TestFindAll(){
+		
+		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> repository = createRepository();
+		TrackPoint newEntry = createNewEntry();
+		
+		TestFindAll(repository, newEntry);
+	}
+	
+	//TODO: Implement tests for search criteria search. Be sure to test each individual param , then one full combined search.
 
 }

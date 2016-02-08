@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 /**
  * Class responsible for broker transactions with a given MySQL Database Server.
- * 
+ * This is essential the DatabaseEngine for the library.
  * @author Corey Sanders
  * 
  */
