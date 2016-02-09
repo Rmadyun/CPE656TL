@@ -116,4 +116,23 @@ public abstract class FilteredSearchRepositoryInterfaceTests<TData, TSearchCrite
 		//cleanup
 		repository.remove(repositoryEntry.getId());
 	}
+	
+	public void TestFindSearchCriteriaWithNoMatches(FilteredSearchRepositoryInterface<TData, TSearchCriteria> repository, TData newEntry, TSearchCriteria searchCriteria){
+		
+		RepositoryEntry<TData> repositoryEntry = repository.add(newEntry);
+				
+		List<RepositoryEntry<TData>> matches = repository.find(searchCriteria);
+
+		boolean matchFound = false;
+		for(RepositoryEntry<TData> match: matches){
+			if(match.getValue().equals(newEntry)){
+				matchFound = true;
+				break;
+			}
+		}
+		assertFalse(matchFound);
+		
+		//cleanup
+		repository.remove(repositoryEntry.getId());
+	}
 }

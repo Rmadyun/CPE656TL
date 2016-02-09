@@ -128,6 +128,10 @@ public class TrackPointRepositoryTests extends FilteredSearchRepositoryInterface
 		searchCriteria.setName(newEntry.getPointName());
 		
 		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+
+		String dummyFilterValue = "dummyFilterValue";
+		searchCriteria.setName(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
 	}
 	
 	@Test
@@ -140,6 +144,10 @@ public class TrackPointRepositoryTests extends FilteredSearchRepositoryInterface
 		searchCriteria.setBlockId(newEntry.getBlockId());
 		
 		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+		
+		String dummyFilterValue = "-1";
+		searchCriteria.setBlockId(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
 	}
 	
 	@Test
@@ -152,6 +160,10 @@ public class TrackPointRepositoryTests extends FilteredSearchRepositoryInterface
 		searchCriteria.setTagName(newEntry.getBlockId());
 		
 		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+		
+		String dummyFilterValue = "dummyFilterValue";
+		searchCriteria.setTagName(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
 	}
 	
 	@Test
@@ -164,6 +176,10 @@ public class TrackPointRepositoryTests extends FilteredSearchRepositoryInterface
 		searchCriteria.setType(newEntry.getType());
 		
 		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+		
+		String dummyFilterValue = "dummyFilterValue";
+		searchCriteria.setType(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
 	}
 	
 	@Test
