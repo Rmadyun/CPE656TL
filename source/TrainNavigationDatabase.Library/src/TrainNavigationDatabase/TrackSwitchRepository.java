@@ -66,7 +66,7 @@ public class TrackSwitchRepository implements FilteredSearchRepositoryInterface<
 		try {
 			List<KeyValuePair> kvps = new ArrayList<KeyValuePair>();
 
-			KeyValuePair switchNameKvp = new KeyValuePair(SwitchNameColumn, trackSwitch.getSwitchName());
+			KeyValuePair switchNameKvp = new KeyValuePair(SwitchNameColumn, "'"+trackSwitch.getSwitchName()+"'");
 			KeyValuePair pointIdKvp = new KeyValuePair(PointIdColumn, trackSwitch.getPointId());
 			KeyValuePair passBlockIdKvp = new KeyValuePair(PassBlockIdColumn, trackSwitch.getPassBlockId());
 			KeyValuePair bypassBlockIdKvp = new KeyValuePair(BypassBlockIdColumn, trackSwitch.getBypassBlockId());

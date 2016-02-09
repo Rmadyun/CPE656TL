@@ -22,29 +22,19 @@ public abstract class FilteredSearchRepositoryInterfaceTests<TData, TSearchCrite
 	public void TestRemoveWithInvalidId(FilteredSearchRepositoryInterface<TData, TSearchCriteria> repository){
 		
 		String dummyId = "-1";
-		
-		try{
-		    repository.remove(dummyId);
-		    fail("Exception not thrown when attempting to remove an entry with an invalid ID");
-		}
-		catch(Exception exception){
 			
-		}
-		
+		//We expect it to silently ignore the error and not update anything
+		//This fails if an exception is thrown.
+		repository.remove(dummyId);
 	}
 	
 	public void TestUpdateWithInvalidId(FilteredSearchRepositoryInterface<TData, TSearchCriteria> repository, TData newEntry){
 		
 		String dummyId = "-1";
 
-		try
-		{
-  		    repository.update(dummyId, newEntry);
-		    fail("Exception not thrown when attempting to update with an invalid ID");
-		}
-		catch(Exception exception){
-			
-		}
+		//We expect it to silently ignore the error and not update anything
+		//This fails if an exception is thrown.
+		repository.update(dummyId, newEntry);
 	}
 	
 	public void TestAdd(FilteredSearchRepositoryInterface<TData, TSearchCriteria> repository, TData newEntry){

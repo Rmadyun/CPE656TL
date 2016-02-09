@@ -92,7 +92,7 @@ public class TrackPointRepository implements FilteredSearchRepositoryInterface<T
 			KeyValuePair xKvp = new KeyValuePair(XColumn, Double.toString(trackPoint.getX()));
 			KeyValuePair yKvp = new KeyValuePair(YColumn, Double.toString(trackPoint.getY()));
 			KeyValuePair zKvp = new KeyValuePair(ZColumn, Double.toString(trackPoint.getZ()));
-			//KeyValuePair tagNameKvp = new KeyValuePair(TagNameColumn, trackPoint.getTagName());
+			KeyValuePair tagNameKvp = new KeyValuePair(TagNameColumn, "'"+trackPoint.getTagName()+"'");
 			
 			kvps.add(pointNameKvp);
 			kvps.add(typeKvp);
@@ -100,7 +100,7 @@ public class TrackPointRepository implements FilteredSearchRepositoryInterface<T
 			kvps.add(xKvp);
 			kvps.add(yKvp);
 			kvps.add(zKvp);
-			//kvps.add(tagNameKvp);
+			kvps.add(tagNameKvp);
 
 			databaseEntry = new DatabaseEntry(kvps);
 		} catch (Exception e) {
@@ -193,17 +193,17 @@ public class TrackPointRepository implements FilteredSearchRepositoryInterface<T
 		
 		if(searchCriteria.getBlockId() != null && searchCriteria.getBlockId().isEmpty()){
 			
-			clauses += PointNameColumn + "=" + searchCriteria.getBlockId();
+			clauses += BlockIdColumn + "=" + searchCriteria.getBlockId();
 		}
 		
 		if(searchCriteria.getType() != null && searchCriteria.getType().isEmpty()){
 			
-			clauses += PointNameColumn + "=" + searchCriteria.getType();
+			clauses += TypeColumn + "=" + searchCriteria.getType();
 		}
 		
 		if(searchCriteria.getTagName() != null && searchCriteria.getTagName().isEmpty()){
 			
-			clauses += PointNameColumn + "=" + searchCriteria.getTagName();
+			clauses += TagNameColumn + "=" + searchCriteria.getTagName();
 		}
 		
 		if(!clauses.isEmpty()){
