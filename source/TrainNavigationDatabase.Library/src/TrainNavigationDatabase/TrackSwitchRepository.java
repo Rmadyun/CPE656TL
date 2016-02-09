@@ -161,25 +161,25 @@ public class TrackSwitchRepository implements FilteredSearchRepositoryInterface<
 		String clauses = "";
 		
 		String switchName = searchCriteria.getSwitchName();
-		if(switchName != null && switchName.isEmpty()){
+		if(switchName != null && !switchName.isEmpty()){
 			
 			clauses += SwitchNameColumn + "=" + switchName;
 		}
 		
 		String pointId = searchCriteria.getPointId();
-		if(pointId != null && pointId.isEmpty()){
+		if(pointId != null && !pointId.isEmpty()){
 			
 			clauses += PointIdColumn + "=" + pointId;
 		}
 		
 		String passBlockId = searchCriteria.getPassBlockId();
-		if(passBlockId != null && passBlockId.isEmpty()){
+		if(passBlockId != null && !passBlockId.isEmpty()){
 			
 			clauses += PassBlockIdColumn + "=" + passBlockId;
 		}
 		
 		String byPassBlockId = searchCriteria.getBypassBlockId();
-		if(byPassBlockId != null && byPassBlockId.isEmpty()){
+		if(byPassBlockId != null && !byPassBlockId.isEmpty()){
 			
 			clauses += BypassBlockIdColumn + "=" + byPassBlockId;
 		}

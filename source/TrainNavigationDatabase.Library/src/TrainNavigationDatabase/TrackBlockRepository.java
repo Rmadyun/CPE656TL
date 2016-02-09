@@ -142,7 +142,7 @@ public class TrackBlockRepository implements FilteredSearchRepositoryInterface<T
 		String clauses = "";
 		
 		String blockName = searchCriteria.getBlockName();
-		if(blockName!= null && blockName.isEmpty()){
+		if(blockName!= null && !blockName.isEmpty()){
 			
 			clauses += BlockNameColumn + "=" + blockName;
 		}

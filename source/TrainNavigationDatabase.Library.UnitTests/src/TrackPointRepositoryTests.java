@@ -7,6 +7,8 @@ import TrainNavigationDatabase.MySqlDatabaseAdapter;
 import TrainNavigationDatabase.TrackPoint;
 import TrainNavigationDatabase.TrackPointRepository;
 import TrainNavigationDatabase.TrackPointSearchCriteria;
+import TrainNavigationDatabase.TrainPosition;
+import TrainNavigationDatabase.TrainPositionSearchCriteria;
 
 
 public class TrackPointRepositoryTests extends FilteredSearchRepositoryInterfaceTests<TrackPoint, TrackPointSearchCriteria> {
@@ -105,7 +107,77 @@ public class TrackPointRepositoryTests extends FilteredSearchRepositoryInterface
 		
 		TestFindAll(repository, newEntry);
 	}
-	
-	//TODO: Implement tests for search criteria search. Be sure to test each individual param , then one full combined search.
 
+	@Test
+	public void TestFindWithEmptySearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> repository = createRepository();
+		TrackPoint newEntry = createNewEntry();
+		TrackPointSearchCriteria searchCriteria = new TrackPointSearchCriteria();
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+	}
+	
+	@Test
+	public void TestFindWithNameSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> repository = createRepository();
+		TrackPoint newEntry = createNewEntry();
+		TrackPointSearchCriteria searchCriteria = new TrackPointSearchCriteria();
+
+		searchCriteria.setName(newEntry.getPointName());
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+	}
+	
+	@Test
+	public void TestFindWithBlockIdSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> repository = createRepository();
+		TrackPoint newEntry = createNewEntry();
+		TrackPointSearchCriteria searchCriteria = new TrackPointSearchCriteria();
+
+		searchCriteria.setBlockId(newEntry.getBlockId());
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+	}
+	
+	@Test
+	public void TestFindWithTagNameSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> repository = createRepository();
+		TrackPoint newEntry = createNewEntry();
+		TrackPointSearchCriteria searchCriteria = new TrackPointSearchCriteria();
+
+		searchCriteria.setTagName(newEntry.getBlockId());
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+	}
+	
+	@Test
+	public void TestFindWithTypeSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> repository = createRepository();
+		TrackPoint newEntry = createNewEntry();
+		TrackPointSearchCriteria searchCriteria = new TrackPointSearchCriteria();
+
+		searchCriteria.setType(newEntry.getType());
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+	}
+	
+	@Test
+	public void TestFindWithAllSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> repository = createRepository();
+		TrackPoint newEntry = createNewEntry();
+		TrackPointSearchCriteria searchCriteria = new TrackPointSearchCriteria();
+
+		searchCriteria.setName(newEntry.getPointName());
+		searchCriteria.setBlockId(newEntry.getBlockId());
+		searchCriteria.setTagName(newEntry.getTagName());
+		searchCriteria.setType(newEntry.getType());
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+	}
 }

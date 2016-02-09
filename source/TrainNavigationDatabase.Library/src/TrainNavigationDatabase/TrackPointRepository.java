@@ -86,13 +86,13 @@ public class TrackPointRepository implements FilteredSearchRepositoryInterface<T
 
 		try {
 			List<KeyValuePair> kvps = new ArrayList<KeyValuePair>();
-			KeyValuePair pointNameKvp = new KeyValuePair(PointNameColumn, "'"+trackPoint.getPointName()+"'");
-			KeyValuePair blockIdKvp = new KeyValuePair(BlockIdColumn, trackPoint.getBlockId());
-			KeyValuePair typeKvp = new KeyValuePair(TypeColumn, "'"+trackPoint.getType()+"'");
-			KeyValuePair xKvp = new KeyValuePair(XColumn, Double.toString(trackPoint.getX()));
-			KeyValuePair yKvp = new KeyValuePair(YColumn, Double.toString(trackPoint.getY()));
-			KeyValuePair zKvp = new KeyValuePair(ZColumn, Double.toString(trackPoint.getZ()));
-			KeyValuePair tagNameKvp = new KeyValuePair(TagNameColumn, "'"+trackPoint.getTagName()+"'");
+			KeyValuePair pointNameKvp = new KeyValuePair(PointNameColumn, SqlUtilities.createSqlString(trackPoint.getPointName()));
+			KeyValuePair blockIdKvp = new KeyValuePair(BlockIdColumn, SqlUtilities.createSqlInt(trackPoint.getBlockId()));
+			KeyValuePair typeKvp = new KeyValuePair(TypeColumn, SqlUtilities.createSqlString(trackPoint.getType()));
+			KeyValuePair xKvp = new KeyValuePair(XColumn, SqlUtilities.createSqlDouble(trackPoint.getX()));
+			KeyValuePair yKvp = new KeyValuePair(YColumn, SqlUtilities.createSqlDouble(trackPoint.getY()));
+			KeyValuePair zKvp = new KeyValuePair(ZColumn, SqlUtilities.createSqlDouble(trackPoint.getZ()));
+			KeyValuePair tagNameKvp = new KeyValuePair(TagNameColumn, SqlUtilities.createSqlString(trackPoint.getTagName()));
 			
 			kvps.add(pointNameKvp);
 			kvps.add(typeKvp);
@@ -186,26 +186,30 @@ public class TrackPointRepository implements FilteredSearchRepositoryInterface<T
 		String queryString = "SELECT * FROM "+TrackPointTable;
 		String clauses = "";
 		
-		if(searchCriteria.getName() != null && searchCriteria.getName().isEmpty()){
+		String name = searchCriteria.getName();
+		if(name != null && !name.isEmpty()){
 			
-			clauses += PointNameColumn + "=" + searchCriteria.getName();
+			clauses += PointNameColumn + "=" + SqlUtilities.createSqlString(name);
 		}
 		
-		if(searchCriteria.getBlockId() != null && searchCriteria.getBlockId().isEmpty()){
+		String blockId = searchCriteria.getBlockId();
+		if(blockId != null && !blockId.isEmpty()){
 			
-			clauses += BlockIdColumn + "=" + searchCriteria.getBlockId();
+			clauses += BlockIdColumn + "=" + SqlUtilities.createSqlString(blockId);
 		}
 		
-		if(searchCriteria.getType() != null && searchCriteria.getType().isEmpty()){
+		String type = searchCriteria.getType();
+		if(type != null && !type.isEmpty()){
 			
-			clauses += TypeColumn + "=" + searchCriteria.getType();
+			clauses += TypeColumn + "=" + SqlUtilities.createSqlString(type);
 		}
 		
-		if(searchCriteria.getTagName() != null && searchCriteria.getTagName().isEmpty()){
+		String tagName = searchCriteria.getTagName();
+		if(tagName != null && !tagName.isEmpty()){
 			
-			clauses += TagNameColumn + "=" + searchCriteria.getTagName();
+			clauses += TagNameColumn + "=" + SqlUtilities.createSqlString(tagName);
 		}
-		
+
 		if(!clauses.isEmpty()){
 			queryString +=  " WHERE " + clauses;
 		}

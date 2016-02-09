@@ -17,7 +17,7 @@ public class TrackMeasurementsReader {
 		List<TrackPointMeasurement> measurements = new ArrayList<TrackPointMeasurement>();
 		try {
 
-			final int numberOfColumns = 6;
+			final int numberOfColumns = 5; // Setting to 5 instead of 6 because we don't have tag data.
 			final int pointNameColumnIndex = 0;
 			final int xInchesColumnIndex = 1;
 			final int yInchesColumnIndex = 2;
@@ -57,15 +57,15 @@ public class TrackMeasurementsReader {
 									.trim();
 							String adjacentPointNames = segments[adjacentPointNamesColumnIndex]
 									.trim();
-							String rfidTagId = segments[rfidTagIdColumnIndex]
-									.trim();
+							String rfidTagId = ""; /*segments[rfidTagIdColumnIndex]
+									.trim();*/
 
 							TrackPointMeasurement measurement = new TrackPointMeasurement();
 							measurement.setPointName(pointName);
 							measurement.setxInches(xInches);
 							measurement.setyInches(yInches);
 							measurement.setBlockName(blockName);
-
+                            measurement.setPointType("Point");
 							measurement.setRfidTagId(rfidTagId);
 
 							Entry entry = new Entry();

@@ -13,22 +13,7 @@ public class DatabaseTestProgram {
         
         mySqlDatabaseAdapter.connect();
         
-        TrackPointRepository trackPointRepository = new TrackPointRepository(mySqlDatabaseAdapter);
-        
-        List<RepositoryEntry<TrackPoint>> allEntries = trackPointRepository.findAll();
-        RepositoryEntry<TrackPoint> secondEntry = trackPointRepository.find("2");
-        
-        TrackPoint newTrackPoint = new TrackPoint("Name", "Point", 1, 1, 1, "2", "Tag");
-        
-        RepositoryEntry<TrackPoint> addedEntry = trackPointRepository.add(newTrackPoint);
-        
-        TrackPoint updatedTrackPoint = new TrackPoint("Name", "Point", 2, 2, 2, "2", "Tag");
-        
-        trackPointRepository.update(addedEntry.getId(), updatedTrackPoint);
- 
-        trackPointRepository.remove(addedEntry.getId());
-        
-        importTrackMeasurements("TestTrackMeasurements.csv", mySqlDatabaseAdapter);
+        importTrackMeasurements("/home/death/Documents/CPE658/TestTrackMeasurements.csv", mySqlDatabaseAdapter);
         
 	}
 	

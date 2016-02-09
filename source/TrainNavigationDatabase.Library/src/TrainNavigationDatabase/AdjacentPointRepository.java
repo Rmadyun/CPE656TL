@@ -154,7 +154,7 @@ public class AdjacentPointRepository implements FilteredSearchRepositoryInterfac
 		}
 		
 		String adjacentPointId = searchCriteria.getAdjacenPointId();
-		if(adjacentPointId != null && adjacentPointId.isEmpty()){
+		if(adjacentPointId != null && !adjacentPointId.isEmpty()){
 			
 			clauses += AdjacentPointIdColumn + "=" + adjacentPointId;
 		}
