@@ -7,6 +7,8 @@ import TrainNavigationDatabase.MySqlDatabaseAdapter;
 import TrainNavigationDatabase.AdjacentPoint;
 import TrainNavigationDatabase.AdjacentPointRepository;
 import TrainNavigationDatabase.AdjacentPointSearchCriteria;
+import TrainNavigationDatabase.TrackSwitch;
+import TrainNavigationDatabase.TrackSwitchSearchCriteria;
 
 
 public class AdjacentPointRepositoryTests extends FilteredSearchRepositoryInterfaceTests<AdjacentPoint, AdjacentPointSearchCriteria> {
@@ -101,6 +103,64 @@ public class AdjacentPointRepositoryTests extends FilteredSearchRepositoryInterf
 		TestFindAll(repository, newEntry);
 	}
 	
-	//TODO: Implement tests for search criteria search. Be sure to test each individual param , then one full combined search.
+	@Test
+	public void TestFindWithEmptySearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<AdjacentPoint, AdjacentPointSearchCriteria> repository = createRepository();
+		AdjacentPoint newEntry = createNewEntry();
+		AdjacentPointSearchCriteria searchCriteria = new AdjacentPointSearchCriteria();
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+	}
+	
+	@Test
+	public void TestFindWithAdjacentPointIdSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<AdjacentPoint, AdjacentPointSearchCriteria> repository = createRepository();
+		AdjacentPoint newEntry = createNewEntry();
+		AdjacentPointSearchCriteria searchCriteria = new AdjacentPointSearchCriteria();
+
+		searchCriteria.setAdjacentPointId(Integer.toString(newEntry.getAdjacenPointId()));
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+
+		String dummyFilterValue = "dummyFilterValue";
+		searchCriteria.setAdjacentPointId(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
+	}
+	
+	@Test
+	public void TestFindWithPointIdSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<AdjacentPoint, AdjacentPointSearchCriteria> repository = createRepository();
+		AdjacentPoint newEntry = createNewEntry();
+		AdjacentPointSearchCriteria searchCriteria = new AdjacentPointSearchCriteria();
+
+		searchCriteria.setPointId(Integer.toString(newEntry.getPointId()));
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+		
+		String dummyFilterValue = "-1";
+		searchCriteria.setPointId(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
+	}
+		
+	@Test
+	public void TestFindWithAllSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<AdjacentPoint, AdjacentPointSearchCriteria> repository = createRepository();
+		AdjacentPoint newEntry = createNewEntry();
+		AdjacentPointSearchCriteria searchCriteria = new AdjacentPointSearchCriteria();
+
+		searchCriteria.setPointId(Integer.toString(newEntry.getPointId()));
+		searchCriteria.setAdjacentPointId(Integer.toString(newEntry.getAdjacenPointId()));
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+		
+		String dummyFilterValue = "dummyFilterValue";
+		searchCriteria.setPointId(dummyFilterValue);
+		searchCriteria.setAdjacentPointId(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
+	}
 
 }

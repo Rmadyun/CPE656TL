@@ -4,6 +4,8 @@ import org.junit.*;
 
 import TrainNavigationDatabase.FilteredSearchRepositoryInterface;
 import TrainNavigationDatabase.MySqlDatabaseAdapter;
+import TrainNavigationDatabase.TrackPoint;
+import TrainNavigationDatabase.TrackPointSearchCriteria;
 import TrainNavigationDatabase.TrackSwitch;
 import TrainNavigationDatabase.TrackSwitchRepository;
 import TrainNavigationDatabase.TrackSwitchSearchCriteria;
@@ -103,6 +105,100 @@ public class TrackSwitchRepositoryTests extends FilteredSearchRepositoryInterfac
 		TestFindAll(repository, newEntry);
 	}
 	
-	//TODO: Implement tests for search criteria search. Be sure to test each individual param , then one full combined search.
+	@Test
+	public void TestFindWithEmptySearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> repository = createRepository();
+		TrackSwitch newEntry = createNewEntry();
+		TrackSwitchSearchCriteria searchCriteria = new TrackSwitchSearchCriteria();
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+	}
+	
+	@Test
+	public void TestFindWithSwitchNameSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> repository = createRepository();
+		TrackSwitch newEntry = createNewEntry();
+		TrackSwitchSearchCriteria searchCriteria = new TrackSwitchSearchCriteria();
+
+		searchCriteria.setSwitchName(newEntry.getSwitchName());
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+
+		String dummyFilterValue = "dummyFilterValue";
+		searchCriteria.setSwitchName(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
+	}
+	
+	@Test
+	public void TestFindWithPointIdSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> repository = createRepository();
+		TrackSwitch newEntry = createNewEntry();
+		TrackSwitchSearchCriteria searchCriteria = new TrackSwitchSearchCriteria();
+
+		searchCriteria.setPointId(newEntry.getPointId());
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+		
+		String dummyFilterValue = "-1";
+		searchCriteria.setPointId(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
+	}
+	
+	@Test
+	public void TestFindWithPassBlockIdSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> repository = createRepository();
+		TrackSwitch newEntry = createNewEntry();
+		TrackSwitchSearchCriteria searchCriteria = new TrackSwitchSearchCriteria();
+
+		searchCriteria.setPassBlockId(newEntry.getPassBlockId());
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+		
+		String dummyFilterValue = "dummyFilterValue";
+		searchCriteria.setPassBlockId(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
+	}
+	
+	@Test
+	public void TestFindWithBypassBlockIdSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> repository = createRepository();
+		TrackSwitch newEntry = createNewEntry();
+		TrackSwitchSearchCriteria searchCriteria = new TrackSwitchSearchCriteria();
+
+		searchCriteria.setBypassBlockId(newEntry.getBypassBlockId());
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+		
+		String dummyFilterValue = "dummyFilterValue";
+		searchCriteria.setBypassBlockId(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
+	}
+	
+	@Test
+	public void TestFindWithAllSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> repository = createRepository();
+		TrackSwitch newEntry = createNewEntry();
+		TrackSwitchSearchCriteria searchCriteria = new TrackSwitchSearchCriteria();
+
+		searchCriteria.setSwitchName(newEntry.getSwitchName());
+		searchCriteria.setPointId(newEntry.getPointId());
+		searchCriteria.setPassBlockId(newEntry.getPassBlockId());
+		searchCriteria.setBypassBlockId(newEntry.getBypassBlockId());
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+		
+		String dummyFilterValue = "dummyFilterValue";
+		searchCriteria.setSwitchName(dummyFilterValue);
+		searchCriteria.setPointId(dummyFilterValue);
+		searchCriteria.setPassBlockId(dummyFilterValue);
+		searchCriteria.setBypassBlockId(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
+	}
 
 }

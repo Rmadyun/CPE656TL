@@ -157,7 +157,7 @@ public class TrackPointRepositoryTests extends FilteredSearchRepositoryInterface
 		TrackPoint newEntry = createNewEntry();
 		TrackPointSearchCriteria searchCriteria = new TrackPointSearchCriteria();
 
-		searchCriteria.setTagName(newEntry.getBlockId());
+		searchCriteria.setTagName(newEntry.getTagName());
 		
 		TestFindSearchCriteria(repository, newEntry, searchCriteria);
 		
@@ -195,5 +195,12 @@ public class TrackPointRepositoryTests extends FilteredSearchRepositoryInterface
 		searchCriteria.setType(newEntry.getType());
 		
 		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+		
+		String dummyFilterValue = "dummyFilterValue";
+		searchCriteria.setName(dummyFilterValue);
+		searchCriteria.setBlockId(dummyFilterValue);
+		searchCriteria.setTagName(dummyFilterValue);
+		searchCriteria.setType(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
 	}
 }

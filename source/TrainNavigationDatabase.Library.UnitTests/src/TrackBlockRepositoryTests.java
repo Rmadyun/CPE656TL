@@ -2,6 +2,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.*;
 
+import TrainNavigationDatabase.AdjacentPoint;
+import TrainNavigationDatabase.AdjacentPointSearchCriteria;
 import TrainNavigationDatabase.FilteredSearchRepositoryInterface;
 import TrainNavigationDatabase.MySqlDatabaseAdapter;
 import TrainNavigationDatabase.TrackBlock;
@@ -100,6 +102,46 @@ public class TrackBlockRepositoryTests extends FilteredSearchRepositoryInterface
 		TestFindAll(repository, newEntry);
 	}
 	
-	//TODO: Implement tests for search criteria search. Be sure to test each individual param , then one full combined search.
+	@Test
+	public void TestFindWithEmptySearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<TrackBlock, TrackBlockSearchCriteria> repository = createRepository();
+		TrackBlock newEntry = createNewEntry();
+		TrackBlockSearchCriteria searchCriteria = new TrackBlockSearchCriteria();
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+	}
+	
+	@Test
+	public void TestFindWithBlockNameSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<TrackBlock, TrackBlockSearchCriteria> repository = createRepository();
+		TrackBlock newEntry = createNewEntry();
+		TrackBlockSearchCriteria searchCriteria = new TrackBlockSearchCriteria();
+
+		searchCriteria.setBlockName(newEntry.getBlockName());
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+
+		String dummyFilterValue = "dummyFilterValue";
+		searchCriteria.setBlockName(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
+	}
+		
+	@Test
+	public void TestFindWithAllSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<TrackBlock, TrackBlockSearchCriteria> repository = createRepository();
+		TrackBlock newEntry = createNewEntry();
+		TrackBlockSearchCriteria searchCriteria = new TrackBlockSearchCriteria();
+
+		searchCriteria.setBlockName(newEntry.getBlockName());
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+		
+		String dummyFilterValue = "dummyFilterValue";
+		searchCriteria.setBlockName(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
+	}
 
 }

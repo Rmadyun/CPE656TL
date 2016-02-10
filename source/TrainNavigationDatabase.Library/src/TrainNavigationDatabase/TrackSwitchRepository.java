@@ -66,10 +66,10 @@ public class TrackSwitchRepository implements FilteredSearchRepositoryInterface<
 		try {
 			List<KeyValuePair> kvps = new ArrayList<KeyValuePair>();
 
-			KeyValuePair switchNameKvp = new KeyValuePair(SwitchNameColumn, "'"+trackSwitch.getSwitchName()+"'");
-			KeyValuePair pointIdKvp = new KeyValuePair(PointIdColumn, trackSwitch.getPointId());
-			KeyValuePair passBlockIdKvp = new KeyValuePair(PassBlockIdColumn, trackSwitch.getPassBlockId());
-			KeyValuePair bypassBlockIdKvp = new KeyValuePair(BypassBlockIdColumn, trackSwitch.getBypassBlockId());
+			KeyValuePair switchNameKvp = new KeyValuePair(SwitchNameColumn, SqlUtilities.createSqlString(trackSwitch.getSwitchName()));
+			KeyValuePair pointIdKvp = new KeyValuePair(PointIdColumn, SqlUtilities.createSqlInt(trackSwitch.getPointId()));
+			KeyValuePair passBlockIdKvp = new KeyValuePair(PassBlockIdColumn, SqlUtilities.createSqlInt(trackSwitch.getPassBlockId()));
+			KeyValuePair bypassBlockIdKvp = new KeyValuePair(BypassBlockIdColumn, SqlUtilities.createSqlInt(trackSwitch.getBypassBlockId()));
 			
 			kvps.add(switchNameKvp);
 			kvps.add(pointIdKvp);
@@ -163,25 +163,41 @@ public class TrackSwitchRepository implements FilteredSearchRepositoryInterface<
 		String switchName = searchCriteria.getSwitchName();
 		if(switchName != null && !switchName.isEmpty()){
 			
-			clauses += SwitchNameColumn + "=" + switchName;
+			if(!clauses.isEmpty()){
+				clauses += " AND ";
+			}
+			
+			clauses += SwitchNameColumn + "=" + SqlUtilities.createSqlString(switchName);
 		}
 		
 		String pointId = searchCriteria.getPointId();
 		if(pointId != null && !pointId.isEmpty()){
 			
-			clauses += PointIdColumn + "=" + pointId;
+			if(!clauses.isEmpty()){
+				clauses += " AND ";
+			}
+			
+			clauses += PointIdColumn + "=" + SqlUtilities.createSqlInt(pointId);
 		}
 		
 		String passBlockId = searchCriteria.getPassBlockId();
 		if(passBlockId != null && !passBlockId.isEmpty()){
 			
-			clauses += PassBlockIdColumn + "=" + passBlockId;
+			if(!clauses.isEmpty()){
+				clauses += " AND ";
+			}
+			
+			clauses += PassBlockIdColumn + "=" + SqlUtilities.createSqlInt(passBlockId);
 		}
 		
 		String byPassBlockId = searchCriteria.getBypassBlockId();
 		if(byPassBlockId != null && !byPassBlockId.isEmpty()){
 			
-			clauses += BypassBlockIdColumn + "=" + byPassBlockId;
+			if(!clauses.isEmpty()){
+				clauses += " AND ";
+			}
+			
+			clauses += BypassBlockIdColumn + "=" + SqlUtilities.createSqlInt(byPassBlockId);
 		}
 		
 		if(!clauses.isEmpty()){

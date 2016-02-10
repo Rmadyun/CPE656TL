@@ -23,6 +23,13 @@ public class AdjacentPointSearchCriteria {
 	}
 	
 	/**
+	 * Default constructor
+	 */
+	public AdjacentPointSearchCriteria() {
+        this("", "");
+	}
+
+	/**
 	 * 
 	 * @return
 	 */
@@ -42,7 +49,7 @@ public class AdjacentPointSearchCriteria {
 	 * 
 	 * @return
 	 */
-	public String getAdjacenPointId(){
+	public String getAdjacentPointId(){
 		return adjacentPointId;
 	}
 	

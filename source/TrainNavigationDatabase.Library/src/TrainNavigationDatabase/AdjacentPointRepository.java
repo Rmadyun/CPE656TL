@@ -57,8 +57,8 @@ public class AdjacentPointRepository implements FilteredSearchRepositoryInterfac
 		try {
 			List<KeyValuePair> kvps = new ArrayList<KeyValuePair>();
 
-			KeyValuePair pointIdKvp = new KeyValuePair(PointIdColumn, Integer.toString(adjacentPoint.getPointId()));
-			KeyValuePair adjacentPointIdKvp = new KeyValuePair(AdjacentPointIdColumn, Integer.toString(adjacentPoint.getAdjacenPointId()));
+			KeyValuePair pointIdKvp = new KeyValuePair(PointIdColumn, SqlUtilities.createSqlInt(adjacentPoint.getPointId()));
+			KeyValuePair adjacentPointIdKvp = new KeyValuePair(AdjacentPointIdColumn, SqlUtilities.createSqlInt(adjacentPoint.getAdjacenPointId()));
 			
 			kvps.add(pointIdKvp);
 			kvps.add(adjacentPointIdKvp);
@@ -148,15 +148,22 @@ public class AdjacentPointRepository implements FilteredSearchRepositoryInterfac
 		String clauses = "";
 		
 		String pointId = searchCriteria.getPointId();
-		if(pointId != null && pointId.isEmpty()){
+		if(pointId != null && !pointId.isEmpty()){
 			
-			clauses += PointIdColumn + "=" + pointId;
+			if(!clauses.isEmpty()){
+				clauses += " AND ";
+			}
+			
+			clauses += PointIdColumn + "=" + SqlUtilities.createSqlInt(pointId);
 		}
 		
-		String adjacentPointId = searchCriteria.getAdjacenPointId();
+		String adjacentPointId = searchCriteria.getAdjacentPointId();
 		if(adjacentPointId != null && !adjacentPointId.isEmpty()){
+			if(!clauses.isEmpty()){
+				clauses += " AND ";
+			}
 			
-			clauses += AdjacentPointIdColumn + "=" + adjacentPointId;
+			clauses += AdjacentPointIdColumn + "=" + SqlUtilities.createSqlInt(adjacentPointId);
 		}
 		
 		if(!clauses.isEmpty()){

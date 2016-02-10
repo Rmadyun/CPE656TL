@@ -52,7 +52,7 @@ public class TrackBlockRepository implements FilteredSearchRepositoryInterface<T
 
 		try {
 			List<KeyValuePair> kvps = new ArrayList<KeyValuePair>();
-			KeyValuePair blockNameKvp = new KeyValuePair(BlockNameColumn, "'"+trackBlock.getBlockName()+"'");
+			KeyValuePair blockNameKvp = new KeyValuePair(BlockNameColumn, SqlUtilities.createSqlString(trackBlock.getBlockName()));
 
 			kvps.add(blockNameKvp);
 
@@ -144,7 +144,11 @@ public class TrackBlockRepository implements FilteredSearchRepositoryInterface<T
 		String blockName = searchCriteria.getBlockName();
 		if(blockName!= null && !blockName.isEmpty()){
 			
-			clauses += BlockNameColumn + "=" + blockName;
+			if(!clauses.isEmpty()){
+				clauses += " AND ";
+			}
+			
+			clauses += BlockNameColumn + "=" + SqlUtilities.createSqlString(blockName);
 		}
 		
 		if(!clauses.isEmpty()){

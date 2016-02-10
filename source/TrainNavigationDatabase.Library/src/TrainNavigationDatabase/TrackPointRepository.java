@@ -189,23 +189,37 @@ public class TrackPointRepository implements FilteredSearchRepositoryInterface<T
 		String name = searchCriteria.getName();
 		if(name != null && !name.isEmpty()){
 			
+			if(!clauses.isEmpty()){
+				clauses += " AND ";
+			}
+			
 			clauses += PointNameColumn + "=" + SqlUtilities.createSqlString(name);
 		}
 		
 		String blockId = searchCriteria.getBlockId();
 		if(blockId != null && !blockId.isEmpty()){
 			
+			if(!clauses.isEmpty()){
+				clauses += " AND ";
+			}
+			
 			clauses += BlockIdColumn + "=" + SqlUtilities.createSqlString(blockId);
 		}
 		
 		String type = searchCriteria.getType();
 		if(type != null && !type.isEmpty()){
+			if(!clauses.isEmpty()){
+				clauses += " AND ";
+			}
 			
 			clauses += TypeColumn + "=" + SqlUtilities.createSqlString(type);
 		}
 		
 		String tagName = searchCriteria.getTagName();
 		if(tagName != null && !tagName.isEmpty()){
+			if(!clauses.isEmpty()){
+				clauses += " AND ";
+			}
 			
 			clauses += TagNameColumn + "=" + SqlUtilities.createSqlString(tagName);
 		}
