@@ -66,7 +66,7 @@ public class TrackPointResource extends ServerResource {
 			
 			List<RepositoryEntry<TrackPoint>> matches = findPoints(searchCriteria);
 			
-			TrackPointMatches trackPointMatches = new TrackPointMatches(matches);
+			TrackPointSearchResults trackPointMatches = new TrackPointSearchResults(matches);
 			jsonRepresentation = new JsonRepresentation(trackPointMatches);
 			
 		} catch (Exception e) {

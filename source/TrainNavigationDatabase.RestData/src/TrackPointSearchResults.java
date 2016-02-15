@@ -9,7 +9,7 @@ import TrainNavigationDatabase.TrackPoint;
  * @author Corey Sanders
  *
  */
-public class TrackPointMatches {
+public class TrackPointSearchResults {
 	
 	private List<TrackPointMatch> trackPointMatches;
 	
@@ -17,7 +17,7 @@ public class TrackPointMatches {
 	 * Constructor
 	 * @param matches matches in a track point repository search
 	 */
-	public TrackPointMatches(List<RepositoryEntry<TrackPoint>> matches){
+	public TrackPointSearchResults(List<RepositoryEntry<TrackPoint>> matches){
 		trackPointMatches = new ArrayList<TrackPointMatch>();
 		
 		for(RepositoryEntry<TrackPoint> match : matches){
@@ -29,7 +29,7 @@ public class TrackPointMatches {
 					match.getValue().getBlockId(),
 					match.getValue().getTagName());
 			
-			trackPointMatches.add(trackPointMatch);
+			trackPointMatches.add(trackPointMatch); 
 		}
 	}
 	

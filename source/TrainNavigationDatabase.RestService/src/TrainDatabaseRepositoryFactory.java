@@ -1,9 +1,18 @@
+import TrainNavigationDatabase.AdjacentPoint;
+import TrainNavigationDatabase.AdjacentPointRepository;
+import TrainNavigationDatabase.AdjacentPointSearchCriteria;
 import TrainNavigationDatabase.FilteredSearchRepositoryInterface;
 import TrainNavigationDatabase.GenericDatabaseInterface;
 import TrainNavigationDatabase.MySqlDatabaseAdapter;
+import TrainNavigationDatabase.TrackBlock;
+import TrainNavigationDatabase.TrackBlockRepository;
+import TrainNavigationDatabase.TrackBlockSearchCriteria;
 import TrainNavigationDatabase.TrackPoint;
 import TrainNavigationDatabase.TrackPointRepository;
 import TrainNavigationDatabase.TrackPointSearchCriteria;
+import TrainNavigationDatabase.TrackSwitch;
+import TrainNavigationDatabase.TrackSwitchRepository;
+import TrainNavigationDatabase.TrackSwitchSearchCriteria;
 
 /**
  * Class is responsible for creating instances of
@@ -46,6 +55,42 @@ public class TrainDatabaseRepositoryFactory {
 		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> trackPointRepository = new TrackPointRepository(databaseInterface);
 		
 		return trackPointRepository;
+	}
+	
+	/**
+	 * Creates a new track switch repository instance
+	 * @return A new track switch repository instance
+	 */
+	public FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> createTrackSwitchRepository(){
+		connectionCheck();
+		
+		FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> trackSwitchRepository = new TrackSwitchRepository(databaseInterface);
+		
+		return trackSwitchRepository;
+	}
+	
+	/**
+	 * Creates a new adjacent point repository instance
+	 * @return A new adjacent point repository instance
+	 */
+	public FilteredSearchRepositoryInterface<AdjacentPoint, AdjacentPointSearchCriteria> createAdjacentPointRepository(){
+		connectionCheck();
+		
+		FilteredSearchRepositoryInterface<AdjacentPoint, AdjacentPointSearchCriteria> adjacentPointRepository = new AdjacentPointRepository(databaseInterface);
+		
+		return adjacentPointRepository;
+	}
+	
+	/**
+	 * Creates a new track block repository instance
+	 * @return A new track block repository instance
+	 */
+	public FilteredSearchRepositoryInterface<TrackBlock, TrackBlockSearchCriteria> createTrackBlockRepository(){
+		connectionCheck();
+		
+		FilteredSearchRepositoryInterface<TrackBlock, TrackBlockSearchCriteria> trackBlockRepository = new TrackBlockRepository(databaseInterface);
+		
+		return trackBlockRepository;
 	}
 	
 	/**
