@@ -9,14 +9,7 @@ import java.util.List;
  *
  * @param <TData> Type of data being stored
  */
-public interface RepositoryInterface<TData> {
-	
-	/**
-	 * Searches for a particular entry in the repository
-	 * @param id Unique identifier for the entry
-	 * @return Returns the requested entry or null if not found.
-	 */
-	RepositoryEntry<TData> find(String id);
+public interface RepositoryInterface<TData> extends ReadOnlyRepositoryInterface<TData> {
 	
 	/**
 	 * Adds a new entry into the repository
@@ -38,9 +31,4 @@ public interface RepositoryInterface<TData> {
 	 */
 	void update(String id, TData entry);
 	
-	/**
-	 * Returns all known entries in the repository
-	 * @return All known entries in the repository
-	 */
-	List<RepositoryEntry<TData>> findAll();
 }

@@ -1,3 +1,5 @@
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Represents a single match in the TrackPoint Repository database
  * @author Corey Sanders
@@ -5,12 +7,28 @@
  */
 public class TrackPointMatch {
 	
+	@SerializedName("pointId")
+	private String pointId;
+	
+	@SerializedName("pointName")
 	private String pointName;
+	
+	@SerializedName("type")
 	private String type;
+	
+	@SerializedName("x")
 	private double x;
+	
+	@SerializedName("y")
 	private double y;
+	
+	@SerializedName("z")
 	private double z;
+	
+	@SerializedName("blockId")
 	private String blockId;
+	
+	@SerializedName("tagName")
 	private String tagName;
 	
 	/**
@@ -24,6 +42,7 @@ public class TrackPointMatch {
 	 * @param tagName Identifier for the RFID tag associated with the point.
 	 */
 	public TrackPointMatch(
+			String pointId,
 			String pointName,
 			String type,
 			double x,
@@ -31,6 +50,7 @@ public class TrackPointMatch {
 			double z,
 			String blockId,
 			String tagName){
+		this.pointId = pointId;
 		this.pointName = pointName;
 		this.type = type;
 		this.x = x;
@@ -40,6 +60,20 @@ public class TrackPointMatch {
 		this.tagName = tagName;
 	}
 	
+	/**
+	 * @return the pointId
+	 */
+	public String getPointId() {
+		return pointId;
+	}
+
+	/**
+	 * @param pointId the pointId to set
+	 */
+	public void setPointId(String pointId) {
+		this.pointId = pointId;
+	}
+
 	public String getPointName(){
 		return pointName;
 	}

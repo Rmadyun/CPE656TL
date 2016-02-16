@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 import org.restlet.data.Form;
@@ -21,54 +22,69 @@ import TrainNavigationDatabase.TrackPointSearchCriteria;
 public class TrackPointResource extends ServerResource {
 
 	// Search criteria
+	private static final String idQueryParameter = "id";
 	private static final String nameQueryParameter = "name";
 	private static final String typeQueryParameter = "type";
 	private static final String blockIdQueryParameter = "block_id";
 	private static final String tagNameQueryParameter = "tag_name";
 
-	//@Get
-	public String toString() {
-		return "hello, world";
-	}
-	
-	private List<RepositoryEntry<TrackPoint>> findPoints(TrackPointSearchCriteria searchCriteria)
-	{
+	private List<RepositoryEntry<TrackPoint>> findPoints(TrackPointSearchCriteria searchCriteria) {
 		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> trackPointRepository;
 		trackPointRepository = TrainDatabaseRepositoryFactory.getInstance().createTrackPointRepository();
 		List<RepositoryEntry<TrackPoint>> matches;
-		
+
 		matches = trackPointRepository.find(searchCriteria);
-		
+
 		return matches;
 	}
 
-	//@Get("json")
+	private List<RepositoryEntry<TrackPoint>> findPoints(String id) {
+		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> trackPointRepository;
+		trackPointRepository = TrainDatabaseRepositoryFactory.getInstance().createTrackPointRepository();
+		List<RepositoryEntry<TrackPoint>> matches = new ArrayList<RepositoryEntry<TrackPoint>>();
+
+		RepositoryEntry<TrackPoint> entry = trackPointRepository.find(id);
+
+		matches.add(entry);
+
+		return matches;
+	}
+
+	// @Get("json")
 	@Get
 	public Representation toJson() throws ResourceException, Exception {
 		Representation jsonRepresentation = null;
-		
+
 		try {
 			// Extract parameters from the request
 			Form query = getQuery();
+
+			String idQuery = query.getValues(idQueryParameter);
 			String nameQuery = query.getValues(nameQueryParameter);
 			String typeQuery = query.getValues(typeQueryParameter);
 			String blockIdQuery = query.getValues(blockIdQueryParameter);
 			String tagNameQuery = query.getValues(tagNameQueryParameter);
-			
-			TrackPointSearchCriteria searchCriteria = new TrackPointSearchCriteria();
-			
-			searchCriteria.setName(nameQuery);
-			searchCriteria.setType(typeQuery);
-			searchCriteria.setBlockId(blockIdQuery);
-			searchCriteria.setTagName(tagNameQuery);
-			
-			//Grab values
-			
-			List<RepositoryEntry<TrackPoint>> matches = findPoints(searchCriteria);
-			
+			List<RepositoryEntry<TrackPoint>> matches;
+
+			if (idQuery != null && !idQuery.isEmpty()) {
+				matches = findPoints(idQuery);
+			} else {
+
+				TrackPointSearchCriteria searchCriteria = new TrackPointSearchCriteria();
+
+				searchCriteria.setName(nameQuery);
+				searchCriteria.setType(typeQuery);
+				searchCriteria.setBlockId(blockIdQuery);
+				searchCriteria.setTagName(tagNameQuery);
+
+				// Grab values
+
+				matches = findPoints(searchCriteria);
+			}
+
 			TrackPointSearchResults trackPointMatches = new TrackPointSearchResults(matches);
 			jsonRepresentation = new JsonRepresentation(trackPointMatches);
-			
+
 		} catch (Exception e) {
 			throw e;
 		}
