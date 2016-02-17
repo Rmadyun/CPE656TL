@@ -9,8 +9,6 @@ import org.restlet.resource.ServerResource;
 
 import TrainNavigationDatabase.FilteredSearchRepositoryInterface;
 import TrainNavigationDatabase.RepositoryEntry;
-import TrainNavigationDatabase.TrackPoint;
-import TrainNavigationDatabase.TrackPointSearchCriteria;
 import TrainNavigationDatabase.TrackSwitch;
 import TrainNavigationDatabase.TrackSwitchSearchCriteria;
 
@@ -28,11 +26,6 @@ public class TrackSwitchResource extends ServerResource {
 	private static final String passBlockIdQueryParameter = "pass_block_id";
 	private static final String bypassBlockIdQueryParameter = "bypass_block_id";
 
-	//@Get
-	public String toString() {
-		return "hello, world";
-	}
-	
 	private List<RepositoryEntry<TrackSwitch>> findPoints(TrackSwitchSearchCriteria searchCriteria)
 	{
 		FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> trackSwitchRepository;
@@ -44,7 +37,6 @@ public class TrackSwitchResource extends ServerResource {
 		return matches;
 	}
 
-	//@Get("json")
 	@Get
 	public Representation toJson() throws ResourceException, Exception {
 		Representation jsonRepresentation = null;

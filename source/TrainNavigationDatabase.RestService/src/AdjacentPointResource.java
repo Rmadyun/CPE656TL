@@ -11,8 +11,6 @@ import TrainNavigationDatabase.AdjacentPoint;
 import TrainNavigationDatabase.AdjacentPointSearchCriteria;
 import TrainNavigationDatabase.FilteredSearchRepositoryInterface;
 import TrainNavigationDatabase.RepositoryEntry;
-import TrainNavigationDatabase.TrackPoint;
-import TrainNavigationDatabase.TrackPointSearchCriteria;
 
 /**
  * Class is responsible for providing access to Track Point information
@@ -25,11 +23,6 @@ public class AdjacentPointResource extends ServerResource {
 	// Search criteria
 	private static final String pointIdQueryParameter = "point_id";
 	private static final String adjacentPointIdQueryParameter = "adjacent_point_id";
-
-	//@Get
-	public String toString() {
-		return "hello, world";
-	}
 	
 	private List<RepositoryEntry<AdjacentPoint>> findPoints(AdjacentPointSearchCriteria searchCriteria)
 	{
@@ -42,7 +35,6 @@ public class AdjacentPointResource extends ServerResource {
 		return matches;
 	}
 
-	//@Get("json")
 	@Get
 	public Representation toJson() throws ResourceException, Exception {
 		Representation jsonRepresentation = null;

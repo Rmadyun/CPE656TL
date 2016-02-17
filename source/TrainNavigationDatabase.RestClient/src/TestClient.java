@@ -1,19 +1,19 @@
 import java.util.List;
 
 import TrainNavigationDatabase.RepositoryEntry;
-import TrainNavigationDatabase.TrackPoint;
+import TrainNavigationDatabase.TrackBlock;
 
 public class TestClient {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
-		RemoteTrackPointRepository repo = new RemoteTrackPointRepository();
+		RemoteTrackBlockRepository repo = new RemoteTrackBlockRepository();
 		
-		List<RepositoryEntry<TrackPoint>> allEntries = repo.findAll();
+		List<RepositoryEntry<TrackBlock>> allEntries = repo.findAll();
 		
-		for(RepositoryEntry<TrackPoint> entry : allEntries){
-			System.out.println(entry.getValue().getPointName());
+		for(RepositoryEntry<TrackBlock> entry : allEntries){
+			System.out.println(entry.getValue().getBlockName());
 		}
 		
 

@@ -1,9 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
 import TrainNavigationDatabase.RepositoryEntry;
 import TrainNavigationDatabase.TrackBlock;
-import TrainNavigationDatabase.TrackPoint;
 
 /**
  * Class represents matches to a track block repository search
@@ -12,6 +13,7 @@ import TrainNavigationDatabase.TrackPoint;
  */
 public class TrackBlockSearchResults {
 	
+	@SerializedName("matches")
 	private List<TrackBlockMatch> trackBlockMatches;
 	
 	/**
@@ -22,7 +24,9 @@ public class TrackBlockSearchResults {
 		trackBlockMatches = new ArrayList<TrackBlockMatch>();
 		
 		for(RepositoryEntry<TrackBlock> match : matches){
-			TrackBlockMatch trackBlockMatch = new TrackBlockMatch(match.getValue().getBlockName());
+			TrackBlockMatch trackBlockMatch = new TrackBlockMatch(
+					match.getId(),
+					match.getValue().getBlockName());
 			
 			trackBlockMatches.add(trackBlockMatch); 
 		}

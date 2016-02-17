@@ -1,3 +1,5 @@
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Represents a single match in the AdjacentPoint Repository database
  * @author Corey Sanders
@@ -5,20 +7,42 @@
  */
 public class AdjacentPointMatch {
 	
+	@SerializedName("listId")
+	private String listId;
+	
+	@SerializedName("pointId")
 	private String pointId;
+	
+	@SerializedName("adjacentPointId")
 	private String adjacentPointId;
 	
 	/**
 	 * Constructor
+	 * @param listId Unique identifier for a given adjacent point entry
 	 * @param pointId ID of the point of interest
 	 * @param adjacentPointId ID of a point that is adjacent to the point of interest
 	 */
 	public AdjacentPointMatch(
+			String listId,
 			String pointId,
 			String adjacentPointId){
-		
+		this.listId = listId;
 		this.pointId = pointId;
 		this.adjacentPointId = adjacentPointId;
+	}
+
+	/**
+	 * @return the listId
+	 */
+	public String getListId() {
+		return listId;
+	}
+
+	/**
+	 * @param listId the listId to set
+	 */
+	public void setListId(String listId) {
+		this.listId = listId;
 	}
 
 	/**

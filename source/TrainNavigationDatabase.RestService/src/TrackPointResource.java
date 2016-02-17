@@ -50,7 +50,6 @@ public class TrackPointResource extends ServerResource {
 		return matches;
 	}
 
-	// @Get("json")
 	@Get
 	public Representation toJson() throws ResourceException, Exception {
 		Representation jsonRepresentation = null;

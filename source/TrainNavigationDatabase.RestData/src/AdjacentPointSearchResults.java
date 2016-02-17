@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
 import TrainNavigationDatabase.AdjacentPoint;
 import TrainNavigationDatabase.RepositoryEntry;
 
@@ -11,6 +13,7 @@ import TrainNavigationDatabase.RepositoryEntry;
  */
 public class AdjacentPointSearchResults {
 	
+	@SerializedName("matches")
 	private List<AdjacentPointMatch> adjacentPointMatches;
 	
 	/**
@@ -22,6 +25,7 @@ public class AdjacentPointSearchResults {
 		
 		for(RepositoryEntry<AdjacentPoint> match : matches){
 			AdjacentPointMatch trackPointMatch = new AdjacentPointMatch(
+					match.getId(),
 					Integer.toString(match.getValue().getPointId()),
 					Integer.toString(match.getValue().getAdjacenPointId()));
 			

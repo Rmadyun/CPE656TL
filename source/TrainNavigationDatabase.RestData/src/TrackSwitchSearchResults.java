@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
 import TrainNavigationDatabase.RepositoryEntry;
 import TrainNavigationDatabase.TrackSwitch;
 
@@ -11,6 +13,7 @@ import TrainNavigationDatabase.TrackSwitch;
  */
 public class TrackSwitchSearchResults {
 	
+	@SerializedName("matches")
 	private List<TrackSwitchMatch> trackSwitchMatches;
 	
 	/**
@@ -21,7 +24,9 @@ public class TrackSwitchSearchResults {
 		trackSwitchMatches = new ArrayList<TrackSwitchMatch>();
 		
 		for(RepositoryEntry<TrackSwitch> match : matches){
-			TrackSwitchMatch trackSwitchMatch = new TrackSwitchMatch(match.getValue().getSwitchName(),
+			TrackSwitchMatch trackSwitchMatch = new TrackSwitchMatch(
+					match.getId(),
+					match.getValue().getSwitchName(),
 					match.getValue().getPointId(),
 					match.getValue().getPassBlockId(),
 					match.getValue().getBypassBlockId());

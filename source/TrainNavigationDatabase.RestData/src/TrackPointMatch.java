@@ -33,6 +33,7 @@ public class TrackPointMatch {
 	
 	/**
 	 * Constructor
+	 * @param pointId Unique identifier for a given track point entry
 	 * @param pointName Human friendly name to describe the point
 	 * @param type Describes the type of point
 	 * @param x Width in inches from the origin
