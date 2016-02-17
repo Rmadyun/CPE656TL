@@ -27,7 +27,7 @@ public class RemoteTrackBlockRepository
 	private static final String trackBlockRepositoryPath = "/TrackBlocks";
 
 	// Search criteria
-	private static final String blockNameQueryParameter = "block_name";
+	private static final String blockNameQueryParameter = "name";
 
 	/**
 	 * Creates the URL used for Restful web requests to a remote Rest service

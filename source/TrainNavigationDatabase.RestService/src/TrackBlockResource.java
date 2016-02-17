@@ -21,7 +21,7 @@ import TrainNavigationDatabase.TrackBlockSearchCriteria;
 public class TrackBlockResource extends ServerResource {
 
 	// Search criteria
-	private static final String blockNameQueryParameter = "block_name";
+	private static final String blockNameQueryParameter = "name";
 	
 	private List<RepositoryEntry<TrackBlock>> findPoints(TrackBlockSearchCriteria searchCriteria)
 	{
