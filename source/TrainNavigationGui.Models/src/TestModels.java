@@ -16,12 +16,12 @@ public class TestModels {
 		pointSequence.add(new Coordinate(-1, -1));
 		pointSequence.add(new Coordinate(-1, 0));
 		pointSequence.add(new Coordinate(0, 0));
-		pointSequence.add(new Coordinate(0, 1));
+		//pointSequence.add(new Coordinate(0, 1));
 
 
 		List<Vertex> vertices = generateVertices(pointSequence);
 		Vertex selectedVertex = vertices.get(0);
-		List<Vertex> verticesTravelSequence = new ArrayList<Vertex>();
+		List<Vertex> availableVertices = new ArrayList<Vertex>(vertices);
 		List<Polygon> loops = new ArrayList<Polygon>();
 
 		// Polygon.TraverseGraph(selectedVertex, vertices,
@@ -33,6 +33,8 @@ public class TestModels {
 		List cycles = ecs.getElementaryCycles();
 
 		List<Cycle> loopsToDraw = new ArrayList<Cycle>();
+		
+		List<Graph> shapesToDraw = new ArrayList<>();
 
 		for (int i = 0; i < cycles.size(); i++) {
 			List cycle = (List) cycles.get(i);
@@ -50,17 +52,42 @@ public class TestModels {
 				if (!loopsToDraw.contains(currentCycle)) {
 					loopsToDraw.add(currentCycle);
 
+					shapesToDraw.add(new Graph(currentCycle.getVertices()));
+					
 					for (Vertex vertex : currentCycle.getVertices()) {
-						System.out.print(vertex.getPosition() + " ");
+						if(availableVertices.contains(vertex)){
+							availableVertices.remove(vertex);
+						}
+						
+						//System.out.print(vertex.getPosition() + " ");
 					}
-					System.out.print("\n");
+					//System.out.print("\n");
 				}
 			}
+		}
+		
+		Graph.CreateAcyclicSubGraphs(availableVertices, shapesToDraw);
+		
+		//shapesToDraw.clear();
+		
+		//Graph.createPaths(new Graph(vertices), shapesToDraw);
+		
+		System.out.println("Polygons: \n");
+		for(Graph polygon : shapesToDraw){
+			System.out.println("---------Start of Polygon--------");
+			for (Edge edge : polygon.getEdges()) {
+				System.out.print(edge.getEndOne() + " + " + edge.getEndTwo());
+				System.out.print("\n");
+			}
+			System.out.println("---------End of Polygon--------");
+			
 		}
 
 		System.out.println("Processing Finished");
 
 	}
+	
+
 
 	static boolean[][] generateAdjacencyMatrix(List<Vertex> vertices) {
 		int num_vertices = vertices.size();
