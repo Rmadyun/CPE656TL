@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<LinearLayout
+    android:paddingBottom="16dp"
+    android:paddingTop="16dp"
+    android:paddingRight="16dp"
+    android:paddingLeft="16dp"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context="edu.uah.cpe.traintrax.TrainMonitorActivity"
+    tools:showIn="@layout/activity_train_monitor"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="82dp"
+        android:text="Display History"
+        android:textColor="#ffffff"
+        android:background="?attr/colorPrimary"
+        android:id="@+id/button"
+        android:onClick="onMonitorButtonClicked"
+        android:layout_gravity="right"/>
+
+<edu.uah.cpe.traintrax.MonitorView
+    android:id="@+id/myview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+
+
+</LinearLayout>
