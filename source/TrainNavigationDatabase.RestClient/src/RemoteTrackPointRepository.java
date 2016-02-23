@@ -2,11 +2,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.restlet.ext.json.JsonRepresentation;
-import org.restlet.resource.ClientResource;
-
-import com.google.gson.Gson;
-
 import TrainNavigationDatabase.FilteredSearchReadOnlyRepositoryInterface;
 import TrainNavigationDatabase.RepositoryEntry;
 import TrainNavigationDatabase.TrackPoint;
@@ -144,53 +139,28 @@ public class RemoteTrackPointRepository
 	 */
 	private int port;
 
+	private final RestfulWebServiceClientInterface webServiceClient;
+
+	private final MessageDeserializerInterface<TrackPointSearchResults> messageDeserializer;
+
+	/**
+	 * Default constructor.
+	 * Defaulting to use Restlet as the web service client and JSON for the
+	 * serialization format.
+	 */
+	public RemoteTrackPointRepository() {
+	    this(new RestletWebServiceClient(), new JsonRepositoryMessageDeserializer<TrackPointSearchResults>(TrackPointSearchResults.class));
+	}
+	
 	/**
 	 * Constructor
 	 */
-	public RemoteTrackPointRepository() {
+	public RemoteTrackPointRepository(RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<TrackPointSearchResults> messageDeserializer) {
 
 		hostName = "localhost";
 		port = 8182;
-	}
-
-	/**
-	 * Sends a Restful web request to the service
-	 * 
-	 * @param requestUrl
-	 *            Resource to request from the web service
-	 * @return connection object for the request to the service.
-	 */
-	private RestClientInterface connectToServer(String requestUrl) {
-		ClientResource clientResource = new ClientResource(requestUrl);
-		RestClientInterface restClientInterface = clientResource.wrap(RestClientInterface.class);
-
-		return restClientInterface;
-	}
-
-	/**
-	 * Extracts track point search results from a web service's response to a
-	 * search request
-	 * 
-	 * @param connectedService
-	 *            Connection object used to place a request to a target service
-	 * @return Track point search results associated with the request initiated
-	 *         by the connection represented by the provided connection object
-	 */
-	private TrackPointSearchResults getResults(RestClientInterface connectedService) {
-		TrackPointSearchResults response = null;
-		JsonRepresentation rep = connectedService.getResults();
-
-		String jsonString;
-		try {
-			jsonString = rep.getText();
-			Gson gson = new Gson();
-			response = gson.fromJson(jsonString, TrackPointSearchResults.class);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return response;
+		this.webServiceClient = webServiceClient;
+		this.messageDeserializer = messageDeserializer;
 	}
 
 	/**
@@ -216,9 +186,9 @@ public class RemoteTrackPointRepository
 
 		String requestUrl = createTrackPointRequestUrl(hostName, port, Integer.parseInt(id));
 
-		RestClientInterface restClientInterface = connectToServer(requestUrl);
+		String response = webServiceClient.sendRequest(requestUrl);
 
-		TrackPointSearchResults results = getResults(restClientInterface);
+		TrackPointSearchResults results = messageDeserializer.deserialize(response);
 		RepositoryEntry<TrackPoint> match = null;
 		
 		if(results.getMatches().size() > 0){
@@ -239,9 +209,9 @@ public class RemoteTrackPointRepository
 	public List<RepositoryEntry<TrackPoint>> find(TrackPointSearchCriteria searchCriteria) {
 		String requestUrl = createTrackPointRequestUrl(hostName, port, searchCriteria);
 
-		RestClientInterface restClientInterface = connectToServer(requestUrl);
+		String response = webServiceClient.sendRequest(requestUrl);
 
-		TrackPointSearchResults results = getResults(restClientInterface);
+		TrackPointSearchResults results = messageDeserializer.deserialize(response);
 		List<RepositoryEntry<TrackPoint>> matches = new ArrayList<RepositoryEntry<TrackPoint>>();
 
         for(TrackPointMatch trackPointMatch : results.getMatches()){

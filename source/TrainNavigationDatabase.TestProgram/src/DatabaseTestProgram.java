@@ -28,8 +28,7 @@ public class DatabaseTestProgram {
 
 	private static void saveMeasurement(TrackSwitchMeasurement measurement,
 			GenericDatabaseInterface databaseInterface) {
-		// TODO: Implement information saving
-
+		
 		// Add track block
 		String blockId = "";
 		String passBlockId = "";
