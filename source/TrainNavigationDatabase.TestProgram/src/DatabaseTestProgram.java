@@ -12,7 +12,8 @@ public class DatabaseTestProgram {
 
 		mySqlDatabaseAdapter.connect();
 
-		importTrackMeasurements("/home/death/Documents/CPE658/TestTrackMeasurements.csv", mySqlDatabaseAdapter);
+		importTrackMeasurements("/home/death/Documents/CPE658/TestTrackMeasurementsv2.csv", mySqlDatabaseAdapter);
+		importTrackSwitchMeasurements("/home/death/Documents/CPE658/TrackSwitchMeasurementsv2.csv", mySqlDatabaseAdapter);
 
 	}
 
@@ -29,6 +30,10 @@ public class DatabaseTestProgram {
 	private static void saveMeasurement(TrackSwitchMeasurement measurement,
 			GenericDatabaseInterface databaseInterface) {
 		
+		TrackBlockRepository trackBlockRepository = new TrackBlockRepository(databaseInterface);
+		TrackPointRepository trackPointRepository = new TrackPointRepository(databaseInterface);
+		TrackSwitchRepository trackSwitchRepository = new TrackSwitchRepository(databaseInterface);
+		
 		// Add track block
 		String blockId = "";
 		String passBlockId = "";
@@ -37,19 +42,19 @@ public class DatabaseTestProgram {
 		String passBlockName = measurement.getPassBlockName().trim();
 		String bypassBlockName = measurement.getBypassBlockName().trim();
 
-		RepositoryEntry<TrackBlock> trackBlockEntry = getOrAddTrackBlock(blockName, databaseInterface);
-
+		RepositoryEntry<TrackBlock> trackBlockEntry = DataImportUtilities.updateOrAddEntry(new TrackBlock(blockName), trackBlockRepository);
+		
 		if (trackBlockEntry != null) {
 			blockId = trackBlockEntry.getId();
 		}
 
-		RepositoryEntry<TrackBlock> passTrackBlockEntry = getOrAddTrackBlock(passBlockName, databaseInterface);
+		RepositoryEntry<TrackBlock> passTrackBlockEntry = DataImportUtilities.updateOrAddEntry(new TrackBlock(passBlockName), trackBlockRepository);
 
 		if (passTrackBlockEntry != null) {
 			passBlockId = passTrackBlockEntry.getId();
 		}
-
-		RepositoryEntry<TrackBlock> bypassTrackBlockEntry = getOrAddTrackBlock(bypassBlockName, databaseInterface);
+		
+		RepositoryEntry<TrackBlock> bypassTrackBlockEntry = DataImportUtilities.updateOrAddEntry(new TrackBlock(bypassBlockName), trackBlockRepository);
 
 		if (bypassTrackBlockEntry != null) {
 			bypassBlockId = bypassTrackBlockEntry.getId();
@@ -59,67 +64,14 @@ public class DatabaseTestProgram {
 		TrackPoint updatedTrackPoint = new TrackPoint(measurement.getSwitchName(), "Switch", measurement.getxInches(),
 				measurement.getyInches(), 0, blockId, "");
 
-		RepositoryEntry<TrackPoint> trackPointEntry = updateOrAddEntry(updatedTrackPoint, databaseInterface);
+		RepositoryEntry<TrackPoint> trackPointEntry = DataImportUtilities.updateOrAddEntry(updatedTrackPoint, trackPointRepository);
 
 		// New Track Switch
 		TrackSwitch updatedTrackSwitch = new TrackSwitch(measurement.getSwitchName(), trackPointEntry.getId(),
 				passBlockId, bypassBlockId);
 
-		updateOrAddEntry(updatedTrackSwitch, databaseInterface);
+		DataImportUtilities.updateOrAddEntry(updatedTrackSwitch, trackSwitchRepository);
 
-	}
-
-	private static RepositoryEntry<TrackSwitch> updateOrAddEntry(TrackSwitch trackSwitch,
-			GenericDatabaseInterface databaseInterface) {
-		RepositoryEntry<TrackSwitch> entry = null;
-		TrackSwitchRepository trackSwitchRepository = new TrackSwitchRepository(databaseInterface);
-
-		// Find TrackSwitch
-		TrackSwitchSearchCriteria trackSwitchSearchCriteria = new TrackSwitchSearchCriteria();
-		trackSwitchSearchCriteria.setSwitchName(trackSwitch.getSwitchName());
-		List<RepositoryEntry<TrackSwitch>> results = trackSwitchRepository.find(trackSwitchSearchCriteria);
-
-		if (results.isEmpty()) {
-			// Add entry
-			entry = trackSwitchRepository.add(trackSwitch);
-		} else {
-			// Update Entry
-			// Grab only first entry
-			RepositoryEntry<TrackSwitch> selectedEntry = results.get(0);
-
-			trackSwitchRepository.update(selectedEntry.getId(), trackSwitch);
-
-			entry = new RepositoryEntry<TrackSwitch>(selectedEntry.getId(), trackSwitch);
-		}
-
-		return entry;
-	}
-
-	private static RepositoryEntry<TrackPoint> updateOrAddEntry(TrackPoint trackPoint,
-			GenericDatabaseInterface databaseInterface) {
-		RepositoryEntry<TrackPoint> entry = null;
-		TrackPointRepository trackPointRepository = new TrackPointRepository(databaseInterface);
-
-		// Find TrackPoint
-		TrackPointSearchCriteria trackPointSearchCriteria = new TrackPointSearchCriteria();
-		trackPointSearchCriteria.setType(trackPoint.getType());
-		trackPointSearchCriteria.setName(trackPoint.getPointName());
-		List<RepositoryEntry<TrackPoint>> results = trackPointRepository.find(trackPointSearchCriteria);
-
-		if (results.isEmpty()) {
-			// Add entry
-			entry = trackPointRepository.add(trackPoint);
-		} else {
-			// Update Entry
-			// Grab only first entry
-			RepositoryEntry<TrackPoint> selectedEntry = results.get(0);
-
-			trackPointRepository.update(selectedEntry.getId(), trackPoint);
-
-			entry = new RepositoryEntry<TrackPoint>(selectedEntry.getId(), trackPoint);
-		}
-
-		return entry;
 	}
 
 	private static void importTrackMeasurements(String filename, GenericDatabaseInterface databaseInterface) {
@@ -136,41 +88,15 @@ public class DatabaseTestProgram {
 		}
 	}
 
-	private static RepositoryEntry<TrackBlock> getOrAddTrackBlock(String blockName,
-			GenericDatabaseInterface databaseInterface) {
-		TrackBlockRepository trackBlockRepository = new TrackBlockRepository(databaseInterface);
-		RepositoryEntry<TrackBlock> trackBlockEntry = null;
-
-		if (!blockName.isEmpty()) {
-			// Search for an existing entry
-
-			TrackBlockSearchCriteria searchCriteria = new TrackBlockSearchCriteria();
-			searchCriteria.setBlockName(blockName);
-			List<RepositoryEntry<TrackBlock>> matches = trackBlockRepository.find(searchCriteria);
-
-			// Assuming that there is only one match
-			if (matches.size() > 0) {
-				trackBlockEntry = matches.get(0);
-			} else {
-				// Create new entry
-				TrackBlock trackBlock = new TrackBlock(blockName);
-
-				trackBlockEntry = trackBlockRepository.add(trackBlock);
-			}
-		}
-
-		return trackBlockEntry;
-	}
-
 	private static void saveMeasurement(TrackPointMeasurement measurement, GenericDatabaseInterface databaseInterface) {
+		TrackBlockRepository trackBlockRepository = new TrackBlockRepository(databaseInterface);
 		TrackPointRepository trackPointRepository = new TrackPointRepository(databaseInterface);
-		AdjacentPointRepository adjacentPointRepository = new AdjacentPointRepository(databaseInterface);
-
+		
 		// Add track block
 		String blockId = "";
 		String blockName = measurement.getBlockName().trim();
 
-		RepositoryEntry<TrackBlock> trackBlockEntry = getOrAddTrackBlock(blockName, databaseInterface);
+		RepositoryEntry<TrackBlock> trackBlockEntry = DataImportUtilities.updateOrAddEntry(new TrackBlock(blockName), trackBlockRepository);
 
 		if (trackBlockEntry != null) {
 			blockId = trackBlockEntry.getId();
@@ -180,13 +106,12 @@ public class DatabaseTestProgram {
 		TrackPoint trackPoint = new TrackPoint(measurement.getPointName(), measurement.getPointType(),
 				measurement.getxInches(), measurement.getyInches(), 0, blockId, "");
 
-		RepositoryEntry<TrackPoint> addedEntry = trackPointRepository.add(trackPoint);
+		RepositoryEntry<TrackPoint> addedEntry = DataImportUtilities.updateOrAddEntry(trackPoint,  trackPointRepository);
 
 	}
 
 	private static String getPointId(String pointName,
 			FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> trackPointRepository) {
-
 		String pointId = null;
 
 		if (!pointName.isEmpty()) {
@@ -224,7 +149,7 @@ public class DatabaseTestProgram {
 					AdjacentPoint adjacentPoint = new AdjacentPoint(Integer.parseInt(pointId),
 							Integer.parseInt(adjacentPointId));
 
-					adjacentPointRepository.add(adjacentPoint);
+					DataImportUtilities.updateOrAddEntry(adjacentPoint, adjacentPointRepository);
 				}
 			}
 		}

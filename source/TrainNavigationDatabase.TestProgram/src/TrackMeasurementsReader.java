@@ -17,19 +17,29 @@ public class TrackMeasurementsReader {
 		List<TrackPointMeasurement> measurements = new ArrayList<TrackPointMeasurement>();
 		try {
 
-			final int numberOfColumns = 5; // Setting to 5 instead of 6 because we don't have tag data.
+			final int numberOfColumns = 7; // NOTE: We don't have tag data presently.
 			final int pointNameColumnIndex = 0;
 			final int xInchesColumnIndex = 1;
 			final int yInchesColumnIndex = 2;
 			final int blockNameColumnIndex = 3;
 			final int adjacentPointNamesColumnIndex = 4;
 			final int rfidTagIdColumnIndex = 5;
+			final int pointTypeColumnIndex = 6;
 			List<Entry> trackMeasurementEntries = new ArrayList<Entry>();
 
 			FileReader fr = new FileReader(filename);
 			BufferedReader reader = new BufferedReader(fr);
 			try {
 				String currentRow = "";
+				
+				//Discard first row.
+				try {
+					currentRow = reader.readLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					currentRow = "";
+				}
 
 				// Stage 1: Read in Measurements
 				do {
@@ -57,16 +67,18 @@ public class TrackMeasurementsReader {
 									.trim();
 							String adjacentPointNames = segments[adjacentPointNamesColumnIndex]
 									.trim();
-							String rfidTagId = ""; /*segments[rfidTagIdColumnIndex]
-									.trim();*/
+							String rfidTagId = segments[rfidTagIdColumnIndex]
+									.trim();
+							String pointType = segments[pointTypeColumnIndex]
+									.trim();
 
 							TrackPointMeasurement measurement = new TrackPointMeasurement();
 							measurement.setPointName(pointName);
 							measurement.setxInches(xInches);
 							measurement.setyInches(yInches);
 							measurement.setBlockName(blockName);
-                            measurement.setPointType("Point");
 							measurement.setRfidTagId(rfidTagId);
+                            measurement.setPointType(pointType);
 
 							Entry entry = new Entry();
 							entry.Measurement = measurement;

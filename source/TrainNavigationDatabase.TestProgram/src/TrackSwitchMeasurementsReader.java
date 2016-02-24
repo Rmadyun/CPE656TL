@@ -24,12 +24,20 @@ public class TrackSwitchMeasurementsReader {
 			final int blockNameColumnIndex = 3;
 			final int passBlockColumnIndex = 4;
 			final int bypassBlockColumnIndex = 5;
-			List<TrackSwitchMeasurement> trackMeasurementEntries = new ArrayList<TrackSwitchMeasurement>();
 
 			FileReader fr = new FileReader(filename);
 			BufferedReader reader = new BufferedReader(fr);
 			try {
 				String currentRow = "";
+				
+				//Discard first row
+				try {
+					currentRow = reader.readLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					currentRow = "";
+				}
 
 				// Stage 1: Read in Measurements
 				do {
@@ -68,7 +76,7 @@ public class TrackSwitchMeasurementsReader {
                             measurement.setPassBlockName(passBlockName);
 							measurement.setBypassBlockName(bypassBlockName);
 
-							trackMeasurementEntries.add(measurement);
+							measurements.add(measurement);
 						}
 					}
 				} while (currentRow != null && !currentRow.isEmpty());
