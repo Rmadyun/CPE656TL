@@ -1,3 +1,4 @@
+package com.traintrax.navigation.gui.models;
 import java.util.List;
 
 public class Cycle {

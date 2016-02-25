@@ -1,3 +1,4 @@
+package com.traintrax.navigation.gui.models;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

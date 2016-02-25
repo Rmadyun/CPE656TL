@@ -1,13 +1,28 @@
+package com.traintrax.navigation.gui.models;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.traintrax.navigation.database.library.AdjacentPoint;
+import com.traintrax.navigation.database.library.RepositoryEntry;
+import com.traintrax.navigation.database.library.TrackBlock;
+import com.traintrax.navigation.database.library.TrackPoint;
+import com.traintrax.navigation.database.rest.test.TestAdjacentPointRepository;
+import com.traintrax.navigation.database.rest.test.TestTrackBlockRepository;
+import com.traintrax.navigation.database.rest.test.TestTrackPointRepository;
 
 import cycles_johnson_meyer.ElementaryCyclesSearch;
 
 public class TestModels {
-
-	public static void main(String[] args) {
+	
+	/**
+	 * This method is a helper method to check whether the current algorithms being used
+	 * to navigate the graph correctly report all of the information necessary to draw an
+	 * arbitrary graph in its entirety.
+	 */
+	private static void TestPathDetection(){
 		List<Coordinate> pointSequence = new ArrayList<Coordinate>();
 
+		//Test Sequence of points with loops and additional edges
 		pointSequence.add(new Coordinate(0, 1));
 		pointSequence.add(new Coordinate(1, 1));
 		pointSequence.add(new Coordinate(1, 0));
@@ -16,6 +31,8 @@ public class TestModels {
 		pointSequence.add(new Coordinate(-1, -1));
 		pointSequence.add(new Coordinate(-1, 0));
 		pointSequence.add(new Coordinate(0, 0));
+		
+		//Uncomment to make test sequence include just two loops
 		//pointSequence.add(new Coordinate(0, 1));
 
 
@@ -27,8 +44,11 @@ public class TestModels {
 		// Polygon.TraverseGraph(selectedVertex, vertices,
 		// verticesTravelSequence, loops);
 
+		//Create the input necessary for the elementary cycles search
 		boolean[][] adjMatrix = generateAdjacencyMatrix(vertices);
 		Object[] nodes = vertices.toArray();
+		
+		//Perform the elementary cycles search
 		ElementaryCyclesSearch ecs = new ElementaryCyclesSearch(adjMatrix, nodes);
 		List cycles = ecs.getElementaryCycles();
 
@@ -36,6 +56,8 @@ public class TestModels {
 		
 		List<Graph> shapesToDraw = new ArrayList<>();
 
+		//Process the elementary cycles detected to only include
+		//Unique loops that are not simply a line.
 		for (int i = 0; i < cycles.size(); i++) {
 			List cycle = (List) cycles.get(i);
 
@@ -66,12 +88,16 @@ public class TestModels {
 			}
 		}
 		
+		//Find the remaining edges that are not part of any loop, and
+		//express paths to traverse them all.
 		Graph.CreateAcyclicSubGraphs(availableVertices, shapesToDraw);
 		
 		//shapesToDraw.clear();
 		
 		//Graph.createPaths(new Graph(vertices), shapesToDraw);
 		
+		//Report all of the edges that have been accounted for in order
+		//to render the graph.
 		System.out.println("Polygons: \n");
 		for(Graph polygon : shapesToDraw){
 			System.out.println("---------Start of Polygon--------");
@@ -82,7 +108,36 @@ public class TestModels {
 			System.out.println("---------End of Polygon--------");
 			
 		}
+		
+		System.out.println("Processing Finished");
+	}
 
+	public static void main(String[] args) {
+
+		
+        TestTrackBlockRepository trackBlockRepository = new TestTrackBlockRepository();
+        TestTrackPointRepository trackPointRepository = new TestTrackPointRepository();
+        TestAdjacentPointRepository adjacentPointRepository = new TestAdjacentPointRepository();
+
+        List<RepositoryEntry<TrackBlock>> trackBlocks = trackBlockRepository.findAll();
+        List<RepositoryEntry<TrackPoint>> trackPoints = trackPointRepository.findAll();
+        List<RepositoryEntry<AdjacentPoint>> adjacentPoints = adjacentPointRepository.findAll();
+
+        Track trainTrack = Track.createTrack(trackBlocks, trackPoints, adjacentPoints);
+
+        List<Polygon> shapes = trainTrack.getShapes();
+        
+		System.out.println("Polygons: \n");
+		for(Polygon shape : shapes){
+			System.out.println("---------Start of Polygon--------");
+			for (Edge edge : shape.getEdges()) {
+				System.out.print(edge.getEndOne() + " + " + edge.getEndTwo());
+				System.out.print("\n");
+			}
+			System.out.println("---------End of Polygon--------");
+			
+		}
+		
 		System.out.println("Processing Finished");
 
 	}

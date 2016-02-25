@@ -1,3 +1,4 @@
+package com.traintrax.navigation.gui.models;
 /**
  * Represents a single point on a canvas to draw
  * @author Corey Sanders
