@@ -1,6 +1,6 @@
 import java.util.List;
 
-import TrainNavigationDatabase.*;
+import com.traintrax.navigation.database.library.*;
 
 public class DatabaseTestProgram {
 

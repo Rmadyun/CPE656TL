@@ -1,15 +1,15 @@
 import java.util.List;
 
-import TrainNavigationDatabase.AdjacentPoint;
-import TrainNavigationDatabase.AdjacentPointSearchCriteria;
-import TrainNavigationDatabase.FilteredSearchRepositoryInterface;
-import TrainNavigationDatabase.RepositoryEntry;
-import TrainNavigationDatabase.TrackBlock;
-import TrainNavigationDatabase.TrackBlockSearchCriteria;
-import TrainNavigationDatabase.TrackPoint;
-import TrainNavigationDatabase.TrackPointSearchCriteria;
-import TrainNavigationDatabase.TrackSwitch;
-import TrainNavigationDatabase.TrackSwitchSearchCriteria;
+import com.traintrax.navigation.database.library.AdjacentPoint;
+import com.traintrax.navigation.database.library.AdjacentPointSearchCriteria;
+import com.traintrax.navigation.database.library.FilteredSearchRepositoryInterface;
+import com.traintrax.navigation.database.library.RepositoryEntry;
+import com.traintrax.navigation.database.library.TrackBlock;
+import com.traintrax.navigation.database.library.TrackBlockSearchCriteria;
+import com.traintrax.navigation.database.library.TrackPoint;
+import com.traintrax.navigation.database.library.TrackPointSearchCriteria;
+import com.traintrax.navigation.database.library.TrackSwitch;
+import com.traintrax.navigation.database.library.TrackSwitchSearchCriteria;
 
 /**
  * Utility class for frequently used methods for

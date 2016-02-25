@@ -3,10 +3,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import TrainNavigationDatabase.AdjacentPoint;
-import TrainNavigationDatabase.RepositoryEntry;
-import TrainNavigationDatabase.TrackBlock;
-import TrainNavigationDatabase.TrackPoint;
+import com.traintrax.navigation.database.library.AdjacentPoint;
+import com.traintrax.navigation.database.library.RepositoryEntry;
+import com.traintrax.navigation.database.library.TrackBlock;
+import com.traintrax.navigation.database.library.TrackPoint;
 
 /**
  * Class represents the positive train control test bed track that
