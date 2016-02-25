@@ -1,5 +1,4 @@
 package com.traintrax.navigation.database.rest.client;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +6,8 @@ import com.traintrax.navigation.database.library.FilteredSearchReadOnlyRepositor
 import com.traintrax.navigation.database.library.RepositoryEntry;
 import com.traintrax.navigation.database.library.TrackPoint;
 import com.traintrax.navigation.database.library.TrackPointSearchCriteria;
-import com.traintrax.navigation.database.rest.data.*;
+import com.traintrax.navigation.database.rest.data.TrackPointMatch;
+import com.traintrax.navigation.database.rest.data.TrackPointSearchResults;
 
 /**
  * Restful Web client implementation of the Track Point Repository

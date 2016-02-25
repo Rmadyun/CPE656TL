@@ -1,18 +1,13 @@
 package com.traintrax.navigation.database.rest.client;
-import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import org.restlet.ext.json.JsonRepresentation;
-import org.restlet.resource.ClientResource;
-
-import com.google.gson.Gson;
 import com.traintrax.navigation.database.library.FilteredSearchReadOnlyRepositoryInterface;
 import com.traintrax.navigation.database.library.RepositoryEntry;
 import com.traintrax.navigation.database.library.TrackBlock;
 import com.traintrax.navigation.database.library.TrackBlockSearchCriteria;
-import com.traintrax.navigation.database.rest.data.*;
+import com.traintrax.navigation.database.rest.data.TrackBlockMatch;
+import com.traintrax.navigation.database.rest.data.TrackBlockSearchResults;
 
 /**
  * Restful Web client implementation of the Track Block Repository
@@ -113,53 +108,26 @@ public class RemoteTrackBlockRepository
 	 */
 	private int port;
 
+	private final RestfulWebServiceClientInterface webServiceClient;
+
+	private final MessageDeserializerInterface<TrackBlockSearchResults> messageDeserializer;
+
 	/**
 	 * Constructor
 	 */
 	public RemoteTrackBlockRepository() {
+		this(new RestletWebServiceClient(), new JsonRepositoryMessageDeserializer<TrackBlockSearchResults>(TrackBlockSearchResults.class));
+	}
+
+	/**
+	 * Constructor
+	 */
+	public RemoteTrackBlockRepository(RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<TrackBlockSearchResults> messageDeserializer) {
 
 		hostName = "localhost";
 		port = 8182;
-	}
-
-	/**
-	 * Sends a Restful web request to the service
-	 * 
-	 * @param requestUrl
-	 *            Resource to request from the web service
-	 * @return connection object for the request to the service.
-	 */
-	private RestClientInterface connectToServer(String requestUrl) {
-		ClientResource clientResource = new ClientResource(requestUrl);
-		RestClientInterface restClientInterface = clientResource.wrap(RestClientInterface.class);
-
-		return restClientInterface;
-	}
-
-	/**
-	 * Extracts track block search results from a web service's response to a
-	 * search request
-	 * 
-	 * @param connectedService
-	 *            Connection object used to place a request to a target service
-	 * @return Track block search results associated with the request initiated
-	 *         by the connection represented by the provided connection object
-	 */
-	private TrackBlockSearchResults getResults(RestClientInterface connectedService) {
-		TrackBlockSearchResults response = null;
-		JsonRepresentation rep = connectedService.getResults();
-
-		String jsonString;
-		try {
-			jsonString = rep.getText();
-			Gson gson = new Gson();
-			response = gson.fromJson(jsonString, TrackBlockSearchResults.class);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return response;
+		this.webServiceClient = webServiceClient;
+		this.messageDeserializer = messageDeserializer;
 	}
 
 	/**
@@ -182,10 +150,9 @@ public class RemoteTrackBlockRepository
 	public RepositoryEntry<TrackBlock> find(String id) {
 
 		String requestUrl = createTrackBlockRequestUrl(hostName, port, Integer.parseInt(id));
+		String response = webServiceClient.sendRequest(requestUrl);
+		TrackBlockSearchResults results = messageDeserializer.deserialize(response);
 
-		RestClientInterface restClientInterface = connectToServer(requestUrl);
-
-		TrackBlockSearchResults results = getResults(restClientInterface);
 		RepositoryEntry<TrackBlock> match = null;
 		
 		if(results.getMatches().size() > 0){
@@ -205,10 +172,10 @@ public class RemoteTrackBlockRepository
 	@Override
 	public List<RepositoryEntry<TrackBlock>> find(TrackBlockSearchCriteria searchCriteria) {
 		String requestUrl = createTrackBlockRequestUrl(hostName, port, searchCriteria);
+		String response = webServiceClient.sendRequest(requestUrl);
+		TrackBlockSearchResults results = messageDeserializer.deserialize(response);
 
-		RestClientInterface restClientInterface = connectToServer(requestUrl);
 
-		TrackBlockSearchResults results = getResults(restClientInterface);
 		List<RepositoryEntry<TrackBlock>> matches = new ArrayList<RepositoryEntry<TrackBlock>>();
 
         for(TrackBlockMatch trackBlockMatch : results.getMatches()){

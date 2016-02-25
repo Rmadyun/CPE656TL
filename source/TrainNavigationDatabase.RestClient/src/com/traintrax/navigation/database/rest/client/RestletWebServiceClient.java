@@ -4,8 +4,6 @@ import java.io.IOException;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.ClientResource;
 
-import com.google.gson.Gson;
-
 /**
  * Restlet implementation of a client to the
  * Restful webserver

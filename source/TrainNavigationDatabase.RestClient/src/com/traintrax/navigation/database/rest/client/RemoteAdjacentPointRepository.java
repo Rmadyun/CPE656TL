@@ -1,17 +1,13 @@
 package com.traintrax.navigation.database.rest.client;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.restlet.ext.json.JsonRepresentation;
-import org.restlet.resource.ClientResource;
-
-import com.google.gson.Gson;
 import com.traintrax.navigation.database.library.AdjacentPoint;
 import com.traintrax.navigation.database.library.AdjacentPointSearchCriteria;
 import com.traintrax.navigation.database.library.FilteredSearchReadOnlyRepositoryInterface;
 import com.traintrax.navigation.database.library.RepositoryEntry;
-import com.traintrax.navigation.database.rest.data.*;
+import com.traintrax.navigation.database.rest.data.AdjacentPointMatch;
+import com.traintrax.navigation.database.rest.data.AdjacentPointSearchResults;
 
 /**
  * Restful Web client implementation of the Adjacent Point Repository
@@ -113,6 +109,11 @@ public class RemoteAdjacentPointRepository
 		return finalUrl;
 	}
 
+	private final RestfulWebServiceClientInterface webServiceClient;
+
+	private final MessageDeserializerInterface<AdjacentPointSearchResults> messageDeserializer;
+
+
 	/**
 	 * Host name or IP of the target Restful web service
 	 */
@@ -127,49 +128,16 @@ public class RemoteAdjacentPointRepository
 	 * Constructor
 	 */
 	public RemoteAdjacentPointRepository() {
+		this(new RestletWebServiceClient(), new JsonRepositoryMessageDeserializer<AdjacentPointSearchResults>(AdjacentPointSearchResults.class));
+
+	}
+
+	public RemoteAdjacentPointRepository(RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<AdjacentPointSearchResults> messageDeserializer) {
 
 		hostName = "localhost";
 		port = 8182;
-	}
-
-	/**
-	 * Sends a Restful web request to the service
-	 * 
-	 * @param requestUrl
-	 *            Resource to request from the web service
-	 * @return connection object for the request to the service.
-	 */
-	private RestClientInterface connectToServer(String requestUrl) {
-		ClientResource clientResource = new ClientResource(requestUrl);
-		RestClientInterface restClientInterface = clientResource.wrap(RestClientInterface.class);
-
-		return restClientInterface;
-	}
-
-	/**
-	 * Extracts adjacent point search results from a web service's response to a
-	 * search request
-	 * 
-	 * @param connectedService
-	 *            Connection object used to place a request to a target service
-	 * @return Adjacent point search results associated with the request initiated
-	 *         by the connection represented by the provided connection object
-	 */
-	private AdjacentPointSearchResults getResults(RestClientInterface connectedService) {
-		AdjacentPointSearchResults response = null;
-		JsonRepresentation rep = connectedService.getResults();
-
-		String jsonString;
-		try {
-			jsonString = rep.getText();
-			Gson gson = new Gson();
-			response = gson.fromJson(jsonString, AdjacentPointSearchResults.class);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return response;
+		this.webServiceClient = webServiceClient;
+		this.messageDeserializer = messageDeserializer;
 	}
 
 	/**
@@ -194,12 +162,11 @@ public class RemoteAdjacentPointRepository
 	public RepositoryEntry<AdjacentPoint> find(String id) {
 
 		String requestUrl = createAdjacentPointRequestUrl(hostName, port, Integer.parseInt(id));
-
-		RestClientInterface restClientInterface = connectToServer(requestUrl);
-
-		AdjacentPointSearchResults results = getResults(restClientInterface);
-		RepositoryEntry<AdjacentPoint> match = null;
 		
+		RepositoryEntry<AdjacentPoint> match = null;
+		String response = webServiceClient.sendRequest(requestUrl);
+		AdjacentPointSearchResults results = messageDeserializer.deserialize(response);
+
 		if(results.getMatches().size() > 0){
 			
 			match = convertToRepositoryEntry(results.getMatches().get(0));
@@ -217,10 +184,10 @@ public class RemoteAdjacentPointRepository
 	@Override
 	public List<RepositoryEntry<AdjacentPoint>> find(AdjacentPointSearchCriteria searchCriteria) {
 		String requestUrl = createAdjacentPointRequestUrl(hostName, port, searchCriteria);
+		String response = webServiceClient.sendRequest(requestUrl);
+		AdjacentPointSearchResults results = messageDeserializer.deserialize(response);
 
-		RestClientInterface restClientInterface = connectToServer(requestUrl);
 
-		AdjacentPointSearchResults results = getResults(restClientInterface);
 		List<RepositoryEntry<AdjacentPoint>> matches = new ArrayList<RepositoryEntry<AdjacentPoint>>();
 
         for(AdjacentPointMatch adjacentPointMatch : results.getMatches()){
