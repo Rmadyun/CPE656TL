@@ -2,6 +2,7 @@ package edu.uah.cpe.traintrax;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+//import TrainNavigationDatabase.*;
 
 public class TrackDiagram {
     Boolean NavData;                   // used to determine if position data exists
@@ -30,6 +31,8 @@ public class TrackDiagram {
 
     //pulls switch data from database (or wherever and sets all values
     void SetAllDiagramData() {
+
+        //RemoteTrackPointRepository trackPointRepository = new RemoteTrackPointRepository();
 
         //GetCoordinate data from somewhere
         int num_cords = 0;

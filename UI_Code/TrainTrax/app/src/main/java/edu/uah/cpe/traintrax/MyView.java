@@ -14,12 +14,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.traintrax.navigation.database.library.AdjacentPoint;
+import com.traintrax.navigation.database.library.RepositoryEntry;
+import com.traintrax.navigation.database.library.TrackBlock;
+import com.traintrax.navigation.database.library.TrackPoint;
+import com.traintrax.navigation.database.rest.test.TestAdjacentPointRepository;
+import com.traintrax.navigation.database.rest.test.TestTrackBlockRepository;
+import com.traintrax.navigation.database.rest.test.TestTrackPointRepository;
+
 import java.util.ArrayList;
+import java.util.List;
 
-
-    public class MyView extends View {
+public class MyView extends View {
         //set for 12 temp coordinates
-        edu.uah.cpe.traintrax.TrackDiagram TrackDig = new edu.uah.cpe.traintrax.TrackDiagram(32);
+        TrackDiagram TrackDig = new TrackDiagram(32);
 
         private ArrayList<Rect> rectangles = new ArrayList<Rect>();
 
@@ -93,14 +101,14 @@ import java.util.ArrayList;
             int ypixel = TrackDig.getYpixel();
             int num_coords = TrackDig.getnumCoords();
 
-            for (int i = 0; i < num_coords; i++ )
+/*            for (int i = 0; i < num_coords; i++ )
             {
-                /* Get the X position and why position of the line */
+                // Get the X position and why position of the line
                 Float xcord = (Float) TrackDig.getXPosition(i);
                 Float ycord = (Float) TrackDig.getYPosition(i);
 
                 //x = (x/xmax) * screen resolution
-                /* scale coordinates to resolution size */
+                // scale coordinates to resolution size
                 xcord = (xcord/xmax) * xpixel;
                 ycord = (ycord/ymax) * ypixel;
 
@@ -113,8 +121,50 @@ import java.util.ArrayList;
 
             }
 
-            canvas.drawPath(path, paint);
+            canvas.drawPath(path, paint); */
 
+
+
+            TestTrackBlockRepository trackBlockRepository = new TestTrackBlockRepository();
+            TestTrackPointRepository trackPointRepository = new TestTrackPointRepository();
+            TestAdjacentPointRepository adjacentPointRepository = new TestAdjacentPointRepository();
+
+            List<RepositoryEntry<TrackBlock>> trackBlocks = trackBlockRepository.findAll();
+            List<RepositoryEntry<TrackPoint>> trackPoints = trackPointRepository.findAll();
+            List<RepositoryEntry<AdjacentPoint>> adjacentPoints = adjacentPointRepository.findAll();
+
+            Track trainTrack = Track.createTrack(trackBlocks, trackPoints, adjacentPoints);
+
+            List<Polygon> shapes = trainTrack.getShapes();
+
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(15);
+
+            //Creates a path based on a collection of lines.
+            Path testPath = new Path();
+
+            for(Polygon shape : shapes){
+                testPath.reset();
+                List<Vertex> points = shape.getVertices();
+
+                //NOTE: This also could be done with edges of the polygons
+                //To simply draw each line that the polygon has.
+                for(int i = 0; i < points.size(); i++ ){
+                    Vertex point = points.get(i);
+                    Coordinate position = point.getPosition();
+
+                    //TODO: Do Scaling here
+
+                    if(i== 0){
+                        testPath.moveTo((float) position.getX(), (float) position.getY());
+                    }
+                    else{
+                        testPath.lineTo((float) position.getX(), (float) position.getY());
+                    }
+                }
+
+                canvas.drawPath(testPath, paint);
+            }
 
             /**************************temp hard codes for track diagram
             //x max = 80, y max = 90

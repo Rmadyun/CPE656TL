@@ -1,0 +1,3 @@
+The Johnson Myers implementation of detecting elementary cycles in a graph was provided by:
+https://github.com/josch/cycles_johnson_meyer/tree/master/de/normalisiert/utils/graphs
+

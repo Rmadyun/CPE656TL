@@ -16,8 +16,8 @@ import java.util.ArrayList;
 
 public class MonitorView extends View {
     //set for 7 temp coordinates
-    edu.uah.cpe.traintrax.TrackDiagram TrackDig = new edu.uah.cpe.traintrax.TrackDiagram(32);
-    edu.uah.cpe.traintrax.TrackSwitch Switch = new edu.uah.cpe.traintrax.TrackSwitch(7);
+    TrackDiagram TrackDig = new TrackDiagram(32);
+    TrackSwitch Switch = new TrackSwitch(27);
 
     public MonitorView(Context context) {
         super(context);
