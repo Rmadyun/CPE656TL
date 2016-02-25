@@ -1,4 +1,4 @@
-package TrainTrax;
+package com.traintrax.navigation.service.testdriver;
 
 import java.util.ArrayList;
 import java.util.Calendar;

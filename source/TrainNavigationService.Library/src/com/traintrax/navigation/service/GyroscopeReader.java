@@ -83,7 +83,7 @@ public class GyroscopeReader {
 			} */
 	}
 	
-    List<GyroscopeMeasurement> getGyroscopeMeasurements(){
+    public List<GyroscopeMeasurement> getGyroscopeMeasurements(){
     	return gyroscopeMeasurements;
     }
 	
