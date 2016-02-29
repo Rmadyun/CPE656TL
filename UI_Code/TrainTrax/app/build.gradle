@@ -24,4 +24,11 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
+    compile files('libs/restlet-android-2.3.6/lib/org.restlet.jar')
+    compile files('libs/restlet-android-2.3.6/lib/org.restlet.ext.json.jar')
+    compile files('libs/restlet-android-2.3.6/lib/com.google.gson_2.3/com.google.gson.jar')
+    compile project(':TrainNavigationDatabase.Library')
+    compile project(':TrainNavigationDatabase.RestClient')
+    compile project(':TrainNavigationDatabase.RestData')
+    compile project(':TrainNavigationDatabase.TestClient')
 }
