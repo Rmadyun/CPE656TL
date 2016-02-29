@@ -12,7 +12,7 @@ public class Edge {
 	private Coordinate EndTwo;
 	
 	public Edge(){
-		this(new Coordinate(), new Coordinate());
+		this(new Coordinate(0,0), new Coordinate(0,0));
 	}
 	
 	public Edge(Coordinate endpointOne, Coordinate endpointTwo){
