@@ -1,4 +1,4 @@
-package com.traintrax.navigation.service;
+package com.traintrax.navigation.service.math;
 
 import java.util.Arrays;
 

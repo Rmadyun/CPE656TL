@@ -1,4 +1,7 @@
-package com.traintrax.navigation.service;
+package com.traintrax.navigation.service.rotation;
+
+import com.traintrax.navigation.service.math.Calculate;
+import com.traintrax.navigation.service.math.ThreeDimensionalSpaceVector;
 
 /**
  * @author death

@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import com.traintrax.navigation.service.Calculate;
+import com.traintrax.navigation.service.math.Calculate;
 
 public class CalculateTests {
 

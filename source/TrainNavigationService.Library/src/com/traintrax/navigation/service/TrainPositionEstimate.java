@@ -2,6 +2,8 @@ package com.traintrax.navigation.service;
 
 import java.util.Calendar;
 
+import com.traintrax.navigation.service.position.Coordinate;
+
 /**
  * Describes an estimate of a train's position at a given point in 
  * time.

@@ -1,4 +1,4 @@
-package com.traintrax.navigation.service;
+package com.traintrax.navigation.service.math;
 
 /**
  * Generic vector to represent the characteristic of an 

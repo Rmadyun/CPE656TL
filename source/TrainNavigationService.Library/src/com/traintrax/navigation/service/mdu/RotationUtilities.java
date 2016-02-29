@@ -1,6 +1,12 @@
-package com.traintrax.navigation.service;
+package com.traintrax.navigation.service.mdu;
 
 import java.util.List;
+
+import com.traintrax.navigation.service.position.*;
+import com.traintrax.navigation.service.rotation.EulerAngleRotation;
+import com.traintrax.navigation.service.rotation.Quat4d;
+import com.traintrax.navigation.service.math.Matrix;
+import com.traintrax.navigation.service.math.ThreeDimensionalSpaceVector;
 
 /**
  * Helper class for frequently performed operations involving rotating

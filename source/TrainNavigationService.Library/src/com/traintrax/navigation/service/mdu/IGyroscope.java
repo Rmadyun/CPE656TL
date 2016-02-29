@@ -1,4 +1,4 @@
-package com.traintrax.navigation.service;
+package com.traintrax.navigation.service.mdu;
 
 ///Interface for Gyroscope sensors
 public interface IGyroscope {

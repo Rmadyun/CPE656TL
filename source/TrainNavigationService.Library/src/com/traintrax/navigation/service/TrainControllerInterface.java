@@ -1,5 +1,7 @@
 package com.traintrax.navigation.service;
 
+import com.traintrax.navigation.service.trackswitch.SwitchState;
+
 /**
  * Interface facilitates communication with switch controllers
  * on the Positive Train Control Test Bed

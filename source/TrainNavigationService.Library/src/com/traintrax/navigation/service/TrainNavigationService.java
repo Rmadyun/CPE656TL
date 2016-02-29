@@ -1,5 +1,8 @@
 package com.traintrax.navigation.service;
 
+import com.traintrax.navigation.service.math.Matrix;
+import com.traintrax.navigation.service.trackswitch.SwitchState;
+
 /**
  * Representation of the Train Navigation Service.
  * @author Corey Sanders

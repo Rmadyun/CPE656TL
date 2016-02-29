@@ -1,4 +1,6 @@
-package com.traintrax.navigation.service;
+package com.traintrax.navigation.service.position;
+
+import com.traintrax.navigation.service.math.ThreeDimensionalSpaceVector;
 
 /**
  * @author Corey Sanders

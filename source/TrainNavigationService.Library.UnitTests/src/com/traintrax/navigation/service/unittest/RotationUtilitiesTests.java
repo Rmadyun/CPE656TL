@@ -6,14 +6,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
-import com.traintrax.navigation.service.EulerAngleRotation;
-import com.traintrax.navigation.service.GyroscopeMeasurement;
-import com.traintrax.navigation.service.Quat4d;
-import com.traintrax.navigation.service.RotationUtilities;
+import com.traintrax.navigation.service.mdu.GyroscopeMeasurement;
+import com.traintrax.navigation.service.mdu.RotationUtilities;
+import com.traintrax.navigation.service.rotation.EulerAngleRotation;
+import com.traintrax.navigation.service.rotation.Quat4d;
+
 
 public class RotationUtilitiesTests {
 	

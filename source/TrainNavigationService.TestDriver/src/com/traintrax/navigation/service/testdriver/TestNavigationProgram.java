@@ -4,17 +4,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import com.traintrax.navigation.service.EulerAngleRotation;
-import com.traintrax.navigation.service.GenerationRotationChangeSubscriber;
-import com.traintrax.navigation.service.GyroscopeMeasurement;
-import com.traintrax.navigation.service.GyroscopeReader;
-import com.traintrax.navigation.service.MathUtilities;
-import com.traintrax.navigation.service.Matrix;
-import com.traintrax.navigation.service.NavigationEngine;
-import com.traintrax.navigation.service.Quat4d;
-import com.traintrax.navigation.service.RotationMonitor;
-import com.traintrax.navigation.service.RotationUtilities;
-import com.traintrax.navigation.service.TestGyroscope;
+import com.traintrax.navigation.service.TrainNavigationService;
+import com.traintrax.navigation.service.math.*;
+import com.traintrax.navigation.service.mdu.*;
+import com.traintrax.navigation.service.rotation.*;
+
 
 
 
@@ -185,7 +179,7 @@ public class TestNavigationProgram {
 		
 		Matrix rotatedVector =  rotationMatrix.multiply(testVector).round();
 		
-		NavigationEngine.PrintMatrix(rotatedVector);
+		TrainNavigationService.PrintMatrix(rotatedVector);
 		
 		boolean coordinateTransformationIsCorrect = rotatedVector.round().equals(expectedRotatedVector.round());
 		

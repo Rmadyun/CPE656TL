@@ -1,4 +1,6 @@
-package com.traintrax.navigation.service;
+package com.traintrax.navigation.service.mdu;
+
+import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 
 public class GenerationRotationChangeSubscriber implements IRotationChangeSubscriber {
 

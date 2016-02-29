@@ -4,6 +4,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import com.traintrax.navigation.service.mdu.AccelerometerMeasurement;
+import com.traintrax.navigation.service.mdu.GyroscopeMeasurement;
+import com.traintrax.navigation.service.mdu.MotionDetectionUnitInterface;
+import com.traintrax.navigation.service.mdu.RotationUtilities;
+import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.rotation.EulerAngleRotation;
+import com.traintrax.navigation.service.rotation.Quat4d;
+
 /**
  * Class is responsible for observing changes to a train that belongs to the
  * Positive Train Control Test Bed.
@@ -84,6 +92,8 @@ public class TrainMonitor implements TrainMonitorInterface {
 		List<AccelerometerMeasurement> nedAccelerometerMeasurements = adjustOrientation(accelerometerMeasurementsSinceLastUpdate, orientationUpdates);
 		
 		//TODO: Calculate velocity
+		
+		
 		//TODO: Calculate position
 		
 		//Update the lastKnown Orientation
@@ -91,6 +101,9 @@ public class TrainMonitor implements TrainMonitorInterface {
 		if(orientationUpdates.size() > 0){
 			lastKnownOrientation = orientationUpdates.get(orientationUpdates.size()-1);
 		}
+		
+		//TODO: Remove measurements (gyroscope, accelerometer) that were used with the update
+		//TODO: Save the time used with the last measurement. 
 		
 		return null;
 	}

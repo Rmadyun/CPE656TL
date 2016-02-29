@@ -1,4 +1,4 @@
-package com.traintrax.navigation.service;
+package com.traintrax.navigation.service.events;
 
 /**
  * Generic abstract class for events

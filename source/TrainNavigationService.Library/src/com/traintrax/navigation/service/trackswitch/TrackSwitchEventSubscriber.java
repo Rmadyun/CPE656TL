@@ -1,4 +1,4 @@
-package com.traintrax.navigation.service;
+package com.traintrax.navigation.service.trackswitch;
 
 /**
  * Class represents a client that wants to receive 

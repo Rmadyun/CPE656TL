@@ -1,4 +1,4 @@
-package com.traintrax.navigation.service;
+package com.traintrax.navigation.service.trackswitch;
 
 /**
  * Describes a mode of operation of a switch on the train track.
