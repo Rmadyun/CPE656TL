@@ -11,13 +11,13 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 import java.util.ArrayList;
-
+import java.util.List;
 
 
 public class MonitorView extends View {
     //set for 7 temp coordinates
-    edu.uah.cpe.traintrax.TrackDiagram TrackDig = new edu.uah.cpe.traintrax.TrackDiagram(32);
-    edu.uah.cpe.traintrax.TrackSwitch Switch = new edu.uah.cpe.traintrax.TrackSwitch(7);
+    TrackDiagram TrackDig = new TrackDiagram();
+    TrackSwitchInfo Switch = new TrackSwitchInfo();
 
     public MonitorView(Context context) {
         super(context);
@@ -35,8 +35,6 @@ public class MonitorView extends View {
         // TODO Auto-generated method stub
 
         Paint paint = new Paint();
-        //paint.setStyle(Paint.Style.FILL);
-        //paint.setColor(Color.WHITE);
 
         super.onDraw(canvas);
         int x = getWidth();
@@ -44,9 +42,6 @@ public class MonitorView extends View {
         int radius;
         radius = 100;
         canvas.drawPaint(paint);
-
-        //Add Path, will replace the coordinates in here with the ArrayLists once
-        // the TrackDiagram model class works correctly
 
         //Use Color.parseColor to define HTML colors
         paint.setColor(Color.parseColor("#CCCfff"));
@@ -60,49 +55,66 @@ public class MonitorView extends View {
         int ymax = TrackDig.getYmax();
         int xpixel = TrackDig.getXpixel();
         int ypixel = TrackDig.getYpixel();
-        int num_coords = TrackDig.getnumCoords();
+        int num_shapes = TrackDig.getNumShapes();
 
+        //set paint style
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(15);
 
-        for (int i = 0; i < num_coords; i++) {
-                /* Get the X position and why position of the line */
-            Float xcord = (Float) TrackDig.getXPosition(i);
-            Float ycord = (Float) TrackDig.getYPosition(i);
+        //Creates a path based on a collection of lines.
+        Path testPath = new Path();
 
-            //x = (x/xmax) * screen resolution
-            /* scale coordinates to resolution size */
-            xcord = (xcord / xmax) * xpixel;
-            ycord = (ycord / ymax) * ypixel;
+        List<TrackDiagram.ShapeCoordinate> tmp;
+        tmp = TrackDig.coordinates;
 
-            //set the initial path to the first point
-            if (i == 0)
-                path.moveTo(xcord, ycord);
+        for (int i = 0; i < num_shapes; i++)
+        {
+            //testPath.reset();
+        TrackDiagram.ShapeCoordinate tempShape_cord;
+            tempShape_cord = tmp.get(i);
 
-            if (i > 0)
-                path.lineTo(xcord, ycord);
+           int num_points = tempShape_cord.getnumCoords();
 
+            //NOTE: This also could be done with edges of the polygons
+            //To simply draw each line that the polygon has.
+            for(int j = 0; j < num_points; j++ ){
+               float xcord = tempShape_cord.getXPosition(j);
+                float ycord = tempShape_cord.getYPosition(j);
+
+                xcord = (xcord / xmax) * xpixel;
+                ycord = (ycord / ymax) * ypixel;
+
+                if(j== 0){
+                    testPath.moveTo(xcord, ycord);
+                }
+                else{
+                    testPath.lineTo(xcord, ycord);
+                }
+            }
+
+            canvas.drawPath(testPath, paint);
         }
 
-        canvas.drawPath(path, paint);
 
-        //get default values for track switchs
-        int num_switches = Switch.getNum_switches();
+       int num_switches = Switch.getNum_switches();
 
-        for (int i = 0; i < num_switches; i++) {
-            /* Get the X position and why position of the line */
-            Float xcord = (Float) Switch.getXPosition(i);
-            Float ycord = (Float) Switch.getYPosition(i);
-            Boolean state = Switch.getPassState(i);
+for (int i = 0; i < num_switches; i++)
+        {
+            float xcord = Switch.getXPosition(i);
+            float ycord = Switch.getYPosition(i);
 
-            //x = (x/xmax) * screen resolution
-            /* scale coordinates to resolution size */
+            //x = (x/xmax) * screen resolution;
+            // scale coordinates to resolution size
             xcord = (xcord / xmax) * xpixel;
             ycord = (ycord / ymax) * ypixel;
 
-            int xrect = xcord.intValue();
-            int yrect = ycord.intValue();
+            //need to figure out a way to size this icon better
+            int xrect = ((int) xcord);
+            int yrect = ((int) ycord);
 
             Bitmap switchstate;
 
+            Boolean state = false;
             if (state == false) {
                 switchstate = BitmapFactory.decodeResource(getResources(),
                         R.drawable.bypass);
@@ -112,15 +124,11 @@ public class MonitorView extends View {
                 switchstate = BitmapFactory.decodeResource(getResources(),
                         R.drawable.pass);
             }
-            //canvas.drawColor(Color.BLACK);
-            //canvas.drawBitmap(MyBitmap, null, rectangle, null)
+
             canvas.drawBitmap(switchstate, null, new Rect(xrect, yrect, (xrect + 50), (yrect + 50)), null);
-            //canvas.drawBitmap(switchstate, 250.0f, 250.0f, paint);
-
-
-            //  for (Rect rect : rectangles) {
-            //  canvas.drawRect(rect, paint);
-            // }
+            //canvas.drawBitmap(switchstate, 250.0f, 250.0f, paint)
         }
     }
+
+
 }

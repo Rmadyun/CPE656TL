@@ -14,12 +14,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
+
+//import com.traintrax.navigation.database.library.AdjacentPoint;
+//import com.traintrax.navigation.database.library.RepositoryEntry;
+//import com.traintrax.navigation.database.library.TrackBlock;
+//import com.traintrax.navigation.database.library.TrackPoint;
+//import com.traintrax.navigation.database.rest.test.TestAdjacentPointRepository;
+//import com.traintrax.navigation.database.rest.test.TestTrackBlockRepository;
+//import com.traintrax.navigation.database.rest.test.TestTrackPointRepository;
+
 import java.util.ArrayList;
+import java.util.List;
 
-
-    public class MyView extends View {
+public class MyView extends View {
         //set for 12 temp coordinates
-        edu.uah.cpe.traintrax.TrackDiagram TrackDig = new edu.uah.cpe.traintrax.TrackDiagram(32);
+        TrackDiagram TrackDig = new TrackDiagram();
 
         private ArrayList<Rect> rectangles = new ArrayList<Rect>();
 
@@ -60,11 +69,6 @@ import java.util.ArrayList;
                 return;
             }
 
-            //here need to get the ArrayLists from the Track Diagram model class
-            // will use those to either add rectangles to the list or draw directly on the screen
-            // from the array lists (both ways are done below)
-            TrackDig.getCoordinates();
-
             super.onDraw(canvas);
             int x = getWidth();
             int y = getHeight();
@@ -91,54 +95,45 @@ import java.util.ArrayList;
             int ymax = TrackDig.getYmax();
             int xpixel = TrackDig.getXpixel();
             int ypixel = TrackDig.getYpixel();
-            int num_coords = TrackDig.getnumCoords();
+            int num_shapes = TrackDig.getNumShapes();
 
-            for (int i = 0; i < num_coords; i++ )
+            //set paint style
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(15);
+
+            //Creates a path based on a collection of lines.
+            Path testPath = new Path();
+
+            List<TrackDiagram.ShapeCoordinate> tmp;
+            tmp = TrackDig.coordinates;
+
+            for (int i = 0; i < num_shapes; i++)
             {
-                /* Get the X position and why position of the line */
-                Float xcord = (Float) TrackDig.getXPosition(i);
-                Float ycord = (Float) TrackDig.getYPosition(i);
+                //testPath.reset();
+                TrackDiagram.ShapeCoordinate tempShape_cord;
+                tempShape_cord = tmp.get(i);
 
-                //x = (x/xmax) * screen resolution
-                /* scale coordinates to resolution size */
-                xcord = (xcord/xmax) * xpixel;
-                ycord = (ycord/ymax) * ypixel;
+                int num_points = tempShape_cord.getnumCoords();
 
-            //set the initial path to the first point
-            if (i == 0)
-                path.moveTo(xcord, ycord);
+                //NOTE: This also could be done with edges of the polygons
+                //To simply draw each line that the polygon has.
+                for(int j = 0; j < num_points; j++ ){
+                    float xcord = tempShape_cord.getXPosition(j);
+                    float ycord = tempShape_cord.getYPosition(j);
 
-            if (i > 0)
-                path.lineTo(xcord, ycord);
+                    xcord = (xcord / xmax) * xpixel;
+                    ycord = (ycord / ymax) * ypixel;
 
+                    if(j== 0){
+                        testPath.moveTo(xcord, ycord);
+                    }
+                    else{
+                        testPath.lineTo(xcord, ycord);
+                    }
+                }
+
+                canvas.drawPath(testPath, paint);
             }
-
-            canvas.drawPath(path, paint);
-
-
-            /**************************temp hard codes for track diagram
-            //x max = 80, y max = 90
-            //nexus 10 = 2500 X 1600   21 inches by 14
-             p.moveTo(960, 280);// 31, 16
-             p.lineTo(780, 280); // 25, 16
-             p.lineTo(625, 330); // 20, 19
-             p.lineTo(500, 400); // 16, 23
-             p.lineTo(430, 490); // 14, 28
-             p.lineTo(430, 600); // 14, 34
-             p.lineTo(530, 710); // 17, 40
-
-
-            p.lineTo(625, 780); // 20, 44
-            p.lineTo(710, 870); // 23, 49
-            p.lineTo(870, 880); // 28, 50
-            p.lineTo(1030, 810); // 33, 46
-            p.lineTo(1180, 760); // 38, 43 */
-
-          //  for (Rect rect : rectangles) {
-            //  canvas.drawRect(rect, paint);
-           // }
-
-
         }
     }
 

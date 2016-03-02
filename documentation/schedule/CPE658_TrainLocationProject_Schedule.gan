@@ -6,8 +6,8 @@
         <field id="tpd5" name="End date" width="24" order="2"/>
     </view>
     <view id="resource-table">
-        <field id="0" name="Name" width="52" order="0"/>
-        <field id="1" name="Default role" width="47" order="1"/>
+        <field id="0" name="Name" width="50" order="0"/>
+        <field id="1" name="Default role" width="49" order="1"/>
     </view>
     <!-- -->
     <calendars>
@@ -33,14 +33,15 @@
             <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
             <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
         </taskproperties>
-        <task id="0" name="Create Motion Detection Unit" meeting="false" start="2016-01-11" duration="59" complete="24" expand="true">
+        <task id="0" name="Create Motion Detection Unit" meeting="false" start="2016-01-11" duration="59" complete="41" expand="true">
             <task id="3" name="Measure Acceleration" color="#8cb6ce" meeting="false" start="2016-01-11" duration="7" complete="100" expand="true"/>
             <task id="4" name="Measure Angular Velocity" color="#8cb6ce" meeting="false" start="2016-01-11" duration="7" complete="100" expand="true"/>
-            <task id="5" name="Read RFID Tags" color="#8cb6ce" meeting="false" start="2016-01-18" duration="38" complete="50" expand="true">
-                <notes><![CDATA[Measuring the detection rate of RFID tags with video is necessary for this task to be completed.
-The rail car has been modified to improve the detection rate, and it has been verified that the existing tags purchased are usable for this project. We also have code to read the tags. What is missing is literally the testing to prove that our system can read the tags quickly and reliably enough for it to be usable to update the position of a moving train on the track.]]></notes>
+            <task id="5" name="Read RFID Tags" color="#8cb6ce" meeting="false" start="2016-01-18" duration="38" complete="100" expand="true">
+                <notes><![CDATA[02/16/16: Measuring the detection rate of RFID tags with video is necessary for this task to be completed.
+The rail car has been modified to improve the detection rate, and it has been verified that the existing tags purchased are usable for this project. We also have code to read the tags. What is missing is literally the testing to prove that our system can read the tags quickly and reliably enough for it to be usable to update the position of a moving train on the track.
+02/23/16: This issue should now be complete since we have successfully determine that the MDU can correctly detect the RFID tags, and we have determined the proper orientation to place tags for maximum detection performance.]]></notes>
             </task>
-            <task id="6" name="Remote Machine Communication" color="#8cb6ce" meeting="false" start="2016-01-11" duration="52" complete="0" expand="false">
+            <task id="6" name="Remote Machine Communication" color="#8cb6ce" meeting="false" start="2016-01-11" duration="52" complete="0" expand="true">
                 <task id="156" name="Stream Messages from MDU" color="#8cb6ce" meeting="false" start="2016-01-11" duration="7" complete="100" expand="true"/>
                 <task id="158" name="Create ICD for MDU Protocol" color="#8cb6ce" meeting="false" start="2016-02-18" duration="7" complete="0" expand="true">
                     <notes><![CDATA[2/9/16: Slipping back development of the MDU ICD due to all of the extra unexpected activity being done to determine a viable solution for reliably reading RFID tags from the test track.
@@ -54,18 +55,20 @@ The rail car has been modified to improve the detection rate, and it has been ve
             <task id="8" name="Report Angular Velocity" color="#8cb6ce" meeting="false" start="2016-03-03" duration="7" complete="0" expand="true"/>
             <task id="9" name="Report RFID Tag Detection" color="#8cb6ce" meeting="false" start="2016-03-03" duration="7" complete="0" expand="true"/>
         </task>
-        <task id="10" name="Create Train Navigation GUI" meeting="false" start="2016-01-11" duration="80" complete="38" expand="true">
-            <task id="11" name="Display Position of the Train" color="#8cb6ce" meeting="false" start="2016-02-25" duration="7" complete="0" expand="true"/>
-            <task id="12" name="Display Track Map" color="#8cb6ce" meeting="false" start="2016-01-11" duration="45" complete="90" expand="true">
-                <notes><![CDATA[We just need to incorporate actual track data. This has been delayed because we had to develop and interface to delver the track data to the tablet in order to incorporate it.]]></notes>
+        <task id="10" name="Create Train Navigation GUI" meeting="false" start="2016-01-11" duration="87" complete="38" expand="true">
+            <task id="11" name="Display Position of the Train" color="#8cb6ce" meeting="false" start="2016-03-03" duration="7" complete="0" expand="true"/>
+            <task id="12" name="Display Track Map" color="#8cb6ce" meeting="false" start="2016-01-11" duration="52" complete="90" expand="true">
+                <notes><![CDATA[2/16/16: We just need to incorporate actual track data. This has been delayed because we had to develop and interface to delver the track data to the tablet in order to incorporate it.
+2/23/16: Track models have been implemented that interpret the track data stored in the Train Navigation Database, however work is still in progress with using those models in the GUI to render the track.]]></notes>
             </task>
-            <task id="13" name="Display Track Switches" color="#8cb6ce" meeting="false" start="2016-02-04" duration="21" complete="30" expand="true">
-                <notes><![CDATA[Switches have been rendered on the track and a prototype has been created using actual track data, however scaling has not been completed and final feedback on how the switches look and operate have not been approved by the customer.]]></notes>
+            <task id="13" name="Display Track Switches" color="#8cb6ce" meeting="false" start="2016-03-03" duration="21" complete="30" expand="true">
+                <notes><![CDATA[2/16/16: Switches have been rendered on the track and a prototype has been created using actual track data, however scaling has not been completed and final feedback on how the switches look and operate have not been approved by the customer.
+2/23/16: Moving back the expected time for switches to complete as work is still in progress for integrating Train Navigation Database data with the GUI.]]></notes>
             </task>
-            <task id="14" name="Display RFID Tags" color="#8cb6ce" meeting="false" start="2016-02-25" duration="14" complete="0" expand="true"/>
-            <task id="15" name="Display Train Speed" color="#8cb6ce" meeting="false" start="2016-03-03" duration="7" complete="0" expand="true"/>
-            <task id="16" name="Control Track Switches" color="#8cb6ce" meeting="false" start="2016-03-10" duration="14" complete="0" expand="true"/>
-            <task id="17" name="Display Train Prediction &amp; History" color="#8cb6ce" meeting="false" start="2016-03-17" duration="14" complete="0" expand="true"/>
+            <task id="14" name="Display RFID Tags" color="#8cb6ce" meeting="false" start="2016-03-03" duration="14" complete="0" expand="true"/>
+            <task id="15" name="Display Train Speed" color="#8cb6ce" meeting="false" start="2016-03-10" duration="7" complete="0" expand="true"/>
+            <task id="16" name="Control Track Switches" color="#8cb6ce" meeting="false" start="2016-03-17" duration="14" complete="0" expand="true"/>
+            <task id="17" name="Display Train Prediction &amp; History" color="#8cb6ce" meeting="false" start="2016-03-24" duration="14" complete="0" expand="true"/>
         </task>
         <task id="18" name="Create Train Navigation Service" meeting="false" start="2016-01-11" duration="87" complete="18" expand="true">
             <task id="19" name="Calculate Train Position" meeting="false" start="2016-01-11" duration="59" complete="40" expand="true">
@@ -73,7 +76,9 @@ The rail car has been modified to improve the detection rate, and it has been ve
                     <task id="136" name="Implement Initial Orientation Algorithm" color="#8cb6ce" meeting="false" start="2016-01-11" duration="7" complete="100" expand="true"/>
                     <task id="138" name="Refactor Orientation Algorithm" color="#8cb6ce" meeting="false" start="2016-01-28" duration="7" complete="100" expand="true"/>
                 </task>
-                <task id="21" name="Calculation Position from RFID Tag" color="#8cb6ce" meeting="false" start="2016-02-18" duration="7" complete="0" expand="true"/>
+                <task id="21" name="Calculation Position from RFID Tag" color="#8cb6ce" meeting="false" start="2016-03-03" duration="7" complete="0" expand="true">
+                    <notes><![CDATA[2/23/16: Delaying calculating location from RFID Tag IDs so that work can be begin on calculating position from IMU measurements.]]></notes>
+                </task>
                 <task id="22" name="Calculate Train Acceleration" color="#8cb6ce" meeting="false" start="2016-02-25" duration="7" complete="0" expand="true"/>
                 <task id="23" name="Calculate Train Velocity" color="#8cb6ce" meeting="false" start="2016-02-25" duration="7" complete="0" expand="true"/>
                 <task id="24" name="Calculate Position from IMU Measurements" color="#8cb6ce" meeting="false" start="2016-02-25" duration="14" complete="0" expand="true"/>
@@ -90,8 +95,10 @@ The rail car has been modified to improve the detection rate, and it has been ve
             <task id="33" name="Detect Train Moving Backward" color="#8cb6ce" meeting="false" start="2016-03-31" duration="7" complete="0" expand="true"/>
         </task>
         <task id="34" name="Create Train Navigation Database" meeting="false" start="2016-01-11" duration="94" complete="48" expand="true">
-            <task id="35" name="Report RFID Tag Position" meeting="false" start="2016-01-11" duration="73" complete="57" expand="true">
-                <task id="36" name="Enter Remaining RFID Tag Positions (Up to 80%)" color="#8cb6ce" meeting="false" start="2016-03-03" duration="21" complete="0" expand="true"/>
+            <task id="35" name="Report RFID Tag Position" meeting="false" start="2016-01-11" duration="87" complete="57" expand="true">
+                <task id="36" name="Enter Remaining RFID Tag Positions (Up to 80%)" color="#8cb6ce" meeting="false" start="2016-03-17" duration="21" complete="0" expand="true">
+                    <notes><![CDATA[2/23/16: Delaying collecting the remaining track tag information so that work can be done for calculating train position using IMU data. This will determine where we place the remaining tags.]]></notes>
+                </task>
                 <task id="128" name="Collect RFID Tag Positions for Sample Track" color="#8cb6ce" meeting="false" start="2016-01-11" duration="14" complete="100" expand="true"/>
                 <task id="130" name="Lookup RFID Tag Position" color="#8cb6ce" meeting="false" start="2016-02-04" duration="7" complete="100" expand="true"/>
                 <task id="191" name="Forward RFID Tag Position to Tablet" color="#8cb6ce" meeting="false" start="2016-02-11" duration="7" complete="100" expand="true"/>
@@ -366,6 +373,61 @@ The rail car has been modified to improve the detection rate, and it has been ve
             <previous-task id="34" start="2016-01-11" duration="94" meeting="false" super="true"/>
             <previous-task id="35" start="2016-01-11" duration="73" meeting="false" super="true"/>
             <previous-task id="36" start="2016-03-03" duration="21" meeting="false" super="false"/>
+            <previous-task id="128" start="2016-01-11" duration="14" meeting="false" super="false"/>
+            <previous-task id="130" start="2016-02-04" duration="7" meeting="false" super="false"/>
+            <previous-task id="191" start="2016-02-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="37" start="2016-02-04" duration="14" meeting="false" super="true"/>
+            <previous-task id="186" start="2016-02-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="38" start="2016-02-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="39" start="2016-02-04" duration="7" meeting="false" super="false"/>
+            <previous-task id="196" start="2016-02-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="40" start="2016-03-17" duration="7" meeting="false" super="false"/>
+            <previous-task id="41" start="2016-03-24" duration="7" meeting="false" super="false"/>
+            <previous-task id="43" start="2016-03-31" duration="7" meeting="false" super="false"/>
+            <previous-task id="42" start="2016-04-07" duration="7" meeting="false" super="false"/>
+        </previous-tasks>
+        <previous-tasks name="Revised 02-23-2016: Adjusted Schedule based on Work Done in Sprint Week 6">
+            <previous-task id="0" start="2016-01-11" duration="59" meeting="false" super="true"/>
+            <previous-task id="3" start="2016-01-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="4" start="2016-01-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="5" start="2016-01-18" duration="38" meeting="false" super="false"/>
+            <previous-task id="6" start="2016-01-11" duration="52" meeting="false" super="true"/>
+            <previous-task id="156" start="2016-01-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="158" start="2016-02-18" duration="7" meeting="false" super="false"/>
+            <previous-task id="162" start="2016-02-25" duration="7" meeting="false" super="false"/>
+            <previous-task id="164" start="2016-02-25" duration="7" meeting="false" super="false"/>
+            <previous-task id="160" start="2016-02-25" duration="7" meeting="false" super="false"/>
+            <previous-task id="7" start="2016-03-03" duration="7" meeting="false" super="false"/>
+            <previous-task id="8" start="2016-03-03" duration="7" meeting="false" super="false"/>
+            <previous-task id="9" start="2016-03-03" duration="7" meeting="false" super="false"/>
+            <previous-task id="10" start="2016-01-11" duration="87" meeting="false" super="true"/>
+            <previous-task id="11" start="2016-03-03" duration="7" meeting="false" super="false"/>
+            <previous-task id="12" start="2016-01-11" duration="52" meeting="false" super="false"/>
+            <previous-task id="13" start="2016-03-03" duration="21" meeting="false" super="false"/>
+            <previous-task id="14" start="2016-03-03" duration="14" meeting="false" super="false"/>
+            <previous-task id="15" start="2016-03-10" duration="7" meeting="false" super="false"/>
+            <previous-task id="16" start="2016-03-17" duration="14" meeting="false" super="false"/>
+            <previous-task id="17" start="2016-03-24" duration="14" meeting="false" super="false"/>
+            <previous-task id="18" start="2016-01-11" duration="87" meeting="false" super="true"/>
+            <previous-task id="19" start="2016-01-11" duration="59" meeting="false" super="true"/>
+            <previous-task id="20" start="2016-01-11" duration="24" meeting="false" super="true"/>
+            <previous-task id="136" start="2016-01-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="138" start="2016-01-28" duration="7" meeting="false" super="false"/>
+            <previous-task id="21" start="2016-03-03" duration="7" meeting="false" super="false"/>
+            <previous-task id="22" start="2016-02-25" duration="7" meeting="false" super="false"/>
+            <previous-task id="23" start="2016-02-25" duration="7" meeting="false" super="false"/>
+            <previous-task id="24" start="2016-02-25" duration="14" meeting="false" super="false"/>
+            <previous-task id="25" start="2016-03-03" duration="7" meeting="false" super="false"/>
+            <previous-task id="26" start="2016-03-03" duration="7" meeting="false" super="false"/>
+            <previous-task id="27" start="2016-03-03" duration="7" meeting="false" super="false"/>
+            <previous-task id="28" start="2016-03-24" duration="7" meeting="false" super="false"/>
+            <previous-task id="29" start="2016-03-10" duration="14" meeting="false" super="false"/>
+            <previous-task id="30" start="2016-03-24" duration="7" meeting="false" super="false"/>
+            <previous-task id="31" start="2016-03-24" duration="7" meeting="false" super="false"/>
+            <previous-task id="33" start="2016-03-31" duration="7" meeting="false" super="false"/>
+            <previous-task id="34" start="2016-01-11" duration="94" meeting="false" super="true"/>
+            <previous-task id="35" start="2016-01-11" duration="87" meeting="false" super="true"/>
+            <previous-task id="36" start="2016-03-17" duration="21" meeting="false" super="false"/>
             <previous-task id="128" start="2016-01-11" duration="14" meeting="false" super="false"/>
             <previous-task id="130" start="2016-02-04" duration="7" meeting="false" super="false"/>
             <previous-task id="191" start="2016-02-11" duration="7" meeting="false" super="false"/>
