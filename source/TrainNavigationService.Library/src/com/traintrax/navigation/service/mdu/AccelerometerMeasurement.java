@@ -9,7 +9,7 @@ import com.traintrax.navigation.service.position.Acceleration;
  *Class represents a single measurement taken from an accelerometer
  *that expresses the forces acting on an object.
  */
-public class AccelerometerMeasurement {
+public class AccelerometerMeasurement implements Comparable<AccelerometerMeasurement> {
 
 	private Acceleration accelerationMeasurement;
 	private double numberOfSecondsSinceLastMeasurement;
@@ -57,4 +57,10 @@ public class AccelerometerMeasurement {
 		return numberOfSecondsSinceLastMeasurement;
 	}
 
+	@Override
+	public int compareTo(AccelerometerMeasurement otherMeasurement) {
+		
+	    return Long.compare(this.timeMeasured.getTimeInMillis(), otherMeasurement.timeMeasured.getTimeInMillis());
+	}
+	
 }

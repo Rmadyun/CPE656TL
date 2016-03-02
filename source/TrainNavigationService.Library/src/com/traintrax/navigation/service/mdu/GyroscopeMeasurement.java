@@ -7,7 +7,7 @@ import java.util.Calendar;
  *Class represents a single measurement taken from a gyroscope for
  *angular velocity expressed in Euler-Angle rotation format.
  */
-public class GyroscopeMeasurement {
+public class GyroscopeMeasurement implements Comparable<GyroscopeMeasurement> {
 
 	private double radiansRotationPerSecondAlongXAxis;
 	private double radiansRotationPerSecondAlongYAxis;
@@ -88,6 +88,12 @@ public class GyroscopeMeasurement {
 	 */
 	public double getNumberOfSecondsSinceLastMeasurement(){
 		return numberOfSecondsSinceLastMeasurement;
+	}
+
+	@Override
+	public int compareTo(GyroscopeMeasurement otherMeasurement) {
+		
+		return Long.compare(this.timeMeasured.getTimeInMillis(), otherMeasurement.timeMeasured.getTimeInMillis());
 	}
 
 }
