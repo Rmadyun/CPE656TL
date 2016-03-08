@@ -1,5 +1,8 @@
 package com.traintrax.navigation.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.traintrax.navigation.service.trackswitch.SwitchState;
 
 /**
@@ -9,6 +12,8 @@ import com.traintrax.navigation.service.trackswitch.SwitchState;
  *
  */
 public class TrainController implements TrainControllerInterface {
+	private Map<String,SwitchState> switchStateLut = new HashMap<String,SwitchState>();
+	
 	
 	/**
 	 * Requests that a switches' state be changed.
@@ -16,7 +21,19 @@ public class TrainController implements TrainControllerInterface {
 	 * @param switchState State to change the targeted switch
 	 */
 	public void ChangeSwitchState(String switchIdentifier, SwitchState switchState){
-		//TODO: Implement
+		//TODO: Implement switch control
+		
+		switchStateLut.put(switchIdentifier, switchState);
+	}
+
+	/**
+	 * Retrieves the last known state of a given switch
+	 * @param switchIdentifier Unique ID for the switch of interest
+	 * @return Current state of the desired switch
+	 */
+	public SwitchState getSwitchState(String switchIdentifier) {
+		
+		return switchStateLut.get(switchIdentifier);
 	}
 
 }

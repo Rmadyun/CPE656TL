@@ -1,6 +1,7 @@
 package com.traintrax.navigation.service;
 
 import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.ValueUpdate;
 
 /**
  * Interface is responsible for observing changes to trains that belong
@@ -28,6 +29,6 @@ public interface TrainMonitorInterface {
 	 * Retrieves the last known position of the target train
 	 * @return The last known position of the target train.
 	 */
-	Coordinate getLastKnownPosition();
+	ValueUpdate<Coordinate> getLastKnownPosition();
 
 }

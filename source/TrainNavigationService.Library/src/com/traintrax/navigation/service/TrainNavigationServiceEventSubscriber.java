@@ -7,4 +7,9 @@ package com.traintrax.navigation.service;
  */
 public class TrainNavigationServiceEventSubscriber {
 
+	public void TrainPositionUpdated(TrainPositionUpdatedEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

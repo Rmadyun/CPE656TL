@@ -1,6 +1,11 @@
 package com.traintrax.navigation.service;
 
-import com.traintrax.navigation.service.math.Matrix;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import com.traintrax.navigation.service.events.PublisherInterface;
+import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.ValueUpdate;
 import com.traintrax.navigation.service.trackswitch.SwitchState;
 
 /**
@@ -10,23 +15,39 @@ import com.traintrax.navigation.service.trackswitch.SwitchState;
  */
 public class TrainNavigationService implements TrainNavigationServiceInterface {
 	
+	private Timer timer;
+	private final TrainMonitorInterface trainMonitor;
+	private final TrainControllerInterface trainController;
+	private final PublisherInterface<TrainNavigationServiceEventSubscriber, TrainPositionUpdatedEvent> eventPublisher;
+	private static final int POLL_RATE_IN_MS = 10000;
+
 	/**
 	 * Constructor
+	 * @param trainMonitor Provides train position information
+	 * @param trainController Controls the train and track
 	 */
-	public TrainNavigationService(){
-		
+	public TrainNavigationService(TrainMonitorInterface trainMonitor, TrainControllerInterface trainController, PublisherInterface<TrainNavigationServiceEventSubscriber, TrainPositionUpdatedEvent> eventPublisher){
+		this.trainMonitor = trainMonitor;
+		this.trainController = trainController;
+		this.eventPublisher = eventPublisher;
+	
+		setupTimer();
 	}
-		
-	public static void PrintMatrix(Matrix matrix){
-		
-		for(int i = 0; i < matrix.getNumberOfRows(); i++){
-			String rowString = "";
-			for(int j = 0; j < matrix.getNumberOfColumns(); j++){
-				rowString += String.format("%f  ", matrix.getValue(i,  j));
-			}
-			
-			System.out.println(rowString);
-		}
+	
+	/**
+	 * Configures the timer to run for listening to train events
+	 */
+	private void setupTimer(){
+		timer.scheduleAtFixedRate(new TimerTask() {
+			  @Override
+			  public void run() {
+			    
+				  ValueUpdate<Coordinate> positionUpdate = trainMonitor.getLastKnownPosition();
+				  TrainPositionUpdatedEvent updatedEvent = new TrainPositionUpdatedEvent(trainMonitor.getTrainId(), positionUpdate);
+				  
+				  eventPublisher.PublishEvent(updatedEvent);
+			  }
+			}, POLL_RATE_IN_MS, POLL_RATE_IN_MS);
 	}
 	
     /**
@@ -35,9 +56,8 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
      * @return Current state of the switch requested
      */
 	public SwitchState GetSwitchState(String switchIdentifier){
-	
-		//TODO: Implement Switch State support
-		return SwitchState.Pass;
+		
+		return trainController.getSwitchState(switchIdentifier);
 	}
 	
 	/**
@@ -47,7 +67,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 	 */
 	public void SetSwitchState(String switchIdentifier, SwitchState switchState){
 		
-		//TODO: Implement 
+		trainController.ChangeSwitchState(switchIdentifier, switchState); 
 	}
 	
 	/**
@@ -55,7 +75,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 	 * @param subscriber Client requested to listen to service events.
 	 */
 	public void Subscribe(TrainNavigationServiceEventSubscriber subscriber){
-		//TODO: Implement
+		eventPublisher.Subscribe(subscriber);
 	}
 	
 	/**
@@ -63,7 +83,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 	 * @param subscriber Client requesting to stop receiving events from the service.
 	 */
 	public void Unsubscribe(TrainNavigationServiceEventSubscriber subscriber){
-		//TODO: Implement
+		eventPublisher.Unsubscribe(subscriber);
 	}
 
 

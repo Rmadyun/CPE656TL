@@ -179,7 +179,7 @@ public class TestNavigationProgram {
 		
 		Matrix rotatedVector =  rotationMatrix.multiply(testVector).round();
 		
-		TrainNavigationService.PrintMatrix(rotatedVector);
+		Matrix.PrintMatrix(rotatedVector);
 		
 		boolean coordinateTransformationIsCorrect = rotatedVector.round().equals(expectedRotatedVector.round());
 		

@@ -16,4 +16,11 @@ public interface TrainControllerInterface {
 	 * @param switchState State to change the targeted switch
 	 */
 	void ChangeSwitchState(String switchIdentifier, SwitchState switchState);
+
+	/**
+	 * Retrieves the last known state of a given switch
+	 * @param switchIdentifier Unique ID for the switch of interest
+	 * @return Current state of the desired switch
+	 */
+	SwitchState getSwitchState(String switchIdentifier);
 }

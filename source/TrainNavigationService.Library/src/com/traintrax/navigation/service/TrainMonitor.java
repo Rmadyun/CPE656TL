@@ -98,8 +98,8 @@ public class TrainMonitor implements TrainMonitorInterface {
 	 * 
 	 * @return The last known position of the target train.
 	 */
-	public Coordinate getLastKnownPosition() {
-		return lastKnownTrainPosition.getValue();
+	public ValueUpdate<Coordinate> getLastKnownPosition() {
+		return lastKnownTrainPosition;
 	}
 
 }

@@ -4,9 +4,9 @@ import com.traintrax.navigation.service.events.AbstractEvent;
 
 /**
  * Base class for notifications from the Train Navigation Service.
- * @author death
+ * @author Corey Sanders
  *
  */
-public class TrainNavigationServiceEvent extends AbstractEvent {
+public abstract class TrainNavigationServiceEvent extends AbstractEvent {
 
 }
