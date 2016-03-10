@@ -1,5 +1,6 @@
 package com.traintrax.navigation.service;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,9 +8,31 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.traintrax.navigation.database.library.AccelerometerMeasurementRepository;
+import com.traintrax.navigation.database.library.AccelerometerMeasurementSearchCriteria;
+import com.traintrax.navigation.database.library.FilteredSearchRepositoryInterface;
+import com.traintrax.navigation.database.library.GenericDatabaseInterface;
+import com.traintrax.navigation.database.library.GyroscopeMeasurementRepository;
+import com.traintrax.navigation.database.library.GyroscopeMeasurementSearchCriteria;
+import com.traintrax.navigation.database.library.MySqlDatabaseAdapter;
+import com.traintrax.navigation.database.library.RfidTagDetectedNotificationRepository;
+import com.traintrax.navigation.database.library.RfidTagDetectedNotificationSearchCriteria;
+import com.traintrax.navigation.database.library.TrackPoint;
+import com.traintrax.navigation.database.library.TrackPointRepository;
+import com.traintrax.navigation.database.library.TrackPointSearchCriteria;
+import com.traintrax.navigation.database.library.TrainPosition;
+import com.traintrax.navigation.database.library.TrainPositionRepository;
+import com.traintrax.navigation.database.library.TrainPositionSearchCriteria;
+import com.traintrax.navigation.service.events.GenericPublisher;
+import com.traintrax.navigation.service.events.NotifierInterface;
 import com.traintrax.navigation.service.events.PublisherInterface;
+import com.traintrax.navigation.service.mdu.InertialMotionPositionAlgorithmInterface;
+import com.traintrax.navigation.service.mdu.MotionDetectionUnitInterface;
+import com.traintrax.navigation.service.mdu.SimulatedMotionDetectionUnit;
+import com.traintrax.navigation.service.mdu.TrainPositionAlgorithm;
 import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.ValueUpdate;
+import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 import com.traintrax.navigation.service.trackswitch.SwitchState;
 
 /**
@@ -19,19 +42,59 @@ import com.traintrax.navigation.service.trackswitch.SwitchState;
  */
 public class TrainNavigationService implements TrainNavigationServiceInterface {
 	
-	private Timer timer;
+	private Timer timer = new Timer();
 	private final TrainMonitorInterface trainMonitor;
 	private final TrainControllerInterface trainController;
-	private final PublisherInterface<TrainNavigationServiceEventSubscriber, TrainPositionUpdatedEvent> eventPublisher;
+	private final PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher;
 	private static final int POLL_RATE_IN_MS = 10000;
 	private final Map<String, ValueUpdate<Coordinate>> trainPositionLut = new HashMap<>();
 
+	/**
+	 * Default Constructor
+	 */
+	public TrainNavigationService(){
+		String trainId = "1";
+		Coordinate currentPosition = new Coordinate(0,0,0);
+		EulerAngleRotation currentOrientation = new EulerAngleRotation(0,0,0);
+		
+		trainPositionLut.put(trainId, new ValueUpdate<Coordinate>(currentPosition, Calendar.getInstance()));
+		
+		
+		MotionDetectionUnitInterface motionDetectionUnit = new SimulatedMotionDetectionUnit();
+		
+		TrainNavigationDatabaseInterface trainNavigationDatabase;
+		GenericDatabaseInterface gdi = new MySqlDatabaseAdapter();
+		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> trackPointRepository = new TrackPointRepository(gdi);
+		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.AccelerometerMeasurement, AccelerometerMeasurementSearchCriteria> accelerometerMeasurementRepository = new AccelerometerMeasurementRepository();
+		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.RfidTagDetectedNotification, RfidTagDetectedNotificationSearchCriteria> rfidTagNotificationRepository = new RfidTagDetectedNotificationRepository();
+		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.GyroscopeMeasurement, GyroscopeMeasurementSearchCriteria> gyroscopeMeasurementRepository = new GyroscopeMeasurementRepository();
+		FilteredSearchRepositoryInterface<TrainPosition, TrainPositionSearchCriteria> trainPositionRepository = new TrainPositionRepository();
+		
+		trainNavigationDatabase = new TrainNavigationDatabase(trackPointRepository, accelerometerMeasurementRepository,
+				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository);
+		
+		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPositionAlgorithm(currentPosition, currentOrientation);
+		
+		TrainMonitorInterface trainMonitor = new TrainMonitor(trainId, positionAlgorithm, motionDetectionUnit, trainNavigationDatabase);
+		TrainControllerInterface trainController = new TrainController();
+		
+		NotifierInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventNotifier = new TrainNavigationServiceEventNotifier();
+		
+		PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher = new GenericPublisher<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> (eventNotifier);
+		
+		this.trainMonitor = trainMonitor;
+		this.trainController = trainController;
+		this.eventPublisher = eventPublisher;
+	
+		setupTimer();
+	}
+	
 	/**
 	 * Constructor
 	 * @param trainMonitor Provides train position information
 	 * @param trainController Controls the train and track
 	 */
-	public TrainNavigationService(TrainMonitorInterface trainMonitor, TrainControllerInterface trainController, PublisherInterface<TrainNavigationServiceEventSubscriber, TrainPositionUpdatedEvent> eventPublisher){
+	public TrainNavigationService(TrainMonitorInterface trainMonitor, TrainControllerInterface trainController, PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher){
 		this.trainMonitor = trainMonitor;
 		this.trainController = trainController;
 		this.eventPublisher = eventPublisher;
@@ -47,13 +110,13 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 			  @Override
 			  public void run() {
 			    
-				  ValueUpdate<Coordinate> positionUpdate = trainMonitor.getLastKnownPosition();
+				  ValueUpdate<Coordinate> positionUpdate = trainMonitor.waitForNextPositionUpdate();
 				  TrainPositionUpdatedEvent updatedEvent = new TrainPositionUpdatedEvent(trainMonitor.getTrainId(), positionUpdate);
 				  
 				  trainPositionLut.put(updatedEvent.getTrainIdentifier(), updatedEvent.getPosition());
 				  eventPublisher.PublishEvent(updatedEvent);
 			  }
-			}, POLL_RATE_IN_MS, POLL_RATE_IN_MS);
+			}, 0, POLL_RATE_IN_MS);
 	}
 	
     /**

@@ -2,7 +2,6 @@ package com.traintrax.navigation.service.mdu;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,11 +59,20 @@ public class TrainPositionAlgorithm implements InertialMotionPositionAlgorithmIn
 	public ValueUpdate<Coordinate> calculatePosition(List<GyroscopeMeasurement> gyroscopeMeasurementsSinceLastUpdate,
 			List<AccelerometerMeasurement> accelerometerMeasurementsSinceLastUpdate,
 			List<ValueUpdate<Coordinate>> rfidTagDetectedLocations) {
+		
+		
+		
 		//Sort gyroscope measurements in increasing order by time
-		Collections.sort(gyroscopeMeasurementsSinceLastUpdate);
+		if(gyroscopeMeasurementsSinceLastUpdate != null)
+		{
+		    Collections.sort(gyroscopeMeasurementsSinceLastUpdate);
+		}
 		
 		//Sort accelerometer measurements in increasing order by time
-		Collections.sort(accelerometerMeasurementsSinceLastUpdate);
+		if(accelerometerMeasurementsSinceLastUpdate != null)
+		{
+		   Collections.sort(accelerometerMeasurementsSinceLastUpdate);
+		}
 		
 		// TODO: Filter gyroscope values
 		// TODO: Filter accelerometer values

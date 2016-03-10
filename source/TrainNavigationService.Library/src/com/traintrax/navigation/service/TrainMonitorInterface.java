@@ -16,7 +16,7 @@ public interface TrainMonitorInterface {
 	 * position.
 	 * @return Most recent update on the position of the train.
 	 */
-	Coordinate waitForNextPositionUpdate();
+	ValueUpdate<Coordinate> waitForNextPositionUpdate();
 	
 	/**
 	 * Retrieves the unique identifier for the target train

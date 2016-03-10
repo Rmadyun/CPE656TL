@@ -5,8 +5,11 @@ import java.util.Calendar;
 import java.util.List;
 
 import com.traintrax.navigation.service.TrainNavigationService;
+import com.traintrax.navigation.service.TrainNavigationServiceInterface;
 import com.traintrax.navigation.service.math.*;
 import com.traintrax.navigation.service.mdu.*;
+import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.ValueUpdate;
 import com.traintrax.navigation.service.rotation.*;
 
 
@@ -246,30 +249,42 @@ public class TestNavigationProgram {
 		}
 	}
 	
+	private static void ReadTrainPositionsFromTrainNavigationService(){
+TrainNavigationServiceInterface trainNavigationService = new TrainNavigationService();
+		
+		List<String> trains = trainNavigationService.GetKnownTrainIdentifiers();
+		
+		System.out.println("List of known Train Ids:");
+		
+		for(String trainId : trains){
+			System.out.println(trainId);
+		}
+		System.out.println("");
+		
+		String selectedTrain = trains.get(0);
+		
+		//Wait 2 seconds
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ValueUpdate<Coordinate> trainPosition = trainNavigationService.GetLastKnownPosition(selectedTrain);
+		
+		System.out.println(String.format("Current position of train %s: (%f, %f) at %s", selectedTrain, trainPosition.getValue().getX(),
+				trainPosition.getValue().getY(), trainPosition.getTimeObserved().getTime()));
+	
+	}
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		
-		Quat4d initialInertialFrameOrientation = RotationUtilities.convertFromEulerAngleToQuaternion(0, 0, Math.PI/2);
-		Quat4d bodyFrameToInertialFrameQuaternion = initialInertialFrameOrientation.inverse();
-		Quat4d initialBodyFrameOrientation = initialInertialFrameOrientation.multiply(initialInertialFrameOrientation.inverse());
-		Quat4d finalBodyFrameOrientation = RotationUtilities.convertFromEulerAngleToQuaternion(0, Math.PI/2, 0);
-		Quat4d finalInertialFrameOrientation = finalBodyFrameOrientation.multiply(bodyFrameToInertialFrameQuaternion);
+		ReadTrainPositionsFromTrainNavigationService();
 		
-		//System.out.println("Calculate final inertial frame orientation");
-		//PrintRotation(RotationMonitor.convertFromQuaternionToEulerAngle(finalInertialFrameOrientation));
-		
-		//TestRotationOfVectorUsingEulerAngleDerivedRotationMatrix();
-		//TestLinearInterpolation();
-		
-		TestMeasurementCsv();
-		
-		/*EulerAngleRotation rotation = RotationMonitor.convertFromQuaternionToEulerAngle(prod);
-		
-		PrintRotation(rotation); */
-	
-		//TestMeasurementCsv();		
 	}
 
 }

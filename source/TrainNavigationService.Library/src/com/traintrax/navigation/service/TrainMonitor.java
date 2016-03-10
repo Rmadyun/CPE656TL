@@ -53,7 +53,7 @@ public class TrainMonitor implements TrainMonitorInterface {
 	 * 
 	 * @return Most recent update on the position of the train.
 	 */
-	public Coordinate waitForNextPositionUpdate() {
+	public ValueUpdate<Coordinate> waitForNextPositionUpdate() {
 		List<GyroscopeMeasurement> newGyroscopeMeasurements;
 		List<AccelerometerMeasurement> newAccelerometerMeasurements;
 		List<RfidTagDetectedNotification> newRfidTagEvents;
@@ -67,9 +67,7 @@ public class TrainMonitor implements TrainMonitorInterface {
 			
 			if((newGyroscopeMeasurements.size() == 0) &&
 					(newAccelerometerMeasurements.size() == 0) &&
-					(newRfidTagEvents.size() == 0)){
-				positionUpdateAvailable = true;
-				
+					(newRfidTagEvents.size() == 0)){				
 				//Wait if nothing is available
 				try{
 				    Thread.sleep(2000, 0);
@@ -77,6 +75,9 @@ public class TrainMonitor implements TrainMonitorInterface {
 				catch(Exception exception){
 					
 				}
+			}
+			else{
+				positionUpdateAvailable = true;
 			}
 			
 		}
@@ -115,7 +116,7 @@ public class TrainMonitor implements TrainMonitorInterface {
 			trainNavigationDatabase.save(notification);
 		}
 		
-		return  latestPositionUpdate.getValue();
+		return  latestPositionUpdate;
 	}
 
 	/**
