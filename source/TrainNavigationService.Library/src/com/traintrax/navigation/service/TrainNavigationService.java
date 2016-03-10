@@ -1,5 +1,9 @@
 package com.traintrax.navigation.service;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -20,6 +24,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 	private final TrainControllerInterface trainController;
 	private final PublisherInterface<TrainNavigationServiceEventSubscriber, TrainPositionUpdatedEvent> eventPublisher;
 	private static final int POLL_RATE_IN_MS = 10000;
+	private final Map<String, ValueUpdate<Coordinate>> trainPositionLut = new HashMap<>();
 
 	/**
 	 * Constructor
@@ -45,6 +50,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 				  ValueUpdate<Coordinate> positionUpdate = trainMonitor.getLastKnownPosition();
 				  TrainPositionUpdatedEvent updatedEvent = new TrainPositionUpdatedEvent(trainMonitor.getTrainId(), positionUpdate);
 				  
+				  trainPositionLut.put(updatedEvent.getTrainIdentifier(), updatedEvent.getPosition());
 				  eventPublisher.PublishEvent(updatedEvent);
 			  }
 			}, POLL_RATE_IN_MS, POLL_RATE_IN_MS);
@@ -84,6 +90,18 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 	 */
 	public void Unsubscribe(TrainNavigationServiceEventSubscriber subscriber){
 		eventPublisher.Unsubscribe(subscriber);
+	}
+
+	@Override
+	public ValueUpdate<Coordinate> GetLastKnownPosition(String trainIdentifier) {
+		return trainPositionLut.get(trainIdentifier);
+	}
+
+	@Override
+	public List<String> GetKnownTrainIdentifiers() {
+		List<String> knownTrainIdentifers = new LinkedList<String>(trainPositionLut.keySet());
+		
+		return knownTrainIdentifers;
 	}
 
 

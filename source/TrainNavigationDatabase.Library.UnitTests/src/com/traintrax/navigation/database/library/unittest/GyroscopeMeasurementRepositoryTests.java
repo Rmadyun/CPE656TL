@@ -1,5 +1,5 @@
 package com.traintrax.navigation.database.library.unittest;
-import static org.junit.Assert.assertEquals;
+import java.util.Calendar;
 
 import org.junit.*;
 
@@ -23,16 +23,17 @@ public class GyroscopeMeasurementRepositoryTests extends FilteredSearchRepositor
 	}
 	
 	GyroscopeMeasurement createNewEntry(){
-		GyroscopeMeasurement newGyroscopeMeasurement = new GyroscopeMeasurement();
+		GyroscopeMeasurement newGyroscopeMeasurement = new GyroscopeMeasurement(1,1,1,Calendar.getInstance());
 		
 		return newGyroscopeMeasurement;
 	}
 	
 	GyroscopeMeasurement createModifiedEntry(GyroscopeMeasurement originalEntry){
-		GyroscopeMeasurement updatedGyroscopeMeasurement = new GyroscopeMeasurement();
-		
-		//TODO: Modify value
-		
+		GyroscopeMeasurement updatedGyroscopeMeasurement = new GyroscopeMeasurement(originalEntry.getRadiansRotationPerSecondAlongXAxis()+1,
+				originalEntry.getRadiansRotationPerSecondAlongYAxis()+1,
+				originalEntry.getRadiansRotationPerSecondAlongZAxis()+1,
+				originalEntry.getTimeMeasured());
+				
 		return updatedGyroscopeMeasurement;
 	}
 	

@@ -1,6 +1,4 @@
 package com.traintrax.navigation.database.library.unittest;
-import static org.junit.Assert.assertEquals;
-
 import org.junit.*;
 
 import com.traintrax.navigation.database.library.FilteredSearchRepositoryInterface;
@@ -8,8 +6,6 @@ import com.traintrax.navigation.database.library.MySqlDatabaseAdapter;
 import com.traintrax.navigation.database.library.TrackPoint;
 import com.traintrax.navigation.database.library.TrackPointRepository;
 import com.traintrax.navigation.database.library.TrackPointSearchCriteria;
-import com.traintrax.navigation.database.library.TrainPosition;
-import com.traintrax.navigation.database.library.TrainPositionSearchCriteria;
 
 
 public class TrackPointRepositoryTests extends FilteredSearchRepositoryInterfaceTests<TrackPoint, TrackPointSearchCriteria> {

@@ -1,5 +1,9 @@
 package com.traintrax.navigation.service;
 
+import java.util.List;
+
+import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.ValueUpdate;
 import com.traintrax.navigation.service.trackswitch.SwitchState;
 
 /**
@@ -8,6 +12,19 @@ import com.traintrax.navigation.service.trackswitch.SwitchState;
  *
  */
 public interface TrainNavigationServiceInterface {
+	
+	/**
+	 * Retrieves the last known position of a given train
+	 * @param trainIdentifier Unique ID for the train that we want to have the position for.
+	 * @return the last known position of a given train.
+	 */
+	ValueUpdate<Coordinate> GetLastKnownPosition(String trainIdentifier);
+	
+	/**
+	 * Retrieves the unique ID associated with each train known by the service.
+	 * @return List of unique IDs. One for each train known by the service.
+	 */
+	List<String> GetKnownTrainIdentifiers();
 
     /**
      * Gets the current state of a given switch

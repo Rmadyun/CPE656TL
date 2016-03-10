@@ -1,7 +1,5 @@
 package com.traintrax.navigation.database.library;
 
-import java.util.List;
-
 /**
  * Generic interface for interacting with a repository of
  * data objects

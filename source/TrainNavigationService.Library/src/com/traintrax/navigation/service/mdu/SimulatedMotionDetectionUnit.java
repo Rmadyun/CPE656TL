@@ -1,33 +1,61 @@
 package com.traintrax.navigation.service.mdu;
 
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.traintrax.navigation.service.position.Acceleration;
+
 /**
- * Class facilitates communication with Motion Detection Unit
- * hardware
+ * Class facilitates simulates collaboration with a
+ * Motion Detection Unit
  * @author Corey Sanders
  *
  */
-public class MotionDetectionUnit implements MotionDetectionUnitInterface {
-	private final Queue<AccelerometerMeasurement> collectedAccelerometerMeasurements;
+public class SimulatedMotionDetectionUnit implements MotionDetectionUnitInterface {
+    private final Queue<AccelerometerMeasurement> collectedAccelerometerMeasurements;
     private final Queue<GyroscopeMeasurement> collectedGyroscopeMeasurements;
     private final Queue<RfidTagDetectedNotification> collectedRfidTagDetectionNotifications;
 
 	/**
 	 * Constructor
 	 */
-	public MotionDetectionUnit(){
+	public SimulatedMotionDetectionUnit(){
 		collectedAccelerometerMeasurements = new ConcurrentLinkedQueue<AccelerometerMeasurement>();
 		collectedGyroscopeMeasurements = new ConcurrentLinkedQueue<GyroscopeMeasurement>();
 		collectedRfidTagDetectionNotifications = new ConcurrentLinkedQueue<RfidTagDetectedNotification>();
-		
-		//TODO: Setup support to contact MDU
-		//TODO: Setup support to collect measurements
+	
+		generateSamples();
 	}
 	
+	/**
+	 * Creates new samples to be reported
+	 */
+	private void generateSamples(){
+
+		//Create sample data
+		Calendar baseTime = Calendar.getInstance();
+		collectedAccelerometerMeasurements.add(new AccelerometerMeasurement(new Acceleration(1.0,1.0,1.0), 0.0, baseTime));
+		
+		baseTime = (Calendar) baseTime.clone();
+		baseTime.add(Calendar.SECOND, 1);
+		collectedAccelerometerMeasurements.add(new AccelerometerMeasurement(new Acceleration(1.0,1.0,1.0), 0.0, baseTime));
+		
+		baseTime = (Calendar) baseTime.clone();
+		baseTime.add(Calendar.SECOND, 1);
+		collectedAccelerometerMeasurements.add(new AccelerometerMeasurement(new Acceleration(1.0,1.0,1.0), 0.0, baseTime));
+		
+		baseTime = (Calendar) baseTime.clone();
+		baseTime.add(Calendar.SECOND, 1);
+		collectedAccelerometerMeasurements.add(new AccelerometerMeasurement(new Acceleration(1.0,1.0,1.0), 0.0, baseTime));
+		
+		baseTime = (Calendar) baseTime.clone();
+		baseTime.add(Calendar.SECOND, 1);
+		collectedAccelerometerMeasurements.add(new AccelerometerMeasurement(new Acceleration(1.0,1.0,1.0), 0.0, baseTime));
+	}
+
 	/**
 	 * Read collected accelerometer measurements
 	 * @return Collected accelerometer measurements

@@ -3,8 +3,6 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-import org.junit.Test;
-
 import com.traintrax.navigation.database.library.FilteredSearchRepositoryInterface;
 import com.traintrax.navigation.database.library.RepositoryEntry;
 

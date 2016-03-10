@@ -1,5 +1,5 @@
 package com.traintrax.navigation.database.library.unittest;
-import static org.junit.Assert.assertEquals;
+import java.util.Calendar;
 
 import org.junit.*;
 
@@ -23,16 +23,18 @@ public class RfidTagDetectedNotificationRepositoryTests extends FilteredSearchRe
 	}
 	
 	RfidTagDetectedNotification createNewEntry(){
-		RfidTagDetectedNotification newRfidTagDetectedNotification = new RfidTagDetectedNotification();
+		RfidTagDetectedNotification newRfidTagDetectedNotification = new RfidTagDetectedNotification("RFIDTagID", Calendar.getInstance());
 		
 		return newRfidTagDetectedNotification;
 	}
 	
 	RfidTagDetectedNotification createModifiedEntry(RfidTagDetectedNotification originalEntry){
-		RfidTagDetectedNotification updatedRfidTagDetectedNotification = new RfidTagDetectedNotification();
+		Calendar time = (Calendar) originalEntry.getTimeDetected().clone();
+		time.add(Calendar.SECOND, 1);
 		
-		//TODO: Modify value
-		
+		RfidTagDetectedNotification updatedRfidTagDetectedNotification = new RfidTagDetectedNotification(originalEntry.getRfidTagValue(),
+				time);
+			
 		return updatedRfidTagDetectedNotification;
 	}
 	

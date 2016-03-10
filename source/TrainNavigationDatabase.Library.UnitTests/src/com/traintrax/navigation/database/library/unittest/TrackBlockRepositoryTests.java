@@ -1,10 +1,6 @@
 package com.traintrax.navigation.database.library.unittest;
-import static org.junit.Assert.assertEquals;
-
 import org.junit.*;
 
-import com.traintrax.navigation.database.library.AdjacentPoint;
-import com.traintrax.navigation.database.library.AdjacentPointSearchCriteria;
 import com.traintrax.navigation.database.library.FilteredSearchRepositoryInterface;
 import com.traintrax.navigation.database.library.MySqlDatabaseAdapter;
 import com.traintrax.navigation.database.library.TrackBlock;

@@ -1,5 +1,5 @@
 package com.traintrax.navigation.database.library.unittest;
-import static org.junit.Assert.assertEquals;
+import java.util.Calendar;
 
 import org.junit.*;
 
@@ -23,16 +23,16 @@ public class TrainPositionRepositoryTests extends FilteredSearchRepositoryInterf
 	}
 	
 	TrainPosition createNewEntry(){
-		TrainPosition newTrainPosition = new TrainPosition();
+		TrainPosition newTrainPosition = new TrainPosition("TrainId",0,0,0, Calendar.getInstance());
 		
 		return newTrainPosition;
 	}
 	
 	TrainPosition createModifiedEntry(TrainPosition originalEntry){
-		TrainPosition updatedTrainPosition = new TrainPosition();
-		
-		//TODO: Modify value
-		
+		TrainPosition updatedTrainPosition = new TrainPosition(originalEntry.getTrainId(),
+				originalEntry.getX()+1, originalEntry.getY()+1, originalEntry.getZ()+1,
+				originalEntry.getTimeAtPosition());
+				
 		return updatedTrainPosition;
 	}
 	

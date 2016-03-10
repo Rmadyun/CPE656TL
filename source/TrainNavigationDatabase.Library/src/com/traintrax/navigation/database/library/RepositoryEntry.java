@@ -60,8 +60,9 @@ public class RepositoryEntry<TData> {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof RepositoryEntry))
 			return false;
+		@SuppressWarnings("rawtypes")
 		RepositoryEntry other = (RepositoryEntry) obj;
 		if (id == null) {
 			if (other.id != null)
@@ -75,5 +76,7 @@ public class RepositoryEntry<TData> {
 			return false;
 		return true;
 	}
+
+	
 	
 }

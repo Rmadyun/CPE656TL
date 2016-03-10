@@ -1,5 +1,6 @@
 package com.traintrax.navigation.service;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import com.traintrax.navigation.service.mdu.AccelerometerMeasurement;
@@ -23,6 +24,7 @@ public class TrainMonitor implements TrainMonitorInterface {
 	private ValueUpdate<Coordinate> lastKnownTrainPosition;
 	private final InertialMotionPositionAlgorithmInterface positionAlgorithm;
 	private final MotionDetectionUnitInterface motionDetectionUnit;
+	private final TrainNavigationDatabaseInterface trainNavigationDatabase;
 	
 	/**
 	 * Constructor
@@ -33,14 +35,17 @@ public class TrainMonitor implements TrainMonitorInterface {
 	 * on inertial measurements from the the train.
 	 * @param motionDetectionUnit Contact to the Motion Detection Unit
 	 * mounted on the train of interest.
+	 * @param trainNavigationDatabase Contact to the Train Navigation Database
 	 */
 	public TrainMonitor(String trainId, InertialMotionPositionAlgorithmInterface positionAlgorithm,
-			MotionDetectionUnitInterface motionDetectionUnit) {
+			MotionDetectionUnitInterface motionDetectionUnit,
+			TrainNavigationDatabaseInterface trainNavigationDatabase) {
 
 		this.trainId = trainId;
 		lastKnownTrainPosition = positionAlgorithm.calculatePosition(null,  null, null);
 		this.positionAlgorithm = positionAlgorithm;
 		this.motionDetectionUnit = motionDetectionUnit;
+		this.trainNavigationDatabase = trainNavigationDatabase;
 	}
 
 	/**
@@ -77,9 +82,38 @@ public class TrainMonitor implements TrainMonitorInterface {
 		}
 		while(!positionUpdateAvailable);
 		
-		ValueUpdate<Coordinate> latestPositionUpdate = positionAlgorithm.calculatePosition(newGyroscopeMeasurements, newAccelerometerMeasurements, null);
+		List<ValueUpdate<Coordinate>> positionUpdates = new LinkedList<ValueUpdate<Coordinate>>();
+		
+		//Lookup RFID Tag position
+		for(RfidTagDetectedNotification notification : newRfidTagEvents){
+		
+			Coordinate tagPosition = trainNavigationDatabase.findTrackMarkerPosition(notification.getRfidTagValue());
+			
+			if(tagPosition != null){
+				ValueUpdate<Coordinate> positionUpdate = new ValueUpdate<>(tagPosition, notification.getTimeDetected());
+				
+				positionUpdates.add(positionUpdate);
+			}
+		}
+				
+		ValueUpdate<Coordinate> latestPositionUpdate = positionAlgorithm.calculatePosition(newGyroscopeMeasurements, newAccelerometerMeasurements, positionUpdates);
 		
 		this.lastKnownTrainPosition = latestPositionUpdate;
+		
+		//Save collected information
+		trainNavigationDatabase.save(new TrainPositionEstimate(latestPositionUpdate.getValue(), latestPositionUpdate.getTimeObserved(), trainId));
+		
+		for(GyroscopeMeasurement measurement : newGyroscopeMeasurements){
+			trainNavigationDatabase.save(measurement);
+		}
+		
+		for(AccelerometerMeasurement measurement : newAccelerometerMeasurements){
+			trainNavigationDatabase.save(measurement);
+		}
+		
+		for(RfidTagDetectedNotification notification : newRfidTagEvents){
+			trainNavigationDatabase.save(notification);
+		}
 		
 		return  latestPositionUpdate.getValue();
 	}

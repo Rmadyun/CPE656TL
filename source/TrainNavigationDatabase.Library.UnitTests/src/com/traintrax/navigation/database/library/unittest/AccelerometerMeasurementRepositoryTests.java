@@ -1,5 +1,5 @@
 package com.traintrax.navigation.database.library.unittest;
-import static org.junit.Assert.assertEquals;
+import java.util.Calendar;
 
 import org.junit.*;
 
@@ -23,15 +23,16 @@ public class AccelerometerMeasurementRepositoryTests extends FilteredSearchRepos
 	}
 	
 	AccelerometerMeasurement createNewEntry(){
-		AccelerometerMeasurement newAccelerometerMeasurement = new AccelerometerMeasurement();
+		AccelerometerMeasurement newAccelerometerMeasurement = new AccelerometerMeasurement(1,1,1, Calendar.getInstance());
 		
 		return newAccelerometerMeasurement;
 	}
 	
 	AccelerometerMeasurement createModifiedEntry(AccelerometerMeasurement originalEntry){
-		AccelerometerMeasurement updatedAccelerometerMeasurement = new AccelerometerMeasurement();
-		
-		//TODO: Modify value
+		AccelerometerMeasurement updatedAccelerometerMeasurement = new AccelerometerMeasurement(originalEntry.getMetersPerSecondSquaredAlongXAxis()+1,
+				originalEntry.getMetersPerSecondSquaredAlongYAxis()+1,
+				originalEntry.getMetersPerSecondSquaredAlongZAxis()+1,
+				originalEntry.getTimeMeasured());
 		
 		return updatedAccelerometerMeasurement;
 	}
