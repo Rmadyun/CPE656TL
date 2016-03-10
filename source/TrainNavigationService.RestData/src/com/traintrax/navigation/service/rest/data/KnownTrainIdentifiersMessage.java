@@ -22,7 +22,7 @@ public class KnownTrainIdentifiersMessage {
 	 * @param trainIdentifiers All of the IDs of trains known on the track
 	 */
 	public KnownTrainIdentifiersMessage(Collection<String> trainIdentifiers){
-		trainIdentifiers = new ArrayList<>(trainIdentifiers);
+		this.trainIdentifiers = new ArrayList<>(trainIdentifiers);
 	}
 	
 	/**
