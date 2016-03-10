@@ -75,7 +75,7 @@ public class Track {
     		
     		TrackBlockModel trackBlockModel = blockLut.get(trackPoint.getBlockId());
     		
-    		trackBlockModel.getPoints().add(vertex);
+    		trackBlockModel.getPoints().add(new TrackPointModel(trackPoint.getPointName(), trackPoint.getType(), vertex));
     	}
     	
     	//Associate vertices
@@ -109,7 +109,24 @@ public class Track {
     	
     	return track;
     }
-	
+    
+    /**
+     * Retrieves all of the known points on the track.
+     * @return List of all known points on the track.
+     */
+    public List<TrackPointModel> getAllPoints(){
+    	
+    	List<TrackPointModel> allPoints = new ArrayList<>();
+		
+		for(TrackBlockModel trackBlock : trackBlockModels){
+			
+			for(TrackPointModel trackPoint : trackBlock.getPoints()){
+				allPoints.add(trackPoint);
+			}
+		}
+		
+    	return allPoints;
+    }
 	
 	/**
 	 * Grabs a sequence of shapes that can be drawn to
@@ -124,7 +141,9 @@ public class Track {
 		
 		for(TrackBlockModel trackBlock : trackBlockModels){
 			
-			allVertices.addAll(trackBlock.getPoints());
+			for(TrackPointModel trackPoint : trackBlock.getPoints()){
+			    allVertices.add(trackPoint.getPosition());
+			}
 		}
 		
 		List<Edge> edges = Graph.CalculateEdges(allVertices);

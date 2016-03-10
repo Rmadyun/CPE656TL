@@ -1,11 +1,11 @@
 package com.traintrax.navigation.gui.models;
 import java.util.List;
 
-public class Cycle {
+public class Cycle<TVertex> {
 	
-	private List<Vertex> vertices;
+	private List<TVertex> vertices;
 
-	public Cycle(List<Vertex> vertices) {
+	public Cycle(List<TVertex> vertices) {
 		super();
 		this.vertices = vertices;
 	}
@@ -15,7 +15,7 @@ public class Cycle {
 	/**
 	 * @return the vertices
 	 */
-	public List<Vertex> getVertices() {
+	public List<TVertex> getVertices() {
 		return vertices;
 	}
 

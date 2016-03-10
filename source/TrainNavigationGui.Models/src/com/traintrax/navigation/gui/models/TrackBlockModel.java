@@ -10,16 +10,33 @@ import java.util.List;
  */
 public class TrackBlockModel {
 
-	private List<Vertex> points = new ArrayList<>();
-	private List<Vertex> boundaryPoints = new ArrayList<>();
+	private List<TrackPointModel> points = new ArrayList<>();
 	private List<TrackBlockModel> adjacentBlocks = new ArrayList<>();
 	private String blockName;
 	
-	public TrackBlockModel(String blockName){
+	/**
+	 * Constructor
+	 * @param blockName Human-friendly name for the track block.
+	 */
+	public TrackBlockModel(String blockName) {
+		super();
 		this.blockName = blockName;
 	}
-	
-	
+
+	/**
+	 * Constructor
+	 * @param points Points that belong to the track block
+	 * @param adjacentBlocks Blocks that are adjacent to the the track block
+	 * @param blockName Human-friendly name for the track block.
+	 */
+	public TrackBlockModel(List<TrackPointModel> points, List<TrackBlockModel> adjacentBlocks, String blockName) {
+		super();
+		this.points = points;
+		this.adjacentBlocks = adjacentBlocks;
+		this.blockName = blockName;
+	}
+
+
 	/**
 	 * @return the blockName
 	 */
@@ -27,11 +44,10 @@ public class TrackBlockModel {
 		return blockName;
 	}
 
-
 	/**
 	 * @return the points
 	 */
-	public List<Vertex> getPoints() {
+	public List<TrackPointModel> getPoints() {
 		return points;
 	}
 	/**
@@ -40,8 +56,5 @@ public class TrackBlockModel {
 	public List<TrackBlockModel> getAdjacentBlocks() {
 		return adjacentBlocks;
 	}
-	
-	
-	
-	
+
 }
