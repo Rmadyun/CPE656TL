@@ -1,4 +1,4 @@
-package com.traintrax.navigation.database.rest.service;
+package com.traintrax.navigation.service.rest.service;
 
 import com.traintrax.navigation.service.TrainNavigationService;
 import com.traintrax.navigation.service.TrainNavigationServiceInterface;

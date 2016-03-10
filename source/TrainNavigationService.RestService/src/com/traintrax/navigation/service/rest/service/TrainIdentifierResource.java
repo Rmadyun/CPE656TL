@@ -1,4 +1,4 @@
-package com.traintrax.navigation.database.rest.service;
+package com.traintrax.navigation.service.rest.service;
 import java.util.List;
 
 import org.restlet.data.Form;
@@ -8,8 +8,8 @@ import org.restlet.resource.Get;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 
-import com.traintrax.navigation.database.rest.data.KnownTrainIdentifiersMessage;
 import com.traintrax.navigation.service.TrainNavigationServiceInterface;
+import com.traintrax.navigation.service.rest.data.KnownTrainIdentifiersMessage;
 
 /**
  * Class is responsible for providing access to Track Point information

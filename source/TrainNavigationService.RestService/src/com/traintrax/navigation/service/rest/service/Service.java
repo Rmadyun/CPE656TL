@@ -1,4 +1,4 @@
-package com.traintrax.navigation.database.rest.service;
+package com.traintrax.navigation.service.rest.service;
 import org.restlet.Component;
 import org.restlet.data.Protocol;
 

@@ -1,4 +1,4 @@
-package com.traintrax.navigation.database.rest.data;
+package com.traintrax.navigation.service.rest.data;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;

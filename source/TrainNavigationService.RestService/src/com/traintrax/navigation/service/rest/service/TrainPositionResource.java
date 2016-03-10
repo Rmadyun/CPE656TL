@@ -1,4 +1,4 @@
-package com.traintrax.navigation.database.rest.service;
+package com.traintrax.navigation.service.rest.service;
 
 import org.restlet.data.Form;
 import org.restlet.ext.json.JsonRepresentation;
@@ -7,10 +7,10 @@ import org.restlet.resource.Get;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 
-import com.traintrax.navigation.database.rest.data.TrainPositionUpdateMessage;
 import com.traintrax.navigation.service.TrainNavigationServiceInterface;
 import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.ValueUpdate;
+import com.traintrax.navigation.service.rest.data.TrainPositionUpdateMessage;
 
 /**
  * Class is responsible for providing access to Track Point information
