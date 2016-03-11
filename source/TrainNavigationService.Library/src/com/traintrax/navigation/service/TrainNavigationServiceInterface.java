@@ -1,5 +1,6 @@
 package com.traintrax.navigation.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.traintrax.navigation.service.position.Coordinate;
@@ -18,27 +19,28 @@ public interface TrainNavigationServiceInterface {
 	 * @param trainIdentifier Unique ID for the train that we want to have the position for.
 	 * @return the last known position of a given train.
 	 */
-	ValueUpdate<Coordinate> GetLastKnownPosition(String trainIdentifier);
+	ValueUpdate<Coordinate> GetLastKnownPosition(String trainIdentifier)throws Exception;
 	
 	/**
 	 * Retrieves the unique ID associated with each train known by the service.
 	 * @return List of unique IDs. One for each train known by the service.
 	 */
-	List<String> GetKnownTrainIdentifiers();
+	List<String> GetKnownTrainIdentifiers()throws Exception;
 
     /**
      * Gets the current state of a given switch
      * @param switchIdentifier Unique identifier for the switch of interest
      * @return Current state of the switch requested
      */
-	SwitchState GetSwitchState(String switchIdentifier);
+	SwitchState GetSwitchState(String switchIdentifier)throws Exception;
 	
 	/**
 	 * Changes the state of a given switch
      * @param switchIdentifier Unique identifier for the switch of interest 
 	 * @param switchState State requested for the switch to change
+	 * @throws IOException 
 	 */
-	void SetSwitchState(String switchIdentifier, SwitchState switchState);
+	void SetSwitchState(String switchIdentifier, SwitchState switchState) throws Exception;
 	
 	/**
 	 * Subscribe a client to listen to events from the Train Navigation service.

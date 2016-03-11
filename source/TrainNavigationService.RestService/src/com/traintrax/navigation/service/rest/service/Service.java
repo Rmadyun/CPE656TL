@@ -24,6 +24,7 @@ public class Service {
 	    // Then attach it to the local host
 	    component.getDefaultHost().attach("/TrainPosition", TrainPositionResource.class);
 	    component.getDefaultHost().attach("/TrainIdentifiers", TrainIdentifierResource.class);
+	    component.getDefaultHost().attach("/TrackSwitchState", TrackSwitchStateResource.class);
 
 	    // Now, let's start the component!
 	    // Note that the HTTP server connector is also automatically started.

@@ -1,7 +1,7 @@
 package com.traintrax.navigation.service.rest.service;
+import java.util.LinkedList;
 import java.util.List;
 
-import org.restlet.data.Form;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.resource.Get;
@@ -10,6 +10,7 @@ import org.restlet.resource.ServerResource;
 
 import com.traintrax.navigation.service.TrainNavigationServiceInterface;
 import com.traintrax.navigation.service.rest.data.KnownTrainIdentifiersMessage;
+import com.traintrax.navigation.service.rest.data.TrainIdentifier;
 
 /**
  * Class is responsible for providing access to Track Point information
@@ -27,7 +28,17 @@ public class TrainIdentifierResource extends ServerResource {
 			//Grab the service
 		    TrainNavigationServiceInterface trainNavigationService = TrainNavigationServiceSingleton.getInstance();	
 		
-		    KnownTrainIdentifiersMessage response = new KnownTrainIdentifiersMessage(trainNavigationService.GetKnownTrainIdentifiers());
+		    List<String> trainIds = trainNavigationService.GetKnownTrainIdentifiers();
+		    
+		    List<TrainIdentifier> trainIdentifiers = new LinkedList<TrainIdentifier>();
+		    
+		    for(String trainId : trainIds){
+		    	TrainIdentifier trainIdentifier = new TrainIdentifier(trainId);
+		    	
+		    	trainIdentifiers.add(trainIdentifier);
+		    }
+		    
+		    KnownTrainIdentifiersMessage response = new KnownTrainIdentifiersMessage(trainIdentifiers);
 			
 			jsonRepresentation = new JsonRepresentation(response);
 			

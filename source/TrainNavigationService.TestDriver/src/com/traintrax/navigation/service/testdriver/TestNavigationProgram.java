@@ -12,9 +12,6 @@ import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.ValueUpdate;
 import com.traintrax.navigation.service.rotation.*;
 
-
-
-
 public class TestNavigationProgram {
 
 	private static void TestSampleRotation(){
@@ -252,7 +249,13 @@ public class TestNavigationProgram {
 	private static void ReadTrainPositionsFromTrainNavigationService(){
 TrainNavigationServiceInterface trainNavigationService = new TrainNavigationService();
 		
-		List<String> trains = trainNavigationService.GetKnownTrainIdentifiers();
+		List<String> trains = null;
+		try {
+			trains = trainNavigationService.GetKnownTrainIdentifiers();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		System.out.println("List of known Train Ids:");
 		
@@ -271,7 +274,13 @@ TrainNavigationServiceInterface trainNavigationService = new TrainNavigationServ
 			e.printStackTrace();
 		}
 		
-		ValueUpdate<Coordinate> trainPosition = trainNavigationService.GetLastKnownPosition(selectedTrain);
+		ValueUpdate<Coordinate> trainPosition = null;
+		try {
+			trainPosition = trainNavigationService.GetLastKnownPosition(selectedTrain);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		System.out.println(String.format("Current position of train %s: (%f, %f) at %s", selectedTrain, trainPosition.getValue().getX(),
 				trainPosition.getValue().getY(), trainPosition.getTimeObserved().getTime()));

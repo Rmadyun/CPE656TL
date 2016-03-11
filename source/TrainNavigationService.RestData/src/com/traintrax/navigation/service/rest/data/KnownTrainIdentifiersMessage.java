@@ -3,9 +3,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.traintrax.navigation.database.library.RepositoryEntry;
-import com.traintrax.navigation.database.library.TrackBlock;
 
 /**
  * Class represents matches to a track block repository search
@@ -14,14 +13,15 @@ import com.traintrax.navigation.database.library.TrackBlock;
  */
 public class KnownTrainIdentifiersMessage {
 	
-	@SerializedName("train_identifiers")
-	private List<String> trainIdentifiers;
+	@SerializedName("trainIdentifiers")
+	@Expose
+	private List<TrainIdentifier> trainIdentifiers;
 	
 	/**
 	 * Constructor
 	 * @param trainIdentifiers All of the IDs of trains known on the track
 	 */
-	public KnownTrainIdentifiersMessage(Collection<String> trainIdentifiers){
+	public KnownTrainIdentifiersMessage(Collection<TrainIdentifier> trainIdentifiers){
 		this.trainIdentifiers = new ArrayList<>(trainIdentifiers);
 	}
 	
@@ -29,7 +29,7 @@ public class KnownTrainIdentifiersMessage {
 	 * Retrieves all of the IDs of all of the known trains on the track.
 	 * @return All of the IDs of trains known on the track
 	 */
-	public List<String> getTrainIdentifiers(){
+	public List<TrainIdentifier> getTrainIdentifiers(){
 		return trainIdentifiers;
 	}
 

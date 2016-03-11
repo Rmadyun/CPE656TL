@@ -1,11 +1,6 @@
 package com.traintrax.navigation.service.rest.data;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-
 import com.google.gson.annotations.SerializedName;
-import com.traintrax.navigation.database.library.AdjacentPoint;
-import com.traintrax.navigation.database.library.RepositoryEntry;
 
 /**
  * Class represents a response from to a GetLastKnownPositionRequest
@@ -14,7 +9,7 @@ import com.traintrax.navigation.database.library.RepositoryEntry;
  */
 public class TrainPositionUpdateMessage {
 	
-	@SerializedName("train_id")
+	@SerializedName("trainId")
 	private String trainId;
 	
 	@SerializedName("x")
@@ -26,7 +21,7 @@ public class TrainPositionUpdateMessage {
 	@SerializedName("z")
 	private double z;
 	
-	@SerializedName("time_measured")
+	@SerializedName("timeMeasured")
 	private Calendar timeMeasured;
 
 	/**
