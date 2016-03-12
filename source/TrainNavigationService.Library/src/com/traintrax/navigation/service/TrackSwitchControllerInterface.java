@@ -8,7 +8,7 @@ import com.traintrax.navigation.service.trackswitch.SwitchState;
  * @author death
  *
  */
-public interface TrainControllerInterface {
+public interface TrackSwitchControllerInterface {
 
 	/**
 	 * Requests that a switches' state be changed.

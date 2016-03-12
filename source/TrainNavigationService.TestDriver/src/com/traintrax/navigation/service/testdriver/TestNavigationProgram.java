@@ -2,17 +2,153 @@ package com.traintrax.navigation.service.testdriver;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 
+import com.traintrax.navigation.database.library.AccelerometerMeasurementRepository;
+import com.traintrax.navigation.database.library.AccelerometerMeasurementSearchCriteria;
+import com.traintrax.navigation.database.library.FilteredSearchRepositoryInterface;
+import com.traintrax.navigation.database.library.GenericDatabaseInterface;
+import com.traintrax.navigation.database.library.GyroscopeMeasurementRepository;
+import com.traintrax.navigation.database.library.GyroscopeMeasurementSearchCriteria;
+import com.traintrax.navigation.database.library.MySqlDatabaseAdapter;
+import com.traintrax.navigation.database.library.RfidTagDetectedNotificationRepository;
+import com.traintrax.navigation.database.library.RfidTagDetectedNotificationSearchCriteria;
+import com.traintrax.navigation.database.library.TrackPoint;
+import com.traintrax.navigation.database.library.TrackPointRepository;
+import com.traintrax.navigation.database.library.TrackPointSearchCriteria;
+import com.traintrax.navigation.database.library.TrainPosition;
+import com.traintrax.navigation.database.library.TrainPositionRepository;
+import com.traintrax.navigation.database.library.TrainPositionSearchCriteria;
+import com.traintrax.navigation.service.TestTrackSwitchController;
+import com.traintrax.navigation.service.TrackSwitchController;
+import com.traintrax.navigation.service.TrackSwitchControllerInterface;
+import com.traintrax.navigation.service.TrainMonitor;
+import com.traintrax.navigation.service.TrainMonitorInterface;
+import com.traintrax.navigation.service.TrainNavigationDatabase;
+import com.traintrax.navigation.service.TrainNavigationDatabaseInterface;
 import com.traintrax.navigation.service.TrainNavigationService;
+import com.traintrax.navigation.service.TrainNavigationServiceEvent;
+import com.traintrax.navigation.service.TrainNavigationServiceEventNotifier;
+import com.traintrax.navigation.service.TrainNavigationServiceEventSubscriber;
 import com.traintrax.navigation.service.TrainNavigationServiceInterface;
+import com.traintrax.navigation.service.events.GenericPublisher;
+import com.traintrax.navigation.service.events.NotifierInterface;
+import com.traintrax.navigation.service.events.PublisherInterface;
 import com.traintrax.navigation.service.math.*;
 import com.traintrax.navigation.service.mdu.*;
 import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.ValueUpdate;
 import com.traintrax.navigation.service.rotation.*;
 
+import gnu.io.*;
+import jmri.jmrix.SerialPortAdapter;
+import jmri.jmrix.loconet.LnPacketizer;
+import jmri.jmrix.loconet.LnPortController;
+import jmri.jmrix.loconet.LnTurnout;
+import jmri.jmrix.loconet.locobuffer.LocoBufferAdapter;
+import jmri.jmrix.loconet.ms100.MS100Adapter;
+import jmri.jmrix.nce.usbdriver.UsbDriverAdapter;
+
 public class TestNavigationProgram {
+	
+	   /**
+     * @return    A HashSet containing the CommPortIdentifier for all serial ports that are not currently being used.
+     */
+    public static HashSet<CommPortIdentifier> getAvailableSerialPorts() {
+        HashSet<CommPortIdentifier> h = new HashSet<CommPortIdentifier>();
+        Enumeration thePorts = CommPortIdentifier.getPortIdentifiers();
+        while (thePorts.hasMoreElements()) {
+            CommPortIdentifier com = (CommPortIdentifier) thePorts.nextElement();
+            switch (com.getPortType()) {
+            case CommPortIdentifier.PORT_SERIAL:
+                try {
+                    CommPort thePort = com.open("CommUtil", 50);
+                    thePort.close();
+                    h.add(com);
+                } catch (PortInUseException e) {
+                    System.out.println("Port, "  + com.getName() + ", is in use.");
+                } catch (Exception e) {
+                    System.err.println("Failed to open port " +  com.getName());
+                    e.printStackTrace();
+                }
+            }
+        }
+        return h;
+    }
+    
+    private static void TestJmri(){
+    	String serialPort = "/dev/ttyUSB0";
+    	String prefix = "";
+    	int switchNumber = 43;
+    	
+    	//TODO: Figure out if LocoBuffer or MS100: (We are using a MS100 compatible device)
+    	
+    	LnPortController serialPortAdapter = new MS100Adapter();
+    	
+    	serialPortAdapter.openPort(serialPort, "Train Navigation Service");
+    	
+    	try {
+			serialPortAdapter.connect();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	LnPacketizer lnPacketizer = new LnPacketizer();
+    	
+    	lnPacketizer.connectPort(serialPortAdapter);
+    	
+    	LnTurnout lnTurnout = new LnTurnout(prefix, switchNumber, lnPacketizer);
+    	
+    	
+    }
+    
+    private static void TestMduMeasurementRead(){
+    	
+		String trainId = "1";
+		Coordinate currentPosition = new Coordinate(0,0,0);
+		EulerAngleRotation currentOrientation = new EulerAngleRotation(0,0,0);
+
+		MduCommunicationChannelInterface mduCommunicationChannel = new TestMduCommunicationChannel();
+		MduProtocolParserInterface mduProtocolParser = new MduProtocolParser();
+		MotionDetectionUnitInterface motionDetectionUnit = new MotionDetectionUnit(mduCommunicationChannel, mduProtocolParser);
+		
+		TrainNavigationDatabaseInterface trainNavigationDatabase;
+		GenericDatabaseInterface gdi = new MySqlDatabaseAdapter();
+		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> trackPointRepository = new TrackPointRepository(gdi);
+		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.AccelerometerMeasurement, AccelerometerMeasurementSearchCriteria> accelerometerMeasurementRepository = new AccelerometerMeasurementRepository();
+		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.RfidTagDetectedNotification, RfidTagDetectedNotificationSearchCriteria> rfidTagNotificationRepository = new RfidTagDetectedNotificationRepository();
+		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.GyroscopeMeasurement, GyroscopeMeasurementSearchCriteria> gyroscopeMeasurementRepository = new GyroscopeMeasurementRepository();
+		FilteredSearchRepositoryInterface<TrainPosition, TrainPositionSearchCriteria> trainPositionRepository = new TrainPositionRepository();
+		
+		trainNavigationDatabase = new TrainNavigationDatabase(trackPointRepository, accelerometerMeasurementRepository,
+				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository);
+		
+		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPositionAlgorithm(currentPosition, currentOrientation);
+		
+		TrainMonitorInterface trainMonitor = new TrainMonitor(trainId, positionAlgorithm, motionDetectionUnit, trainNavigationDatabase);
+		TrackSwitchControllerInterface trainController = null;
+/*		try {
+			trainController = new TrainController();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} */
+		
+		trainController = new TestTrackSwitchController();
+		
+		NotifierInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventNotifier = new TrainNavigationServiceEventNotifier();
+		
+		PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher = new GenericPublisher<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> (eventNotifier);
+
+    	TrainNavigationServiceInterface trainNavigationService = new TrainNavigationService(trainMonitor, trainController, eventPublisher);
+
+    	ReadTrainPositionsFromTrainNavigationService(trainNavigationService);
+    	
+    }
+    
 
 	private static void TestSampleRotation(){
 		List<GyroscopeMeasurement> measurements = new ArrayList<GyroscopeMeasurement>();
@@ -246,8 +382,7 @@ public class TestNavigationProgram {
 		}
 	}
 	
-	private static void ReadTrainPositionsFromTrainNavigationService(){
-TrainNavigationServiceInterface trainNavigationService = new TrainNavigationService();
+	private static void ReadTrainPositionsFromTrainNavigationService(TrainNavigationServiceInterface trainNavigationService){
 		
 		List<String> trains = null;
 		try {
@@ -268,7 +403,7 @@ TrainNavigationServiceInterface trainNavigationService = new TrainNavigationServ
 		
 		//Wait 2 seconds
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -292,8 +427,15 @@ TrainNavigationServiceInterface trainNavigationService = new TrainNavigationServ
 	 */
 	public static void main(String[] args) {
 		
-		ReadTrainPositionsFromTrainNavigationService();
+		//ReadTrainPositionsFromTrainNavigationService();
 		
+		/*HashSet<CommPortIdentifier> ports = getAvailableSerialPorts();
+		
+	    for(CommPortIdentifier p : ports){
+	    	System.out.println(p.getName());
+	    }*/
+		
+		TestMduMeasurementRead();
 	}
 
 }

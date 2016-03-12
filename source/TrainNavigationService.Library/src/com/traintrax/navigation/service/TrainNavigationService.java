@@ -41,25 +41,26 @@ import com.traintrax.navigation.service.trackswitch.SwitchState;
  *
  */
 public class TrainNavigationService implements TrainNavigationServiceInterface {
-	
+
+	private static final String DefaultTrainId = "1";
+	private static final Coordinate DefaultTrainPosition = new Coordinate(0,0,0);
+	private final List<String> trainIds = new LinkedList<String>();
 	private Timer timer = new Timer();
 	private final TrainMonitorInterface trainMonitor;
-	private final TrainControllerInterface trainController;
+	private final TrackSwitchControllerInterface trainController;
 	private final PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher;
 	private static final int POLL_RATE_IN_MS = 10000;
 	private final Map<String, ValueUpdate<Coordinate>> trainPositionLut = new HashMap<>();
 
 	/**
 	 * Default Constructor
+	 * @throws Exception Reports failure to configure the service to run.
 	 */
 	public TrainNavigationService(){
-		String trainId = "1";
+		String trainId = DefaultTrainId;
 		Coordinate currentPosition = new Coordinate(0,0,0);
 		EulerAngleRotation currentOrientation = new EulerAngleRotation(0,0,0);
-		
-		trainPositionLut.put(trainId, new ValueUpdate<Coordinate>(currentPosition, Calendar.getInstance()));
-		
-		
+
 		MotionDetectionUnitInterface motionDetectionUnit = new SimulatedMotionDetectionUnit();
 		
 		TrainNavigationDatabaseInterface trainNavigationDatabase;
@@ -76,7 +77,13 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPositionAlgorithm(currentPosition, currentOrientation);
 		
 		TrainMonitorInterface trainMonitor = new TrainMonitor(trainId, positionAlgorithm, motionDetectionUnit, trainNavigationDatabase);
-		TrainControllerInterface trainController = new TrainController();
+		TrackSwitchControllerInterface trainController = null;
+		try {
+			trainController = new TrackSwitchController();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		NotifierInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventNotifier = new TrainNavigationServiceEventNotifier();
 		
@@ -86,7 +93,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 		this.trainController = trainController;
 		this.eventPublisher = eventPublisher;
 	
-		setupTimer();
+		initialize(trainId, currentPosition, trainMonitor, trainController, eventPublisher);
 	}
 	
 	/**
@@ -94,11 +101,24 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 	 * @param trainMonitor Provides train position information
 	 * @param trainController Controls the train and track
 	 */
-	public TrainNavigationService(TrainMonitorInterface trainMonitor, TrainControllerInterface trainController, PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher){
+	public TrainNavigationService(TrainMonitorInterface trainMonitor, TrackSwitchControllerInterface trainController, PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher){
 		this.trainMonitor = trainMonitor;
 		this.trainController = trainController;
 		this.eventPublisher = eventPublisher;
 	
+		initialize("1", DefaultTrainPosition, trainMonitor, trainController, eventPublisher);
+	}
+	
+	/**
+	 * Completes initialization of the class.
+	 * @param trainMonitor Determines train position
+	 * @param trainController Controls switches
+	 * @param eventPublisher Notifiers subscribers of changes within the service or monitored trains
+	 */
+	private void initialize(String trainId, Coordinate currentPosition, TrainMonitorInterface trainMonitor, TrackSwitchControllerInterface trainController, PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher){
+
+		trainPositionLut.put(trainId, new ValueUpdate<Coordinate>(currentPosition, Calendar.getInstance()));
+		
 		setupTimer();
 	}
 	
