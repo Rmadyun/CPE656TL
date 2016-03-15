@@ -27,6 +27,7 @@ public class TrainPositionAlgorithm implements InertialMotionPositionAlgorithmIn
 	private ValueUpdate<EulerAngleRotation> lastKnownTrainOrientation;
 	private Coordinate initialTrainPosition;
 	private EulerAngleRotation initialTrainOrientation;
+	private boolean firstMeasurementReceived = false;
 
 	/**
 	 * Constructor NOTE: Assuming that the train is a rest at initialization.
@@ -45,8 +46,8 @@ public class TrainPositionAlgorithm implements InertialMotionPositionAlgorithmIn
 		this.initialTrainOrientation = initialTrainOrientation;
 		lastKnownTrainPosition = new ValueUpdate<Coordinate>(initialTrainPosition, currentTime);
 		lastKnownTrainOrientation = new ValueUpdate<EulerAngleRotation>(initialTrainOrientation, currentTime);
-		lastKnownTrainVelocity = null; //new ValueUpdate<Velocity>(new Velocity(0, 0, 0), currentTime);
-		lastKnownTrainAcceleration = null; //new ValueUpdate<Acceleration>(new Acceleration(0, 0, 0), currentTime);
+		lastKnownTrainVelocity = new ValueUpdate<Velocity>(new Velocity(0, 0, 0), currentTime);
+		lastKnownTrainAcceleration = new ValueUpdate<Acceleration>(new Acceleration(0, 0, 0), currentTime);
 	}
 
 	/**
@@ -96,21 +97,21 @@ public class TrainPositionAlgorithm implements InertialMotionPositionAlgorithmIn
 		ValueUpdate<Velocity> initialVelocity = lastKnownTrainVelocity;
 		ValueUpdate<Acceleration> lastProcessedAcceleration = lastKnownTrainAcceleration;
 		
-		if(lastProcessedAcceleration == null && accelerometerMeasurementsSinceLastUpdate!=null && accelerometerMeasurementsSinceLastUpdate.size() > 0){
-			AccelerometerMeasurement accelerometerMeasurement = accelerometerMeasurementsSinceLastUpdate.get(0);
-			Calendar currentTime = accelerometerMeasurement.getTimeMeasured();
-			lastProcessedAcceleration = new ValueUpdate<Acceleration>(accelerometerMeasurement.getAccelerationMeasurement(), accelerometerMeasurement.getTimeMeasured());
-			lastKnownTrainPosition = new ValueUpdate<Coordinate>(initialTrainPosition, currentTime);
-			lastKnownTrainOrientation = new ValueUpdate<EulerAngleRotation>(initialTrainOrientation, currentTime);
-			lastKnownTrainVelocity = new ValueUpdate<Velocity>(new Velocity(0, 0, 0), currentTime);
-		}
-		else if(lastProcessedAcceleration == null){
-			lastKnownTrainPosition = new ValueUpdate<Coordinate>(initialTrainPosition, Calendar.getInstance());
-		}
-
 		if (accelerometerMeasurementsSinceLastUpdate != null) {
 			List<AccelerometerMeasurement> testbedCoordinateFrameAccelerometerMeasurements = adjustOrientation(
 					accelerometerMeasurementsSinceLastUpdate, lastKnownTrainOrientation, orientationUpdates);
+			
+			if(!firstMeasurementReceived){
+				AccelerometerMeasurement accelerometerMeasurement = accelerometerMeasurementsSinceLastUpdate.get(0);
+				Calendar currentTime = accelerometerMeasurement.getTimeMeasured();
+				lastProcessedAcceleration = new ValueUpdate<Acceleration>(accelerometerMeasurement.getAccelerationMeasurement(), accelerometerMeasurement.getTimeMeasured());
+				lastKnownTrainPosition = new ValueUpdate<Coordinate>(initialTrainPosition, currentTime);
+				lastKnownTrainOrientation = new ValueUpdate<EulerAngleRotation>(initialTrainOrientation, currentTime);
+				lastKnownTrainVelocity = new ValueUpdate<Velocity>(new Velocity(0, 0, 0), currentTime);
+				
+				firstMeasurementReceived = true;
+			}
+
 			for (AccelerometerMeasurement measurement : testbedCoordinateFrameAccelerometerMeasurements) {
 
 				// Calculate velocity

@@ -9,7 +9,7 @@ import jmri.jmrix.loconet.LnPacketizer;
 import jmri.jmrix.loconet.LnPortController;
 import jmri.jmrix.loconet.LnTurnout;
 import jmri.jmrix.loconet.LocoNetInterface;
-import jmri.jmrix.loconet.ms100.MS100Adapter;
+import jmri.jmrix.loconet.pr3.PR3Adapter;
 
 /**
  * Class facilitates communication with switch controllers
@@ -59,7 +59,7 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
     	//Assumes we are using a MS100 compatible device, not a 
 		//LocoBuffer
     	
-    	LnPortController serialPortAdapter = new MS100Adapter();
+    	LnPortController serialPortAdapter = new PR3Adapter();
     	
     	serialPortAdapter.openPort(serialPort, ApplicationName);
 	    serialPortAdapter.connect();

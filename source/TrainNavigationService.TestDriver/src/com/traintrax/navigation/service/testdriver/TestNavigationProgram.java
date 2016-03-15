@@ -41,15 +41,9 @@ import com.traintrax.navigation.service.mdu.*;
 import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.ValueUpdate;
 import com.traintrax.navigation.service.rotation.*;
+import com.traintrax.navigation.service.trackswitch.SwitchState;
 
 import gnu.io.*;
-import jmri.jmrix.SerialPortAdapter;
-import jmri.jmrix.loconet.LnPacketizer;
-import jmri.jmrix.loconet.LnPortController;
-import jmri.jmrix.loconet.LnTurnout;
-import jmri.jmrix.loconet.locobuffer.LocoBufferAdapter;
-import jmri.jmrix.loconet.ms100.MS100Adapter;
-import jmri.jmrix.nce.usbdriver.UsbDriverAdapter;
 
 public class TestNavigationProgram {
 	
@@ -83,26 +77,18 @@ public class TestNavigationProgram {
     	String prefix = "";
     	int switchNumber = 43;
     	
-    	//TODO: Figure out if LocoBuffer or MS100: (We are using a MS100 compatible device)
+    	TrainNavigationServiceInterface trainNavigationServiceInterface = null;
     	
-    	LnPortController serialPortAdapter = new MS100Adapter();
-    	
-    	serialPortAdapter.openPort(serialPort, "Train Navigation Service");
+    	trainNavigationServiceInterface = new TrainNavigationService();
     	
     	try {
-			serialPortAdapter.connect();
+			trainNavigationServiceInterface.SetSwitchState("SW43", SwitchState.ByPass);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	
-    	LnPacketizer lnPacketizer = new LnPacketizer();
-    	
-    	lnPacketizer.connectPort(serialPortAdapter);
-    	
-    	LnTurnout lnTurnout = new LnTurnout(prefix, switchNumber, lnPacketizer);
-    	
-    	
+    		
     }
     
     private static void TestMduMeasurementRead(){
@@ -435,7 +421,9 @@ public class TestNavigationProgram {
 	    	System.out.println(p.getName());
 	    }*/
 		
-		TestMduMeasurementRead();
+		TestJmri();
+		
+		//TestMduMeasurementRead();
 	}
 
 }
