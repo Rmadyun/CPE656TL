@@ -9,7 +9,7 @@ import java.util.Calendar;
  *
  * @param <TValue> Type of value being monitored.
  */
-public class ValueUpdate<TValue> {
+public class ValueUpdate<TValue> implements Comparable<ValueUpdate<TValue>> {
 	
 	private TValue value;
 	private Calendar timeObserved;
@@ -77,4 +77,9 @@ public class ValueUpdate<TValue> {
 		return true;
 	}
 	
+	@Override
+	public int compareTo(ValueUpdate<TValue> otherMeasurement) {
+		
+	    return Long.compare(this.timeObserved.getTimeInMillis(), otherMeasurement.timeObserved.getTimeInMillis());
+	}
 }
