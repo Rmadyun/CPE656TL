@@ -86,7 +86,7 @@ public class TrainPositionAlgorithmTests {
 		double tolerance = 0.05;
 		EulerAngleRotation initialOrientation = new EulerAngleRotation(0, 0, 0);
 		Coordinate initialPosition = new Coordinate(0, 0, 0); // Assuming starting from origin.
-		InertialMotionPositionAlgorithmInterface uut = new TrainPositionAlgorithm(initialPosition, initialOrientation);
+		InertialMotionPositionAlgorithmInterface uut = new TrainPosition2DAlgorithm(initialPosition, initialOrientation);
 		Calendar startTime = Calendar.getInstance();
 		int numberOfSeconds = 10;
 		List<AccelerometerMeasurement> accelerometerMeasurements = generateAccelerometerMeasurements(startTime, numberOfSeconds);

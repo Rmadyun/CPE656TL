@@ -112,7 +112,7 @@ public class TestNavigationProgram {
 		trainNavigationDatabase = new TrainNavigationDatabase(trackPointRepository, accelerometerMeasurementRepository,
 				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository);
 		
-		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPositionAlgorithm(currentPosition, currentOrientation);
+		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(currentPosition, currentOrientation);
 		
 		TrainMonitorInterface trainMonitor = new TrainMonitor(trainId, positionAlgorithm, motionDetectionUnit, trainNavigationDatabase);
 		TrackSwitchControllerInterface trainController = null;

@@ -29,7 +29,7 @@ import com.traintrax.navigation.service.events.PublisherInterface;
 import com.traintrax.navigation.service.mdu.InertialMotionPositionAlgorithmInterface;
 import com.traintrax.navigation.service.mdu.MotionDetectionUnitInterface;
 import com.traintrax.navigation.service.mdu.SimulatedMotionDetectionUnit;
-import com.traintrax.navigation.service.mdu.TrainPositionAlgorithm;
+import com.traintrax.navigation.service.mdu.TrainPosition2DAlgorithm;
 import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.ValueUpdate;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
@@ -74,7 +74,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 		trainNavigationDatabase = new TrainNavigationDatabase(trackPointRepository, accelerometerMeasurementRepository,
 				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository);
 		
-		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPositionAlgorithm(currentPosition, currentOrientation);
+		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(currentPosition, currentOrientation);
 		
 		TrainMonitorInterface trainMonitor = new TrainMonitor(trainId, positionAlgorithm, motionDetectionUnit, trainNavigationDatabase);
 		TrackSwitchControllerInterface trainController = null;
