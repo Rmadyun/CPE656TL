@@ -6,8 +6,15 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.traintrax.navigation.service.Tuple;
 import com.traintrax.navigation.service.position.Acceleration;
+import com.traintrax.navigation.service.position.AccelerometerCalibrationFilter;
 import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.GyroscopeCalibrationFilter;
+import com.traintrax.navigation.service.position.ImuPositionResults;
+import com.traintrax.navigation.service.position.ImuState;
+import com.traintrax.navigation.service.position.RfidTagPositionResults;
+import com.traintrax.navigation.service.position.ThresholdFilter;
 import com.traintrax.navigation.service.position.ValueUpdate;
 import com.traintrax.navigation.service.position.Velocity;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
@@ -20,21 +27,30 @@ import com.traintrax.navigation.service.rotation.EulerAngleRotation;
  * 
  */
 public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithmInterface {
-	
+
 	/**
-	 * Constant to use to correct acceleration measurements to account for the amount of
-	 * force necessary to offset kinetic friction of a moving vehicle.
+	 * Constant to use to correct acceleration measurements to account for the
+	 * amount of force necessary to offset kinetic friction of a moving vehicle.
 	 */
-	
-	//Assuming that train is initially at rest at the start of time.
-	private static final double kineticFrictionOffset = 0.35;
-	
+
+	// Assuming that train is initially at rest at the start of time.
+	private static final double kineticFrictionOffset = 0.00; //0.35
+
 	private final ThresholdFilter thresholdFilter = new ThresholdFilter(kineticFrictionOffset, 0);
+	private final AccelerometerCalibrationFilter accCalibrationFilter = new AccelerometerCalibrationFilter();
+	private final GyroscopeCalibrationFilter gyrCalibrationFilter = new GyroscopeCalibrationFilter();
 
 	private ValueUpdate<Coordinate> lastKnownTrainPosition;
 	private ValueUpdate<Velocity> lastKnownTrainVelocity;
 	private ValueUpdate<Acceleration> lastKnownTrainAcceleration;
 	private ValueUpdate<EulerAngleRotation> lastKnownTrainOrientation;
+
+	private ImuCalibrator imuCalibrator = new ImuCalibrator();
+
+	private RfidTagPositionResults lastRfidTagPositionResults = null;
+
+	// TODO: Incorporate Last IMU Position Results
+	private ImuPositionResults lastImuPositionResults = null;
 
 	/**
 	 * Constructor NOTE: Assuming that the train is a rest at initialization.
@@ -53,6 +69,14 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 		lastKnownTrainOrientation = new ValueUpdate<EulerAngleRotation>(initialTrainOrientation, currentTime);
 		lastKnownTrainVelocity = new ValueUpdate<Velocity>(new Velocity(0, 0, 0), currentTime);
 		lastKnownTrainAcceleration = new ValueUpdate<Acceleration>(new Acceleration(0, 0, 0), currentTime);
+
+		// Creating a fake measurement to initiate position calculations
+		lastRfidTagPositionResults = new RfidTagPositionResults();
+
+		lastRfidTagPositionResults.setLastKnownTrainOrientation(lastKnownTrainOrientation);
+		lastRfidTagPositionResults.setLastKnownTrainVelocity(lastKnownTrainVelocity);
+		lastRfidTagPositionResults.setLastKnownTrainPosition(lastKnownTrainPosition);
+
 	}
 
 	/**
@@ -70,304 +94,290 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 			List<AccelerometerMeasurement> accelerometerMeasurementsSinceLastUpdate,
 			List<ValueUpdate<Coordinate>> rfidTagDetectedLocations) {
 
-		//Sort gyroscope measurements in increasing order by time
-		if(gyroscopeMeasurementsSinceLastUpdate != null)
-		{
-		    Collections.sort(gyroscopeMeasurementsSinceLastUpdate);
+		// Sort gyroscope measurements in increasing order by time
+		if (gyroscopeMeasurementsSinceLastUpdate != null) {
+			Collections.sort(gyroscopeMeasurementsSinceLastUpdate);
 		}
-		
-		//Sort accelerometer measurements in increasing order by time
-		if(accelerometerMeasurementsSinceLastUpdate != null)
-		{
-		   Collections.sort(accelerometerMeasurementsSinceLastUpdate);
+
+		// Sort accelerometer measurements in increasing order by time
+		if (accelerometerMeasurementsSinceLastUpdate != null) {
+			Collections.sort(accelerometerMeasurementsSinceLastUpdate);
 		}
-		
-		// TODO: Filter gyroscope values
-		// TODO: Filter accelerometer values
-		
+
+		if (imuCalibrator.isCalibrationComplete()) {
+			// Filtering
+			for (int i = 0; i < gyroscopeMeasurementsSinceLastUpdate.size(); i++) {
+
+				// retrieve original value
+				GyroscopeMeasurement gyroscopeMeasurement = gyroscopeMeasurementsSinceLastUpdate.get(i);
+
+				// filter value
+				gyroscopeMeasurement = gyrCalibrationFilter.filter(gyroscopeMeasurement);
+
+				// replace with filtered value
+				gyroscopeMeasurementsSinceLastUpdate.set(i, gyroscopeMeasurement);
+			}
+
+			for (int i = 0; i < accelerometerMeasurementsSinceLastUpdate.size(); i++) {
+
+				// retrieve original value
+				AccelerometerMeasurement accelerometerMeasurement = accelerometerMeasurementsSinceLastUpdate.get(i);
+
+				// filter value
+				accelerometerMeasurement = accCalibrationFilter.filter(accelerometerMeasurement);
+
+				// replace with filtered value
+				accelerometerMeasurementsSinceLastUpdate.set(i, accelerometerMeasurement);
+			}
+		} else {
+			// Calibration
+			for (GyroscopeMeasurement m : gyroscopeMeasurementsSinceLastUpdate) {
+				imuCalibrator.addMeasurement(m);
+			}
+
+			for (AccelerometerMeasurement m : accelerometerMeasurementsSinceLastUpdate) {
+				imuCalibrator.addMeasurement(m);
+			}
+
+			if (imuCalibrator.isCalibrationComplete()) {
+				// Assign calibration values
+				accCalibrationFilter.setXOffset(imuCalibrator.getAccXOffset());
+				accCalibrationFilter.setYOffset(imuCalibrator.getAccYOffset());
+				accCalibrationFilter.setZOffset(imuCalibrator.getAccZOffset());
+				gyrCalibrationFilter.setXOffset(imuCalibrator.getGyrXOffset());
+				gyrCalibrationFilter.setYOffset(imuCalibrator.getGyrYOffset());
+				gyrCalibrationFilter.setZOffset(imuCalibrator.getGyrZOffset());
+			}
+		}
+
 		ValueUpdate<Coordinate> startPosition = lastKnownTrainPosition;
 		ValueUpdate<Coordinate> endPosition = lastKnownTrainPosition;
 
-		if(rfidTagDetectedLocations.size() > 0){
+		if (rfidTagDetectedLocations.size() > 0) {
 			int lastIndex = rfidTagDetectedLocations.size() - 1;
-			
-			if(lastIndex == 0){
+
+			if (lastIndex == 0) {
+				startPosition = this.lastRfidTagPositionResults.getLastKnownTrainPosition();
+				endPosition = rfidTagDetectedLocations.get(lastIndex);
+			} else {
+				startPosition = rfidTagDetectedLocations.get(lastIndex - 1);
 				endPosition = rfidTagDetectedLocations.get(lastIndex);
 			}
-			else{
-				startPosition = rfidTagDetectedLocations.get(lastIndex-1);
-				endPosition = rfidTagDetectedLocations.get(lastIndex);
-			}
-			
-			//Use RFID Tag Plus IMU
-			RfidTagPositionResults rfidTagPositionResults = calculationPositionFromRfidTagUpdates(startPosition, endPosition);
+
+			// Use RFID Tag Plus IMU
+			RfidTagPositionResults rfidTagPositionResults = calculationPositionFromRfidTagUpdates(startPosition,
+					endPosition);
 			ImuPositionResults imuPositionResults = null;
+
+			// Update the last RFID Tag position results
+			lastRfidTagPositionResults = rfidTagPositionResults;
+
+			if (imuCalibrator.isCalibrationComplete() && (accelerometerMeasurementsSinceLastUpdate.size() > 0)) {
+				// Include IMU measurements
+
+				List<GyroscopeMeasurement> postRfidTagGyroscopeMeasurements;
+
+				if (gyroscopeMeasurementsSinceLastUpdate.size() > 0) {
+					postRfidTagGyroscopeMeasurements = selectGyroscopeMeasurementsByTime(
+							gyroscopeMeasurementsSinceLastUpdate, endPosition.getTimeObserved(),
+							gyroscopeMeasurementsSinceLastUpdate.get(gyroscopeMeasurementsSinceLastUpdate.size() - 1)
+									.getTimeMeasured());
+				} else {
+					postRfidTagGyroscopeMeasurements = new LinkedList<GyroscopeMeasurement>();
+				}
+
+				List<AccelerometerMeasurement> postRfidTagAccelerometerMeasurements = selectAccelerometerMeasurementsByTime(
+						accelerometerMeasurementsSinceLastUpdate, endPosition.getTimeObserved(),
+						accelerometerMeasurementsSinceLastUpdate
+								.get(accelerometerMeasurementsSinceLastUpdate.size() - 1).getTimeMeasured());
+
+				imuPositionResults = calculatePositionFromImu(rfidTagPositionResults.getLastKnownTrainPosition(),
+						rfidTagPositionResults.getLastKnownTrainOrientation(), rfidTagPositionResults.getLastKnownTrainVelocity(),
+						lastKnownTrainAcceleration, postRfidTagGyroscopeMeasurements,
+						postRfidTagAccelerometerMeasurements);
+
+				// Save calculated values for future calculations
+
+				lastKnownTrainPosition = imuPositionResults.getLastKnownTrainPosition();
+				lastKnownTrainOrientation = imuPositionResults.getLastKnownTrainOrientation();
+				lastKnownTrainVelocity = imuPositionResults.getLastKnownTrainVelocity();
+				lastKnownTrainAcceleration = imuPositionResults.getLastKnownTrainAcceleration();
+
+				lastImuPositionResults = imuPositionResults;
+
+			} else {
+				// Use RFID tag measurements only
+
+				if (!lastKnownTrainPosition.getValue()
+						.equals(rfidTagPositionResults.getLastKnownTrainPosition().getValue())) {
+
+					// Save calculated values for future calculations
+					lastKnownTrainPosition = rfidTagPositionResults.getLastKnownTrainPosition();
+					lastKnownTrainOrientation =
+					 rfidTagPositionResults.getLastKnownTrainOrientation();
+					lastKnownTrainVelocity = rfidTagPositionResults.getLastKnownTrainVelocity();
+					
+					/*//Calculated velocity based on the last calculated train velocity
+					ValueUpdate<Velocity> rfidTagVelocityUpdate = rfidTagPositionResults.getLastKnownTrainVelocity();
+					double speed = Math.sqrt((rfidTagVelocityUpdate.getValue().getMetersPerSecondAlongXAxis()*rfidTagVelocityUpdate.getValue().getMetersPerSecondAlongXAxis())
+							+ (rfidTagVelocityUpdate.getValue().getMetersPerSecondAlongYAxis()*rfidTagVelocityUpdate.getValue().getMetersPerSecondAlongYAxis()));
+					
+					double velocityX = Math.cos(lastKnownTrainOrientation.getValue().getRadiansRotationAlongZAxis())*speed;
+					double velocityY = Math.sin(lastKnownTrainOrientation.getValue().getRadiansRotationAlongZAxis())*speed;
+					
+					lastKnownTrainVelocity = new ValueUpdate<Velocity>(new Velocity(velocityX, velocityY, 0), rfidTagVelocityUpdate.getTimeObserved()); */
+				}
+			}
+
+		} else if (imuCalibrator.isCalibrationComplete()) {
+			// Use IMU data Only
+			ImuPositionResults imuPositionResults = calculatePositionFromImu(lastKnownTrainPosition,
+					lastKnownTrainOrientation, lastKnownTrainVelocity, lastKnownTrainAcceleration,
+					gyroscopeMeasurementsSinceLastUpdate, accelerometerMeasurementsSinceLastUpdate);
+
+			// Save calculated values for future calculations
+			lastKnownTrainPosition = imuPositionResults.getLastKnownTrainPosition();
+			lastKnownTrainOrientation = imuPositionResults.getLastKnownTrainOrientation();
+			lastKnownTrainVelocity = imuPositionResults.getLastKnownTrainVelocity();
+			lastKnownTrainAcceleration = imuPositionResults.getLastKnownTrainAcceleration();
+
+			lastImuPositionResults = imuPositionResults;
+		}
+		else{ //imuCalibration is NOT complete
 			
 			if(accelerometerMeasurementsSinceLastUpdate.size() > 0)
 			{
-				//Include IMU measurements
+				Calendar newTimestamp = accelerometerMeasurementsSinceLastUpdate.get(accelerometerMeasurementsSinceLastUpdate.size() - 1).getTimeMeasured();
 				
-			    List<GyroscopeMeasurement> postRfidTagGyroscopeMeasurements;
-			    
-			    if(gyroscopeMeasurementsSinceLastUpdate.size() > 0){
-			    	postRfidTagGyroscopeMeasurements = selectGyroscopeMeasurementsByTime(gyroscopeMeasurementsSinceLastUpdate, 
-			    			endPosition.getTimeObserved(), 
-			    			gyroscopeMeasurementsSinceLastUpdate.get(gyroscopeMeasurementsSinceLastUpdate.size() - 1).getTimeMeasured());
-			    }
-			    else{
-			    	postRfidTagGyroscopeMeasurements = new LinkedList<GyroscopeMeasurement>();
-			    }
-			    
-			    List<AccelerometerMeasurement> postRfidTagAccelerometerMeasurements = selectAccelerometerMeasurementsByTime(accelerometerMeasurementsSinceLastUpdate, 
-			    		endPosition.getTimeObserved(), 
-			    		accelerometerMeasurementsSinceLastUpdate.get(accelerometerMeasurementsSinceLastUpdate.size() - 1).getTimeMeasured());
-
-			    imuPositionResults = calculatePositionFromImu(rfidTagPositionResults.lastKnownTrainPosition, rfidTagPositionResults.lastKnownTrainOrientation, rfidTagPositionResults.lastKnownTrainVelocity, lastKnownTrainAcceleration, postRfidTagGyroscopeMeasurements, postRfidTagAccelerometerMeasurements);
-
-				//Save calculated values for future calculations
-				lastKnownTrainPosition = imuPositionResults.lastKnownTrainPosition;
-				lastKnownTrainOrientation = imuPositionResults.lastKnownTrainOrientation;
-				lastKnownTrainVelocity = imuPositionResults.lastKnownTrainVelocity;
-				lastKnownTrainAcceleration = imuPositionResults.lastKnownTrainAcceleration;
-			    
+				//Replacing timestamp otherwise assuming that train is at rest since calibration is still in progress
+				lastKnownTrainPosition = new ValueUpdate<Coordinate>(lastKnownTrainPosition.getValue(), newTimestamp);
+				lastKnownTrainOrientation = new ValueUpdate<EulerAngleRotation>(lastKnownTrainOrientation.getValue(), newTimestamp);
+				lastKnownTrainVelocity = new ValueUpdate<Velocity>(lastKnownTrainVelocity.getValue(), newTimestamp);
+				lastKnownTrainAcceleration = new ValueUpdate<Acceleration>(lastKnownTrainAcceleration.getValue(), newTimestamp);
 			}
-			else{
-				//Use RFID tag measurements only
+		}
 
-				//Save calculated values for future calculations
-				lastKnownTrainPosition = rfidTagPositionResults.lastKnownTrainPosition;
-				lastKnownTrainOrientation = rfidTagPositionResults.lastKnownTrainOrientation;
-				lastKnownTrainVelocity = rfidTagPositionResults.lastKnownTrainVelocity;
-			}
-			
-		}
-		else{
-			//Use IMU data Only
-			ImuPositionResults imuPositionResults = calculatePositionFromImu(lastKnownTrainPosition, lastKnownTrainOrientation, lastKnownTrainVelocity, lastKnownTrainAcceleration, gyroscopeMeasurementsSinceLastUpdate, accelerometerMeasurementsSinceLastUpdate);
-			
-			//Save calculated values for future calculations
-			lastKnownTrainPosition = imuPositionResults.lastKnownTrainPosition;
-			lastKnownTrainOrientation = imuPositionResults.lastKnownTrainOrientation;
-			lastKnownTrainVelocity = imuPositionResults.lastKnownTrainVelocity;
-			lastKnownTrainAcceleration = imuPositionResults.lastKnownTrainAcceleration;
-		}
+		System.out.println(String.format("orientation: %f rads\n",
+				lastKnownTrainOrientation.getValue().getRadiansRotationAlongZAxis()));
 
 		return lastKnownTrainPosition;
 	}
-	
-	/**
-	 * Class describes information about the last 
-	 * estimate of position calculated from RFID tag input alone.
-	 * @author Corey Sanders
-	 *
-	 */
-	private class RfidTagPositionResults{
-		private ValueUpdate<Coordinate> lastKnownTrainPosition;
-		private ValueUpdate<Velocity> lastKnownTrainVelocity;
-		private ValueUpdate<EulerAngleRotation> lastKnownTrainOrientation;
-		
-		/**
-		 * @return the lastKnownTrainPosition
-		 */
-		public ValueUpdate<Coordinate> getLastKnownTrainPosition() {
-			return lastKnownTrainPosition;
-		}
-		/**
-		 * @param lastKnownTrainPosition the lastKnownTrainPosition to set
-		 */
-		public void setLastKnownTrainPosition(ValueUpdate<Coordinate> lastKnownTrainPosition) {
-			this.lastKnownTrainPosition = lastKnownTrainPosition;
-		}
-		/**
-		 * @return the lastKnownTrainVelocity
-		 */
-		public ValueUpdate<Velocity> getLastKnownTrainVelocity() {
-			return lastKnownTrainVelocity;
-		}
-		/**
-		 * @param lastKnownTrainVelocity the lastKnownTrainVelocity to set
-		 */
-		public void setLastKnownTrainVelocity(ValueUpdate<Velocity> lastKnownTrainVelocity) {
-			this.lastKnownTrainVelocity = lastKnownTrainVelocity;
-		}
-		
-		/**
-		 * @return the lastKnownTrainOrientation
-		 */
-		public ValueUpdate<EulerAngleRotation> getLastKnownTrainOrientation() {
-			return lastKnownTrainOrientation;
-		}
-		/**
-		 * @param lastKnownTrainOrientation the lastKnownTrainOrientation to set
-		 */
-		public void setLastKnownTrainOrientation(ValueUpdate<EulerAngleRotation> lastKnownTrainOrientation) {
-			this.lastKnownTrainOrientation = lastKnownTrainOrientation;
-		}
-	}
-	
+
 	/**
 	 * Determines the current position of the train from RFID tag measurements
-	 * This implementation is assuming a 2-dimensional train track where the
-	 * NED frame is used, but there are not any elevation changes on the track (i.e. the track is flat)
-	 * and on a level-table so that gravity is only acting on the Z-axis.
-	 * @param initialPosition Initial position of the train
-	 * @param finalPosition Final position of the train
+	 * This implementation is assuming a 2-dimensional train track where the NED
+	 * frame is used, but there are not any elevation changes on the track (i.e.
+	 * the track is flat) and on a level-table so that gravity is only acting on
+	 * the Z-axis.
+	 * 
+	 * @param initialPosition
+	 *            Initial position of the train
+	 * @param finalPosition
+	 *            Final position of the train
 	 * @return Detailed information about the position of the train
 	 */
-	private RfidTagPositionResults calculationPositionFromRfidTagUpdates(ValueUpdate<Coordinate> initialPosition, 
-			ValueUpdate<Coordinate> finalPosition){
-		
+	private RfidTagPositionResults calculationPositionFromRfidTagUpdates(ValueUpdate<Coordinate> initialPosition,
+			ValueUpdate<Coordinate> finalPosition) {
+
 		RfidTagPositionResults rfidTagPositionResults = new RfidTagPositionResults();
-		
-        double dx = finalPosition.getValue().getX() - initialPosition.getValue().getX();
-        double dy = finalPosition.getValue().getY() - initialPosition.getValue().getY();
-        double distance = Math.sqrt(dx*dx + dy*dy);
+
+		double dx = finalPosition.getValue().getX() - initialPosition.getValue().getX();
+		double dy = finalPosition.getValue().getY() - initialPosition.getValue().getY();
+		double distance = Math.sqrt(dx * dx + dy * dy);
 		double dt = (finalPosition.getTimeObserved().getTimeInMillis()
 				- initialPosition.getTimeObserved().getTimeInMillis()) / 1000.0;
-        double yaw = 0;
-		
-        if(distance != 0)
-        {
-            yaw = Math.acos(dx/distance);
-            if(dy < 0)
-            {
-                yaw = yaw * -1;
-            }
-        }
-        
-        ValueUpdate<EulerAngleRotation> orientationUpdate = new ValueUpdate<EulerAngleRotation>(new EulerAngleRotation(0,0, yaw), finalPosition.getTimeObserved());
-        ValueUpdate<Velocity> velocityUpdate = new ValueUpdate<Velocity>(new Velocity(dx/dt, dy/dt, 0), finalPosition.getTimeObserved());
-        
+		double yaw = 0;
+
+		if (distance != 0) {
+			yaw = Math.acos(dx / distance);
+			if (dy < 0) {
+				yaw = yaw * -1;
+			}
+		}
+
+		ValueUpdate<EulerAngleRotation> orientationUpdate = new ValueUpdate<EulerAngleRotation>(
+				new EulerAngleRotation(0, 0, yaw), finalPosition.getTimeObserved());
+		ValueUpdate<Velocity> velocityUpdate = new ValueUpdate<Velocity>(new Velocity(dx / dt, dy / dt, 0),
+				finalPosition.getTimeObserved());
+
 		rfidTagPositionResults.setLastKnownTrainVelocity(velocityUpdate);
 		rfidTagPositionResults.setLastKnownTrainOrientation(orientationUpdate);
 		rfidTagPositionResults.setLastKnownTrainPosition(finalPosition);
-		
+
 		return rfidTagPositionResults;
 	}
-	
+
 	/**
-	 * Class describes information about the last 
-	 * estimate of position calculated from IMU measurements alone.
-	 * @author Corey Sanders
-	 *
+	 * Method selects a subset of measurements based on time.
+	 * 
+	 * @param measurements
+	 *            List of measurements that have been pre-sorted by time to
+	 *            search through to find the desired measurements.
+	 * @param startTime
+	 *            Beginning of the time range to select measurements
+	 * @param endTime
+	 *            End of the time range to select measurements
+	 * @return Subset of measurements that match the time range requested sorted
+	 *         by time.
 	 */
-	private class ImuPositionResults{
-		private ValueUpdate<Coordinate> lastKnownTrainPosition;
-		private ValueUpdate<Velocity> lastKnownTrainVelocity;
-		private ValueUpdate<EulerAngleRotation> lastKnownTrainOrientation;
-		private ValueUpdate<Acceleration> lastKnownTrainAcceleration;
-		
-		/**
-		 * @return the lastKnownTrainPosition
-		 */
-		public ValueUpdate<Coordinate> getLastKnownTrainPosition() {
-			return lastKnownTrainPosition;
-		}
-		
-		/**
-		 * @param lastKnownTrainPosition the lastKnownTrainPosition to set
-		 */
-		public void setLastKnownTrainPosition(ValueUpdate<Coordinate> lastKnownTrainPosition) {
-			this.lastKnownTrainPosition = lastKnownTrainPosition;
-		}
-		
-		/**
-		 * @return the lastKnownTrainVelocity
-		 */
-		public ValueUpdate<Velocity> getLastKnownTrainVelocity() {
-			return lastKnownTrainVelocity;
-		}
-		/**
-		 * @param lastKnownTrainVelocity the lastKnownTrainVelocity to set
-		 */
-		public void setLastKnownTrainVelocity(ValueUpdate<Velocity> lastKnownTrainVelocity) {
-			this.lastKnownTrainVelocity = lastKnownTrainVelocity;
+	private List<AccelerometerMeasurement> selectAccelerometerMeasurementsByTime(
+			List<AccelerometerMeasurement> measurements, Calendar startTime, Calendar endTime) {
+
+		List<AccelerometerMeasurement> selectedMeasurements = new LinkedList<AccelerometerMeasurement>();
+
+		for (AccelerometerMeasurement measurement : measurements) {
+
+			if (measurement.getTimeMeasured().getTimeInMillis() >= startTime.getTimeInMillis()
+					&& measurement.getTimeMeasured().getTimeInMillis() <= endTime.getTimeInMillis()) {
+
+				selectedMeasurements.add(measurement);
+			}
 		}
 
-		/**
-		 * @return the lastKnownTrainOrientation
-		 */
-		public ValueUpdate<EulerAngleRotation> getLastKnownTrainOrientation() {
-			return lastKnownTrainOrientation;
-		}
-		
-		/**
-		 * @param lastKnownTrainOrientation the lastKnownTrainOrientation to set
-		 */
-		public void setLastKnownTrainOrientation(ValueUpdate<EulerAngleRotation> lastKnownTrainOrientation) {
-			this.lastKnownTrainOrientation = lastKnownTrainOrientation;
-		}
-		
-		/**
-		 * Retrieves the last acceleration value measured for the train
-		 * @return Last Acceleration value measured for the train
-		 */
-		public ValueUpdate<Acceleration> getLastKnownTrainAcceleration() {
-			return lastKnownTrainAcceleration;
-		}
-		
-		/**
-		 * Assigns the last acceleration value measured for the train
-		 * @param lastKnownTrainAcceleration Last Acceleration value measured for the train
-		 */
-		public void setLastKnownTrainAcceleration(ValueUpdate<Acceleration> lastKnownTrainAcceleration) {
-			this.lastKnownTrainAcceleration = lastKnownTrainAcceleration;
-		}
-	}
-	
-	/**
-	 * Method selects a subset of measurements based on time.
-	 * @param measurements List of measurements that have been pre-sorted by time to search through to find the desired measurements.
-	 * @param startTime Beginning of the time range to select measurements
-	 * @param endTime End of the time range to select measurements
-	 * @return Subset of measurements that match the time range requested sorted by time.
-	 */
-	private List<AccelerometerMeasurement> selectAccelerometerMeasurementsByTime(List<AccelerometerMeasurement> measurements, Calendar startTime, Calendar endTime){
-		
-		List<AccelerometerMeasurement> selectedMeasurements = new LinkedList<AccelerometerMeasurement>();
-		
-		for(AccelerometerMeasurement measurement: measurements){
-			
-			if(measurement.getTimeMeasured().getTimeInMillis() >= startTime.getTimeInMillis() 
-					&& measurement.getTimeMeasured().getTimeInMillis() <= endTime.getTimeInMillis()){
-			
-				selectedMeasurements.add(measurement);
-			}
-		}
-		
 		return selectedMeasurements;
 	}
-	
+
 	/**
 	 * Method selects a subset of measurements based on time.
-	 * @param measurements List of measurements that have been pre-sorted by time to search through to find the desired measurements.
-	 * @param startTime Beginning of the time range to select measurements
-	 * @param endTime End of the time range to select measurements
-	 * @return Subset of measurements that match the time range requested sorted by time.
+	 * 
+	 * @param measurements
+	 *            List of measurements that have been pre-sorted by time to
+	 *            search through to find the desired measurements.
+	 * @param startTime
+	 *            Beginning of the time range to select measurements
+	 * @param endTime
+	 *            End of the time range to select measurements
+	 * @return Subset of measurements that match the time range requested sorted
+	 *         by time.
 	 */
-	private List<GyroscopeMeasurement> selectGyroscopeMeasurementsByTime(List<GyroscopeMeasurement> measurements, Calendar startTime, Calendar endTime){
-		
+	private List<GyroscopeMeasurement> selectGyroscopeMeasurementsByTime(List<GyroscopeMeasurement> measurements,
+			Calendar startTime, Calendar endTime) {
+
 		List<GyroscopeMeasurement> selectedMeasurements = new LinkedList<GyroscopeMeasurement>();
-		
-		for(GyroscopeMeasurement measurement: measurements){
-			
-			if(measurement.getTimeMeasured().getTimeInMillis() >= startTime.getTimeInMillis() 
-					&& measurement.getTimeMeasured().getTimeInMillis() <= endTime.getTimeInMillis()){
-			
+
+		for (GyroscopeMeasurement measurement : measurements) {
+
+			if (measurement.getTimeMeasured().getTimeInMillis() >= startTime.getTimeInMillis()
+					&& measurement.getTimeMeasured().getTimeInMillis() <= endTime.getTimeInMillis()) {
+
 				selectedMeasurements.add(measurement);
 			}
 		}
-		
+
 		return selectedMeasurements;
 	}
 
 	/**
 	 * Determines the current position of the train
 	 * 
-	 * @param initialPosition Initial position of the train
-	 * @param initialOrientation Initial orientation of the train
-	 * @param initialVelocity Initial velocity of the train
-	 * @param lastProcessedAcceleration Last measured acceleration of the train (NED frame)
+	 * @param initialPosition
+	 *            Initial position of the train
+	 * @param initialOrientation
+	 *            Initial orientation of the train
+	 * @param initialVelocity
+	 *            Initial velocity of the train
+	 * @param lastProcessedAcceleration
+	 *            Last measured acceleration of the train (NED frame)
 	 * 
 	 * @param gyroscopeMeasurementsSinceLastUpdate
 	 *            New Gyroscope measurements
@@ -375,36 +385,24 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 	 *            New Accelerometer measurements
 	 * @return The estimated current position of the train.
 	 */
-	private ImuPositionResults calculatePositionFromImu(ValueUpdate<Coordinate> initialPosition, ValueUpdate<EulerAngleRotation> initialOrientation, ValueUpdate<Velocity> initialVelocity,	
-			ValueUpdate<Acceleration> lastProcessedAcceleration, List<GyroscopeMeasurement> gyroscopeMeasurementsSinceLastUpdate,
+	private ImuPositionResults calculatePositionFromImu(ValueUpdate<Coordinate> initialPosition,
+			ValueUpdate<EulerAngleRotation> initialOrientation, ValueUpdate<Velocity> initialVelocity,
+			ValueUpdate<Acceleration> lastProcessedAcceleration,
+			List<GyroscopeMeasurement> gyroscopeMeasurementsSinceLastUpdate,
 			List<AccelerometerMeasurement> accelerometerMeasurementsSinceLastUpdate) {
-		
+
 		ImuPositionResults positionResults = new ImuPositionResults();
-		
-		//TODO: Remove all dependencies of fields in the algorithm
-		//Make them arguments instead.
-		
-		//TODO: Partition IMU Measurements based on RFID Tag time
-		//Use only the most recent Time post RFID Tag measurements for
-		//IMU position calculations.
-		//.) Add code to write to CSV all interim measurements
-		//.) -> This will be done by calling each measurement (IMU/ACC+GYR or RFID Tag)
-		//.) update one-at-a-time with a separate calculate position call.
-		//.) Use RFID Tag derived orientation and velocity as inputs
-		//.) for IMU calculation.
-		
-		//Sort gyroscope measurements in increasing order by time
-		if(gyroscopeMeasurementsSinceLastUpdate != null)
-		{
-		    Collections.sort(gyroscopeMeasurementsSinceLastUpdate);
+
+		// Sort gyroscope measurements in increasing order by time
+		if (gyroscopeMeasurementsSinceLastUpdate != null) {
+			Collections.sort(gyroscopeMeasurementsSinceLastUpdate);
 		}
-		
-		//Sort accelerometer measurements in increasing order by time
-		if(accelerometerMeasurementsSinceLastUpdate != null)
-		{
-		   Collections.sort(accelerometerMeasurementsSinceLastUpdate);
+
+		// Sort accelerometer measurements in increasing order by time
+		if (accelerometerMeasurementsSinceLastUpdate != null) {
+			Collections.sort(accelerometerMeasurementsSinceLastUpdate);
 		}
-		
+
 		// TODO: Filter gyroscope values
 		// TODO: Filter accelerometer values
 
@@ -415,39 +413,46 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 			orientationUpdates = new ArrayList<ValueUpdate<EulerAngleRotation>>();
 
 		} else {
-			orientationUpdates = convertOrientationUpdate(initialOrientation,
-					gyroscopeMeasurementsSinceLastUpdate);
+			orientationUpdates = convertOrientationUpdate(initialOrientation, gyroscopeMeasurementsSinceLastUpdate);
 		}
-		
+
 		if (accelerometerMeasurementsSinceLastUpdate != null) {
-			List<AccelerometerMeasurement> testbedCoordinateFrameAccelerometerMeasurements = adjustOrientation(
+			List<ImuState> testbedCoordinateFrameAccelerometerMeasurements = adjustOrientation(
 					accelerometerMeasurementsSinceLastUpdate, initialOrientation, orientationUpdates);
-			
-			if(lastProcessedAcceleration == null && testbedCoordinateFrameAccelerometerMeasurements.size() > 0){
-				
-				AccelerometerMeasurement accelerometerMeasurement = testbedCoordinateFrameAccelerometerMeasurements.get(0);
-				Calendar currentTime = accelerometerMeasurement.getTimeMeasured();
-				lastProcessedAcceleration = new ValueUpdate<Acceleration>(accelerometerMeasurement.getAccelerationMeasurement(), accelerometerMeasurement.getTimeMeasured());
+
+			if (lastProcessedAcceleration == null && testbedCoordinateFrameAccelerometerMeasurements.size() > 0) {
+
+				ImuState imuState = testbedCoordinateFrameAccelerometerMeasurements
+						.get(0);
+				Calendar currentTime = imuState.getTimeMeasured();
+				lastProcessedAcceleration = new ValueUpdate<Acceleration>(
+						imuState.getCorrectedAcceleration(),
+						imuState.getTimeMeasured());
 				initialPosition = new ValueUpdate<Coordinate>(initialPosition.getValue(), currentTime);
 				initialOrientation = new ValueUpdate<EulerAngleRotation>(initialOrientation.getValue(), currentTime);
 				initialVelocity = new ValueUpdate<Velocity>(new Velocity(0, 0, 0), currentTime);
 			}
 
-			for (AccelerometerMeasurement measurement : testbedCoordinateFrameAccelerometerMeasurements) {
+			for (ImuState measurement : testbedCoordinateFrameAccelerometerMeasurements) {
 
 				// Calculate velocity
 				double velocityX = 0;
 				double velocityY = 0;
 				double velocityZ = 0;
-				double deltaTimeInSeconds = (measurement.getTimeMeasured().getTimeInMillis()
-						- lastProcessedAcceleration.getTimeObserved().getTimeInMillis()) / 1000.0;
+				double deltaTimeInSeconds = measurement.getNumberOfSecondsSinceLastUpdate();
+				
+				//Correct Velocity with the current orientation
+				double speed = Math.sqrt((initialVelocity.getValue().getMetersPerSecondAlongXAxis()*initialVelocity.getValue().getMetersPerSecondAlongXAxis())
+						+ (initialVelocity.getValue().getMetersPerSecondAlongYAxis()*initialVelocity.getValue().getMetersPerSecondAlongYAxis()));
+				
+				//velocityX = Math.cos(measurement.getCorrectedOrientation().getRadiansRotationAlongZAxis())*speed;
+				//velocityY = Math.sin(measurement.getCorrectedOrientation().getRadiansRotationAlongZAxis())*speed;
+				velocityX = initialVelocity.getValue().getMetersPerSecondAlongXAxis();
+				velocityY = initialVelocity.getValue().getMetersPerSecondAlongYAxis();
 
-				velocityX = measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongXAxis()
-						* deltaTimeInSeconds + initialVelocity.getValue().getMetersPerSecondAlongXAxis();
-				velocityY = measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongYAxis()
-						* deltaTimeInSeconds + initialVelocity.getValue().getMetersPerSecondAlongYAxis();
-				velocityZ = measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongZAxis()
-						* deltaTimeInSeconds + initialVelocity.getValue().getMetersPerSecondAlongZAxis();
+				velocityX += (measurement.getCorrectedAcceleration().getMetersPerSecondSquaredAlongXAxis() * deltaTimeInSeconds);
+				velocityY += (measurement.getCorrectedAcceleration().getMetersPerSecondSquaredAlongYAxis() * deltaTimeInSeconds);
+				velocityZ += (measurement.getCorrectedAcceleration().getMetersPerSecondSquaredAlongZAxis() * deltaTimeInSeconds);
 
 				// Update the final velocity
 				ValueUpdate<Velocity> finalVelocity = new ValueUpdate<Velocity>(
@@ -474,11 +479,10 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 				// Update the initial velocity
 				initialVelocity = finalVelocity;
 
-				// Update the last
-				// processeaccelerometerMeasurementsSinceLastUpdated
-				// acceleration
-				lastProcessedAcceleration = new ValueUpdate<Acceleration>(measurement.getAccelerationMeasurement(),
+				// Update the last processed acceleration measurement
+				lastProcessedAcceleration = new ValueUpdate<Acceleration>(measurement.getCorrectedAcceleration(),
 						measurement.getTimeMeasured());
+
 			}
 		}
 
@@ -486,8 +490,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 
 		if (orientationUpdates.size() > 0) {
 			positionResults.setLastKnownTrainOrientation(orientationUpdates.get(orientationUpdates.size() - 1));
-		}
-		else{
+		} else {
 			positionResults.setLastKnownTrainOrientation(initialOrientation);
 		}
 
@@ -507,69 +510,82 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 			ValueUpdate<EulerAngleRotation> lastKnownOrientation, List<GyroscopeMeasurement> gyroscopeMeasurements) {
 		List<ValueUpdate<EulerAngleRotation>> orientationUpdates = new ArrayList<ValueUpdate<EulerAngleRotation>>();
 		orientationUpdates.add(lastKnownOrientation);
-		
-		//Assuming that the table is flat and all of gravity the NED, axis.
-		//Assuming that the body frame z-axis matches the NED frame z-axis.
+
+		// Assuming that the table is flat and all of gravity the NED, axis.
+		// Assuming that the body frame z-axis matches the NED frame z-axis.
+		double netDeltaYaw = 0;
 
 		for (GyroscopeMeasurement gyroscopeMeasurement : gyroscopeMeasurements) {
-
 			double dt = gyroscopeMeasurement.getNumberOfSecondsSinceLastMeasurement();
-			
-			EulerAngleRotation updatedOrientation = new EulerAngleRotation(0,0,gyroscopeMeasurement.getRadiansRotationPerSecondAlongZAxis()*dt);
+
+			double deltaYaw = (gyroscopeMeasurement.getRadiansRotationPerSecondAlongZAxis()) * dt;
+
+			netDeltaYaw += deltaYaw;
+			EulerAngleRotation updatedOrientation = new EulerAngleRotation(0, 0,
+					lastKnownOrientation.getValue().getRadiansRotationAlongZAxis() + netDeltaYaw);
 
 			ValueUpdate<EulerAngleRotation> orientationUpdate = new ValueUpdate<EulerAngleRotation>(updatedOrientation,
 					gyroscopeMeasurement.getTimeMeasured());
 			orientationUpdates.add(orientationUpdate);
-		}		
+		}
 
 		return orientationUpdates;
 	}
-	
+
 	/**
-	 * Method is responsible for adjusting accelerometer measurements based on the
-	 * orientation data that is available for the the body coordinate relative to the NED coordinate frame
-	 * assuming that the object is flat on a surface and the body z-axis is always aligned with the NED z-axis.
-	 * @param measurement Accelerometer measurement to convert
-	 * @param orientation Orientation of the measurement at the point of interest
-	 * @param frictionThresholdFilter Filter used to correct for friction. Assign null if not desired
+	 * Method is responsible for adjusting accelerometer measurements based on
+	 * the orientation data that is available for the the body coordinate
+	 * relative to the NED coordinate frame assuming that the object is flat on
+	 * a surface and the body z-axis is always aligned with the NED z-axis.
+	 * 
+	 * @param measurement
+	 *            Accelerometer measurement to convert
+	 * @param orientation
+	 *            Orientation of the measurement at the point of interest
+	 * @param frictionThresholdFilter
+	 *            Filter used to correct for friction. Assign null if not
+	 *            desired
 	 * @return corrected accelerometer measurement for the NED coordinate frame
 	 */
-	private static AccelerometerMeasurement changetoInertialFrame2d(AccelerometerMeasurement measurement, EulerAngleRotation orientation, ThresholdFilter frictionThresholdFilter){
+	private static AccelerometerMeasurement changetoInertialFrame2d(AccelerometerMeasurement measurement,
+			EulerAngleRotation orientation, ThresholdFilter frictionThresholdFilter) {
 		AccelerometerMeasurement inertialFrameMeasurement;
-		double sqX = measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongXAxis()* measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongXAxis();
-		double sqY = measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongYAxis()* measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongYAxis();
+
+		double adjustedX = (measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongXAxis());
+		double adjustedY = (measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongYAxis());
+		double sqX = adjustedX * adjustedX;
+		double sqY = adjustedY * adjustedY;
 		double scalarAcceleration = Math.sqrt(sqX + sqY);
-		
-		if(frictionThresholdFilter != null){
+
+		if (frictionThresholdFilter != null) {
 			scalarAcceleration = frictionThresholdFilter.filter(scalarAcceleration);
 		}
 
 		double accX = scalarAcceleration * Math.cos(orientation.getRadiansRotationAlongZAxis());
 		double accY = scalarAcceleration * Math.sin(orientation.getRadiansRotationAlongZAxis());
 		double accZ = 0;
-		
+
 		Acceleration acceleration = new Acceleration(accX, accY, accZ);
-		inertialFrameMeasurement = new AccelerometerMeasurement(acceleration, measurement.getNumberOfSecondsSinceLastMeasurement(), measurement.getTimeMeasured());
-		
+		inertialFrameMeasurement = new AccelerometerMeasurement(acceleration,
+				measurement.getNumberOfSecondsSinceLastMeasurement(), measurement.getTimeMeasured());
+
 		return inertialFrameMeasurement;
 	}
 
-	List<AccelerometerMeasurement> adjustOrientation(List<AccelerometerMeasurement> rawMeasurements,
+	private List<ImuState> adjustOrientation(List<AccelerometerMeasurement> rawMeasurements,
 			ValueUpdate<EulerAngleRotation> lastKnownOrientation,
 			List<ValueUpdate<EulerAngleRotation>> orientationUpdates) {
-		List<AccelerometerMeasurement> remainingMeasurements = new ArrayList<AccelerometerMeasurement>(rawMeasurements);
-		List<AccelerometerMeasurement> adjustedVectors = new ArrayList<AccelerometerMeasurement>();
+		List<AccelerometerMeasurement> remainingMeasurements = new LinkedList<AccelerometerMeasurement>(rawMeasurements);
+		List<ImuState> adjustedVectors = new LinkedList<ImuState>();
 		int first = 0;
 		int last = orientationUpdates.size();
 
 		ValueUpdate<EulerAngleRotation> finalOrientation;
-		
-		if(orientationUpdates.isEmpty())
-		{
+
+		if (orientationUpdates.isEmpty()) {
 			finalOrientation = lastKnownOrientation;
-		}
-		else{
-			finalOrientation = orientationUpdates.get(last-1);
+		} else {
+			finalOrientation = orientationUpdates.get(last - 1);
 		}
 
 		// NOTE: This implementation assumes that the orientationUpdates list is
@@ -580,7 +596,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 
 		for (int i = first; i < last; i++) {
 			ValueUpdate<EulerAngleRotation> orientationUpdate = orientationUpdates.get(i);
-			List<AccelerometerMeasurement> toRemove = new ArrayList<AccelerometerMeasurement>();
+			List<AccelerometerMeasurement> toRemove = new LinkedList<AccelerometerMeasurement>();
 
 			// Process measurements
 
@@ -595,7 +611,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 
 					AccelerometerMeasurement adjustedMeasurement = changetoInertialFrame2d(measurement,
 							finalOrientation.getValue(), thresholdFilter);
-					adjustedVectors.add(adjustedMeasurement);
+					adjustedVectors.add(new ImuState(adjustedMeasurement, finalOrientation));
 
 					toRemove.add(measurement);
 				} else if (measurement.getTimeMeasured().getTimeInMillis() >= lastKnownOrientation.getTimeObserved()
@@ -609,7 +625,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 
 					AccelerometerMeasurement adjustedMeasurement = changetoInertialFrame2d(measurement,
 							finalOrientation.getValue(), thresholdFilter);
-					adjustedVectors.add(adjustedMeasurement);
+					adjustedVectors.add(new ImuState(adjustedMeasurement, finalOrientation));
 
 					toRemove.add(measurement);
 				} else if (measurement.getTimeMeasured().getTimeInMillis() >= finalOrientation.getTimeObserved()
@@ -618,7 +634,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 					// Final
 					AccelerometerMeasurement adjustedMeasurement = changetoInertialFrame2d(measurement,
 							finalOrientation.getValue(), thresholdFilter);
-					adjustedVectors.add(adjustedMeasurement);
+					adjustedVectors.add(new ImuState(adjustedMeasurement, finalOrientation));
 					toRemove.add(measurement);
 				}
 			}
@@ -638,7 +654,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 			// TODO: Raise some kind index of error.
 			// Something is wrong with implementation
 		}
-		
+
 		Collections.sort(adjustedVectors);
 
 		return adjustedVectors;

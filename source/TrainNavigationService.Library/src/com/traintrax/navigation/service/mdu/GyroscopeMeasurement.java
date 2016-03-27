@@ -3,7 +3,7 @@ package com.traintrax.navigation.service.mdu;
 import java.util.Calendar;
 
 /**
- * @author death
+ * @author Corey Sanders
  *Class represents a single measurement taken from a gyroscope for
  *angular velocity expressed in Euler-Angle rotation format.
  */

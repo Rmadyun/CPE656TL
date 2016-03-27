@@ -1,6 +1,11 @@
 package com.traintrax.navigation.service.position;
 
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.traintrax.navigation.database.library.MergerSort;
 
 /**
  * Class describes a recorded snapshot of a value
@@ -9,7 +14,7 @@ import java.util.Calendar;
  *
  * @param <TValue> Type of value being monitored.
  */
-public class ValueUpdate<TValue> implements Comparable<ValueUpdate<TValue>> {
+public class ValueUpdate<TValue> implements Comparable {
 	
 	private TValue value;
 	private Calendar timeObserved;
@@ -77,9 +82,48 @@ public class ValueUpdate<TValue> implements Comparable<ValueUpdate<TValue>> {
 		return true;
 	}
 	
-	@Override
+	//@Override
 	public int compareTo(ValueUpdate<TValue> otherMeasurement) {
 		
 	    return Long.compare(this.timeObserved.getTimeInMillis(), otherMeasurement.timeObserved.getTimeInMillis());
 	}
+	
+	public static <TValue> void sort(List<ValueUpdate<TValue>> collection){
+		
+	    Comparable[] tempList = new Comparable[collection.size()];
+	    
+	    for(int i = 0; i < collection.size(); i++){
+	    	tempList[i] = collection.get(i);
+	    }
+		
+		MergerSort.mergeSort(tempList);
+		
+		collection.clear();
+		
+		for(Comparable item : tempList){
+			
+			collection.add((ValueUpdate<TValue>)item);
+		}
+		
+		
+		
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		int compareValue = 0;
+		
+		if(o instanceof ValueUpdate<?>){
+			ValueUpdate<?> otherMeasurement = (ValueUpdate<?>) o;
+		
+			compareValue = Long.compare(this.timeObserved.getTimeInMillis(), otherMeasurement.timeObserved.getTimeInMillis());
+		}
+		else{
+			compareValue = 0;
+		}
+		
+		return compareValue;
+	}
+	
+	
 }

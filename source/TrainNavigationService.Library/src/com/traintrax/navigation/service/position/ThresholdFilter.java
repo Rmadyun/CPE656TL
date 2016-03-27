@@ -1,4 +1,4 @@
-package com.traintrax.navigation.service.mdu;
+package com.traintrax.navigation.service.position;
 
 /**
  * Class is responsible for clamping 
