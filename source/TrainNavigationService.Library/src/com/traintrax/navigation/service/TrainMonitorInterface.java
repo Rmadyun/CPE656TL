@@ -1,7 +1,6 @@
 package com.traintrax.navigation.service;
 
 import com.traintrax.navigation.service.position.Coordinate;
-import com.traintrax.navigation.service.position.ValueUpdate;
 
 /**
  * Interface is responsible for observing changes to trains that belong

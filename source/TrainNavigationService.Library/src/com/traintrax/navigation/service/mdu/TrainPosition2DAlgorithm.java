@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.traintrax.navigation.service.Tuple;
+import com.traintrax.navigation.service.ValueUpdate;
 import com.traintrax.navigation.service.position.Acceleration;
 import com.traintrax.navigation.service.position.AccelerometerCalibrationFilter;
 import com.traintrax.navigation.service.position.Coordinate;
@@ -15,7 +16,6 @@ import com.traintrax.navigation.service.position.ImuPositionResults;
 import com.traintrax.navigation.service.position.ImuState;
 import com.traintrax.navigation.service.position.RfidTagPositionResults;
 import com.traintrax.navigation.service.position.ThresholdFilter;
-import com.traintrax.navigation.service.position.ValueUpdate;
 import com.traintrax.navigation.service.position.Velocity;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 

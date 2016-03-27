@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.traintrax.navigation.service.position.Coordinate;
-import com.traintrax.navigation.service.position.ValueUpdate;
-import com.traintrax.navigation.service.trackswitch.SwitchState;
+import com.traintrax.navigation.trackswitch.SwitchState;
 
 /**
  * Standard interface for interacting with the Train Navigation Service

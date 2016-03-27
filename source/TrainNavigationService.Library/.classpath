@@ -4,5 +4,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/TrainNavigationDatabase.Library"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/home/death/repositories/CPE656TL/packages/JMRI-3.8/jmri.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/TrainNavigationService.API"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

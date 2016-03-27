@@ -2,13 +2,8 @@ package com.traintrax.navigation.service.rest.client;
 import java.io.IOException;
 
 import org.restlet.ext.json.JsonRepresentation;
-import org.restlet.resource.ClientResource;
-
-import com.traintrax.navigation.service.position.Coordinate;
-import com.traintrax.navigation.service.position.ValueUpdate;
 import com.traintrax.navigation.service.rest.data.TrackSwitchStateMessage;
-import com.traintrax.navigation.service.rest.data.TrainPositionUpdateMessage;
-import com.traintrax.navigation.service.trackswitch.SwitchState;
+import com.traintrax.navigation.trackswitch.SwitchState;
 
 /**
  * Restful Web client to the Train Navigation Service to retrieve information

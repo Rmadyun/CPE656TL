@@ -1,6 +1,6 @@
 package com.traintrax.navigation.service;
 
-import com.traintrax.navigation.service.trackswitch.SwitchState;
+import com.traintrax.navigation.trackswitch.SwitchState;
 
 /**
  * Interface facilitates communication with switch controllers

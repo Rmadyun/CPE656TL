@@ -1,6 +1,7 @@
 package com.traintrax.navigation.service.rest.client;
+
+import com.traintrax.navigation.service.ValueUpdate;
 import com.traintrax.navigation.service.position.Coordinate;
-import com.traintrax.navigation.service.position.ValueUpdate;
 import com.traintrax.navigation.service.rest.data.TrainPositionUpdateMessage;
 
 /**

@@ -2,8 +2,8 @@ package com.traintrax.navigation.service.mdu;
 
 import java.util.List;
 
+import com.traintrax.navigation.service.ValueUpdate;
 import com.traintrax.navigation.service.position.Coordinate;
-import com.traintrax.navigation.service.position.ValueUpdate;
 
 /**
  * Generic interface for an object that determines the

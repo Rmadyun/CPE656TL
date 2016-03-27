@@ -9,7 +9,6 @@ import com.traintrax.navigation.service.mdu.InertialMotionPositionAlgorithmInter
 import com.traintrax.navigation.service.mdu.MotionDetectionUnitInterface;
 import com.traintrax.navigation.service.mdu.RfidTagDetectedNotification;
 import com.traintrax.navigation.service.position.Coordinate;
-import com.traintrax.navigation.service.position.ValueUpdate;
 
 /**
  * Class is responsible for observing changes to a train that belongs to the

@@ -1,5 +1,7 @@
 package com.traintrax.navigation.service.trackswitch;
 
+import com.traintrax.navigation.trackswitch.SwitchState;
+
 /**
  * Interface represents a single track switch on the
  * positive train control test bed.

@@ -10,10 +10,10 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.traintrax.navigation.service.ValueUpdate;
 import com.traintrax.navigation.service.mdu.*;
 import com.traintrax.navigation.service.position.Acceleration;
 import com.traintrax.navigation.service.position.Coordinate;
-import com.traintrax.navigation.service.position.ValueUpdate;
 import com.traintrax.navigation.service.rotation.*;
 
 public class TrainPositionAlgorithmTests {

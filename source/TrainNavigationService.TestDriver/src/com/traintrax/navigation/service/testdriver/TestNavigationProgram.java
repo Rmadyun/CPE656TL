@@ -34,20 +34,20 @@ import com.traintrax.navigation.service.TrainNavigationDatabase;
 import com.traintrax.navigation.service.TrainNavigationDatabaseInterface;
 import com.traintrax.navigation.service.TrainNavigationService;
 import com.traintrax.navigation.service.TrainNavigationServiceEvent;
-import com.traintrax.navigation.service.TrainNavigationServiceEventNotifier;
 import com.traintrax.navigation.service.TrainNavigationServiceEventSubscriber;
 import com.traintrax.navigation.service.TrainNavigationServiceInterface;
 import com.traintrax.navigation.service.Tuple;
+import com.traintrax.navigation.service.ValueUpdate;
 import com.traintrax.navigation.service.ValueUpdateComparator;
 import com.traintrax.navigation.service.events.GenericPublisher;
 import com.traintrax.navigation.service.events.NotifierInterface;
 import com.traintrax.navigation.service.events.PublisherInterface;
+import com.traintrax.navigation.service.events.TrainNavigationServiceEventNotifier;
 import com.traintrax.navigation.service.math.*;
 import com.traintrax.navigation.service.mdu.*;
 import com.traintrax.navigation.service.position.Coordinate;
-import com.traintrax.navigation.service.position.ValueUpdate;
 import com.traintrax.navigation.service.rotation.*;
-import com.traintrax.navigation.service.trackswitch.SwitchState;
+import com.traintrax.navigation.trackswitch.SwitchState;
 
 import gnu.io.*;
 
@@ -426,8 +426,11 @@ public class TestNavigationProgram {
 		List<ValueUpdate<Coordinate>> positionReadings;
 		List<ValueUpdate<Coordinate>> finalPositions = new LinkedList<ValueUpdate<Coordinate>>();
 
+		//imuReadings = ImuMeasurementsReader
+		//		.ReadFile("/home/death/Documents/CPE658/sample-imu-data/02-17-2016/ImuUpdates.csv");
 		imuReadings = ImuMeasurementsReader
-				.ReadFile("/home/death/Documents/CPE658/sample-imu-data/02-17-2016/ImuUpdates.csv");
+				.ReadFile("/home/death/Documents/CPE658/sample-imu-data/testdataandicd/Sample 1 - Imu.csv");
+		
 		positionReadings = PositionMeasurementsReader
 				.ReadFile("/home/death/Documents/CPE658/sample-imu-data/02-17-2016/PositionUpdates-6inches.csv");
 
@@ -440,8 +443,8 @@ public class TestNavigationProgram {
 		}
 
 		for (ValueUpdate<Coordinate> entry : positionReadings) {
-			ValueUpdate<Object> valueUpdate = new ValueUpdate<Object>(entry.getValue(), entry.getTimeObserved());
-			timeline.add(valueUpdate);
+		/*	ValueUpdate<Object> valueUpdate = new ValueUpdate<Object>(entry.getValue(), entry.getTimeObserved());
+			timeline.add(valueUpdate); */
 		}
 
 		// Sort timeline

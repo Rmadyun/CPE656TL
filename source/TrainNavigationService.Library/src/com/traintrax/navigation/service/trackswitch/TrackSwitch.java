@@ -1,5 +1,6 @@
 package com.traintrax.navigation.service.trackswitch;
 
+import com.traintrax.navigation.trackswitch.SwitchState;
 
 /**
  * Class represents a single track switch on the

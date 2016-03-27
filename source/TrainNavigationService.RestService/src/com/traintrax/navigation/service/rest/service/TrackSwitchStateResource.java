@@ -11,7 +11,7 @@ import org.restlet.resource.ServerResource;
 import com.google.gson.Gson;
 import com.traintrax.navigation.service.TrainNavigationServiceInterface;
 import com.traintrax.navigation.service.rest.data.TrackSwitchStateMessage;
-import com.traintrax.navigation.service.trackswitch.SwitchState;
+import com.traintrax.navigation.trackswitch.SwitchState;
 
 /**
  * Class is responsible for providing access to Track Switch information

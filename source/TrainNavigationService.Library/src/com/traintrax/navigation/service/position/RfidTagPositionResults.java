@@ -1,5 +1,6 @@
 package com.traintrax.navigation.service.position;
 
+import com.traintrax.navigation.service.ValueUpdate;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 
 /**

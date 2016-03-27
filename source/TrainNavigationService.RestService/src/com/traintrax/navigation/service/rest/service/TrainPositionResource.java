@@ -8,8 +8,8 @@ import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 
 import com.traintrax.navigation.service.TrainNavigationServiceInterface;
+import com.traintrax.navigation.service.ValueUpdate;
 import com.traintrax.navigation.service.position.Coordinate;
-import com.traintrax.navigation.service.position.ValueUpdate;
 import com.traintrax.navigation.service.rest.data.TrainPositionUpdateMessage;
 
 /**

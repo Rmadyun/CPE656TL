@@ -1,6 +1,8 @@
-package com.traintrax.navigation.service;
+package com.traintrax.navigation.service.events;
 
-import com.traintrax.navigation.service.events.NotifierInterface;
+import com.traintrax.navigation.service.TrainNavigationServiceEvent;
+import com.traintrax.navigation.service.TrainNavigationServiceEventSubscriber;
+import com.traintrax.navigation.service.TrainPositionUpdatedEvent;
 
 /**
  * Class responsible for notifying Train Navigation Service subscribers of

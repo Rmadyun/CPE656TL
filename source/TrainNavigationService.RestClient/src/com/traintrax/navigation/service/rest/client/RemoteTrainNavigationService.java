@@ -5,17 +5,10 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.traintrax.navigation.service.TrainNavigationServiceEvent;
-import com.traintrax.navigation.service.TrainNavigationServiceEventNotifier;
-import com.traintrax.navigation.service.TrainNavigationServiceEventSubscriber;
-import com.traintrax.navigation.service.TrainNavigationServiceInterface;
-import com.traintrax.navigation.service.TrainPositionUpdatedEvent;
-import com.traintrax.navigation.service.events.GenericPublisher;
-import com.traintrax.navigation.service.events.NotifierInterface;
-import com.traintrax.navigation.service.events.PublisherInterface;
-import com.traintrax.navigation.service.position.Coordinate;
-import com.traintrax.navigation.service.position.ValueUpdate;
-import com.traintrax.navigation.service.trackswitch.SwitchState;
+import com.traintrax.navigation.service.*;
+import com.traintrax.navigation.service.events.*;
+import com.traintrax.navigation.service.position.*;
+import com.traintrax.navigation.trackswitch.*;
 
 /**
  * Restful Web client implementation of the Train Navigation Service

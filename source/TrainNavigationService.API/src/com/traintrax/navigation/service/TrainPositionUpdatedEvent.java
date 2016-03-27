@@ -1,7 +1,6 @@
 package com.traintrax.navigation.service;
 
 import com.traintrax.navigation.service.position.Coordinate;
-import com.traintrax.navigation.service.position.ValueUpdate;
 
 /**
  * Event notifies that the new information about the position of a train has been determined

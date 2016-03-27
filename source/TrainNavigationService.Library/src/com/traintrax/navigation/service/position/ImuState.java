@@ -2,6 +2,7 @@ package com.traintrax.navigation.service.position;
 
 import java.util.Calendar;
 
+import com.traintrax.navigation.service.ValueUpdate;
 import com.traintrax.navigation.service.mdu.AccelerometerMeasurement;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 

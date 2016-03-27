@@ -1,7 +1,6 @@
 package com.traintrax.navigation.service.rest.data;
 
 import com.google.gson.annotations.SerializedName;
-import com.traintrax.navigation.service.trackswitch.SwitchState;
 
 /**
  * Describes the mode of operation for a given switch.

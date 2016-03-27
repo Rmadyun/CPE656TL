@@ -26,14 +26,14 @@ import com.traintrax.navigation.database.library.TrainPositionSearchCriteria;
 import com.traintrax.navigation.service.events.GenericPublisher;
 import com.traintrax.navigation.service.events.NotifierInterface;
 import com.traintrax.navigation.service.events.PublisherInterface;
+import com.traintrax.navigation.service.events.TrainNavigationServiceEventNotifier;
 import com.traintrax.navigation.service.mdu.InertialMotionPositionAlgorithmInterface;
 import com.traintrax.navigation.service.mdu.MotionDetectionUnitInterface;
 import com.traintrax.navigation.service.mdu.SimulatedMotionDetectionUnit;
 import com.traintrax.navigation.service.mdu.TrainPosition2DAlgorithm;
 import com.traintrax.navigation.service.position.Coordinate;
-import com.traintrax.navigation.service.position.ValueUpdate;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
-import com.traintrax.navigation.service.trackswitch.SwitchState;
+import com.traintrax.navigation.trackswitch.SwitchState;
 
 /**
  * Representation of the Train Navigation Service.

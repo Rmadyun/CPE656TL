@@ -3,7 +3,7 @@ package com.traintrax.navigation.service;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.traintrax.navigation.service.trackswitch.SwitchState;
+import com.traintrax.navigation.trackswitch.SwitchState;
 
 import jmri.jmrix.loconet.LnPacketizer;
 import jmri.jmrix.loconet.LnPortController;

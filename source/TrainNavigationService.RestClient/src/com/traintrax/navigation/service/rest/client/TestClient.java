@@ -2,7 +2,7 @@ package com.traintrax.navigation.service.rest.client;
 import java.io.IOException;
 import java.util.List;
 
-import com.traintrax.navigation.service.trackswitch.SwitchState;
+import com.traintrax.navigation.trackswitch.SwitchState;
 
 public class TestClient {
 
