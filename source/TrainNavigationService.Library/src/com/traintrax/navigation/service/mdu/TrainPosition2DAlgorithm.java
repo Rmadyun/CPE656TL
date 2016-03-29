@@ -217,7 +217,9 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 					 rfidTagPositionResults.getLastKnownTrainOrientation();
 					lastKnownTrainVelocity = rfidTagPositionResults.getLastKnownTrainVelocity();
 					
-					/*//Calculated velocity based on the last calculated train velocity
+					/*//This is good for a velocity only correction
+					//Recommended for this to be used when RFID tag orientation information is not good enough.
+					//Calculated velocity based on the last calculated train velocity
 					ValueUpdate<Velocity> rfidTagVelocityUpdate = rfidTagPositionResults.getLastKnownTrainVelocity();
 					double speed = Math.sqrt((rfidTagVelocityUpdate.getValue().getMetersPerSecondAlongXAxis()*rfidTagVelocityUpdate.getValue().getMetersPerSecondAlongXAxis())
 							+ (rfidTagVelocityUpdate.getValue().getMetersPerSecondAlongYAxis()*rfidTagVelocityUpdate.getValue().getMetersPerSecondAlongYAxis()));
@@ -445,10 +447,10 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 				double speed = Math.sqrt((initialVelocity.getValue().getMetersPerSecondAlongXAxis()*initialVelocity.getValue().getMetersPerSecondAlongXAxis())
 						+ (initialVelocity.getValue().getMetersPerSecondAlongYAxis()*initialVelocity.getValue().getMetersPerSecondAlongYAxis()));
 				
-				//velocityX = Math.cos(measurement.getCorrectedOrientation().getRadiansRotationAlongZAxis())*speed;
-				//velocityY = Math.sin(measurement.getCorrectedOrientation().getRadiansRotationAlongZAxis())*speed;
-				velocityX = initialVelocity.getValue().getMetersPerSecondAlongXAxis();
-				velocityY = initialVelocity.getValue().getMetersPerSecondAlongYAxis();
+				velocityX = Math.cos(measurement.getCorrectedOrientation().getRadiansRotationAlongZAxis())*speed;
+				velocityY = Math.sin(measurement.getCorrectedOrientation().getRadiansRotationAlongZAxis())*speed;
+				//velocityX = initialVelocity.getValue().getMetersPerSecondAlongXAxis();
+				//velocityY = initialVelocity.getValue().getMetersPerSecondAlongYAxis();
 
 				velocityX += (measurement.getCorrectedAcceleration().getMetersPerSecondSquaredAlongXAxis() * deltaTimeInSeconds);
 				velocityY += (measurement.getCorrectedAcceleration().getMetersPerSecondSquaredAlongYAxis() * deltaTimeInSeconds);
