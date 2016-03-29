@@ -155,7 +155,7 @@ public class RfidTagDetectedNotificationRepository implements FilteredSearchRepo
 		String queryString = "SELECT * FROM "+RfidTagDetectedEventTable;
 		String clauses = "";
 		
-		String rfidTagValue = searchCriteria.getTagName();
+		String rfidTagValue = searchCriteria.getRfidTagValue();
 		if(rfidTagValue != null && !rfidTagValue.isEmpty()){
 			
 			if(!clauses.isEmpty()){

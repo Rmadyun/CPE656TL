@@ -8,6 +8,8 @@ import com.traintrax.navigation.database.library.MySqlDatabaseAdapter;
 import com.traintrax.navigation.database.library.RfidTagDetectedNotification;
 import com.traintrax.navigation.database.library.RfidTagDetectedNotificationRepository;
 import com.traintrax.navigation.database.library.RfidTagDetectedNotificationSearchCriteria;
+import com.traintrax.navigation.database.library.TrackPoint;
+import com.traintrax.navigation.database.library.TrackPointSearchCriteria;
 
 
 public class RfidTagDetectedNotificationRepositoryTests extends FilteredSearchRepositoryInterfaceTests<RfidTagDetectedNotification, RfidTagDetectedNotificationSearchCriteria> {
@@ -105,6 +107,42 @@ public class RfidTagDetectedNotificationRepositoryTests extends FilteredSearchRe
 		TestFindAll(repository, newEntry);
 	}
 	
-	//TODO: Implement tests for search criteria search. Be sure to test each individual param , then one full combined search.
+	@Test
+	public void TestFindWithRfidTagValueSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<RfidTagDetectedNotification, RfidTagDetectedNotificationSearchCriteria> repository = createRepository();
+		RfidTagDetectedNotification newEntry = createNewEntry();
+		RfidTagDetectedNotificationSearchCriteria searchCriteria = new RfidTagDetectedNotificationSearchCriteria();
+
+		searchCriteria.setRfidTagValue(newEntry.getRfidTagValue());
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+		
+		String dummyFilterValue = "dummyFilterValue";
+		searchCriteria.setRfidTagValue(dummyFilterValue);
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
+	}
+	
+	@Test
+	public void TestFindWithAllSearchCriteria(){
+		
+		FilteredSearchRepositoryInterface<RfidTagDetectedNotification, RfidTagDetectedNotificationSearchCriteria> repository = createRepository();
+		RfidTagDetectedNotification newEntry = createNewEntry();
+		RfidTagDetectedNotificationSearchCriteria searchCriteria = new RfidTagDetectedNotificationSearchCriteria();
+
+		searchCriteria.setRfidTagValue(newEntry.getRfidTagValue());
+
+		//Add other fields here
+		
+		
+		TestFindSearchCriteria(repository, newEntry, searchCriteria);
+		
+		String dummyFilterValue = "dummyFilterValue";
+		searchCriteria.setRfidTagValue(dummyFilterValue);
+        //Add other fields here
+		
+		
+		TestFindSearchCriteriaWithNoMatches(repository, newEntry, searchCriteria);
+	}
 
 }

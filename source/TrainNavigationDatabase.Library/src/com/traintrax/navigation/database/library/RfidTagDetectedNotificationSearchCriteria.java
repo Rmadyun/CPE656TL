@@ -10,31 +10,38 @@ package com.traintrax.navigation.database.library;
  */
 public class RfidTagDetectedNotificationSearchCriteria {
 	
-	private String tagName;
+	private String rfidTagValue;
+	
+	/**
+	 * Default Constructor
+	 */
+	public RfidTagDetectedNotificationSearchCriteria(){
+		this("");
+	}
 
 	/**
 	 * Constructor
-	 * @param tagName Value associated with the RFID Tag of interest
+	 * @param rfidTagValue Value associated with the RFID Tag of interest
 	 */
-	public RfidTagDetectedNotificationSearchCriteria(String tagName) {
+	public RfidTagDetectedNotificationSearchCriteria(String rfidTagValue) {
 		super();
-		this.tagName = tagName;
+		this.rfidTagValue = rfidTagValue;
 	}
 
 	/**
 	 * Retrieves the value associated with the RFID Tag of interest
 	 * @return Value associated with the RFID Tag of interest
 	 */
-	public String getTagName() {
-		return tagName;
+	public String getRfidTagValue() {
+		return rfidTagValue;
 	}
 
 	/**
 	 * Assigns the value associated with the RFID Tag of interest
 	 * @param Value associated with the RFID Tag of interest
 	 */
-	public void setTagName(String tagName) {
-		this.tagName = tagName;
+	public void setRfidTagValue(String rfidTagValue) {
+		this.rfidTagValue = rfidTagValue;
 	}
 
 }
