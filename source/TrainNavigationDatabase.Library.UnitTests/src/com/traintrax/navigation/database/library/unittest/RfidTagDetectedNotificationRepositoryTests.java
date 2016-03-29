@@ -19,7 +19,7 @@ public class RfidTagDetectedNotificationRepositoryTests extends FilteredSearchRe
         
         mySqlDatabaseAdapter.connect();
         
-        RfidTagDetectedNotificationRepository RfidTagDetectedNotificationRepository = new RfidTagDetectedNotificationRepository();
+        RfidTagDetectedNotificationRepository RfidTagDetectedNotificationRepository = new RfidTagDetectedNotificationRepository(mySqlDatabaseAdapter);
 		
 		return RfidTagDetectedNotificationRepository;
 	}
