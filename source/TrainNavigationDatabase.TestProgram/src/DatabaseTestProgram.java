@@ -12,7 +12,8 @@ public class DatabaseTestProgram {
 
 		mySqlDatabaseAdapter.connect();
 
-		importTrackMeasurements("/home/death/Documents/CPE658/TestTrackMeasurementsv2.csv", mySqlDatabaseAdapter);
+		//importTrackMeasurements("/home/death/Documents/CPE658/TestTrackMeasurementsv2.csv", mySqlDatabaseAdapter);
+		importTrackMeasurements("/home/death/Documents/CPE658/MainTrackMeasurements.csv", mySqlDatabaseAdapter);
 		importTrackSwitchMeasurements("/home/death/Documents/CPE658/TrackSwitchMeasurementsv2.csv", mySqlDatabaseAdapter);
 
 	}
@@ -104,7 +105,7 @@ public class DatabaseTestProgram {
 
 		// Add point
 		TrackPoint trackPoint = new TrackPoint(measurement.getPointName(), measurement.getPointType(),
-				measurement.getxInches(), measurement.getyInches(), 0, blockId, "");
+				measurement.getxInches(), measurement.getyInches(), 0, blockId, measurement.getRfidTagId());
 
 		RepositoryEntry<TrackPoint> addedEntry = DataImportUtilities.updateOrAddEntry(trackPoint,  trackPointRepository);
 
