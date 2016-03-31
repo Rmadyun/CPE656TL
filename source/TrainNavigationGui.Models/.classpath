@@ -2,7 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TrainNavigationDatabase.Library"/>
-	<classpathentry kind="lib" path="/home/death/repositories/CPE656TL/packages/restlet-jse-2.3.6/lib/com.google.gson_2.3/com.google.gson.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/TrainNavigationDatabase.RestClient"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/TrainNavigationDatabase.RestData"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/TrainNavigationDatabase.TestClient"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
