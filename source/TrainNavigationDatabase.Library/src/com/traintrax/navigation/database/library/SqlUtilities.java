@@ -79,7 +79,7 @@ public class SqlUtilities {
 		//Conversion courtesy of: http://alvinalexander.com/java/java-timestamp-example-current-time-now
 		Timestamp currentTimestamp = new java.sql.Timestamp(timeDetected.getTime().getTime());
 		
-		return currentTimestamp.toString();
+		return createSqlString(currentTimestamp.toString());
 	}
 	
 	/**
@@ -91,13 +91,11 @@ public class SqlUtilities {
 		
 		Calendar timeDetected = Calendar.getInstance();
 		
-		//Using timestamp parsing though deprecated to expedite parsing
-		
 		//Use a DateFormat class instead. Recommend using SimpleDateFormat for parsing
 		//http://stackoverflow.com/questions/18915075/java-convert-string-to-timestamp
-		long millisecondsInUnixEpoch = Timestamp.parse(sqlTimestamp);
+		Timestamp timestamp = Timestamp.valueOf(sqlTimestamp);
 		
-		timeDetected.setTimeInMillis(millisecondsInUnixEpoch);
+		timeDetected.setTime(timestamp);
 		
 		return timeDetected;
 	}

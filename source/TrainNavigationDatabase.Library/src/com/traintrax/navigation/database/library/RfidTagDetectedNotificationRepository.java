@@ -53,10 +53,10 @@ public class RfidTagDetectedNotificationRepository implements FilteredSearchRepo
 	}
 	
     /**
-     * Converts a AdjacentPoint object into a DatabaseEntry object
+     * Converts a RfidTagDetectedNotification object into a DatabaseEntry object
 	 * @param databaseEntry Entry to convert
 	 * @return DatabaseEntry object that is representative of the values
-	 * assigned to the AdjacentPoint object. Returns null if the entry
+	 * assigned to the RfidTagDetectedNotification object. Returns null if the entry
 	 * cannot be converted.
 	 */
 	private static DatabaseEntry convertToDatabaseEntry(RfidTagDetectedNotification adjacentPoint) {
