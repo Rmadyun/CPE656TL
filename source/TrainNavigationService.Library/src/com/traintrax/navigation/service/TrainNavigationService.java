@@ -43,6 +43,11 @@ import com.traintrax.navigation.trackswitch.SwitchState;
 public class TrainNavigationService implements TrainNavigationServiceInterface {
 
 	private static final String DefaultTrainId = "1";
+	
+	/**
+	 * Default assumption of the position of the train relative to the origin
+	 * in meters
+	 */
 	private static final Coordinate DefaultTrainPosition = new Coordinate(0,0,0);
 	private final List<String> trainIds = new LinkedList<String>();
 	private Timer timer = new Timer();
@@ -58,7 +63,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 	 */
 	public TrainNavigationService(){
 		String trainId = DefaultTrainId;
-		Coordinate currentPosition = new Coordinate(0,0,0);
+		Coordinate currentPosition = DefaultTrainPosition;
 		EulerAngleRotation currentOrientation = new EulerAngleRotation(0,0,0);
 
 		MotionDetectionUnitInterface motionDetectionUnit = new SimulatedMotionDetectionUnit();

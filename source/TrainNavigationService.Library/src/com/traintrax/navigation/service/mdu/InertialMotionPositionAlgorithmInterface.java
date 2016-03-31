@@ -18,7 +18,8 @@ public interface InertialMotionPositionAlgorithmInterface {
 	 * Assign null or an empty list for parameters that do not have any updated values.
 	 * @param gyroscopeMeasurementsSinceLastUpdate New Gyroscope measurements from the object
 	 * @param accelerometerMeasurementsSinceLastUpdate New Accelerometer measurements from the object
-	 * @param positionUpdates Reported updates in the position of the object.
+	 * @param positionUpdates Reported updates in the position of the object. This should be
+	 * the distance from the origin in meters
 	 * @return The estimated current position of the object.
 	 */
 	public ValueUpdate<Coordinate> calculatePosition(

@@ -18,7 +18,7 @@ public class TrainPositionEstimate {
 
 	/**
 	 * Constructor
-	 * @param position Position of estimated for train 
+	 * @param position Position of estimated for train ( in inches)
 	 * @param timeAtPosition Point in time where train is believed to be at the reported position
 	 * @param trainId Unique identifier for the train of interest
 	 */

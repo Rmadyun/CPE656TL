@@ -15,6 +15,7 @@ import com.traintrax.navigation.service.mdu.AccelerometerMeasurement;
 import com.traintrax.navigation.service.mdu.GyroscopeMeasurement;
 import com.traintrax.navigation.service.mdu.RfidTagDetectedNotification;
 import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.UnitConversionUtilities;
 
 /**
  * Class communicates with the Train Navigation Database
@@ -23,6 +24,8 @@ import com.traintrax.navigation.service.position.Coordinate;
  */
 public class TrainNavigationDatabase implements TrainNavigationDatabaseInterface {
 
+
+	
 	private FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> trackPointRepository;
 	private FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.AccelerometerMeasurement, AccelerometerMeasurementSearchCriteria> accelerometerMeasurementRepository;
 	private FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.RfidTagDetectedNotification, RfidTagDetectedNotificationSearchCriteria> rfidTagNotificationRepository;
@@ -65,8 +68,11 @@ public class TrainNavigationDatabase implements TrainNavigationDatabaseInterface
 		
 		if(matches.size() > 0){
 			RepositoryEntry<TrackPoint> selectedMatch = matches.get(0);
-			
+						
 			tagPosition = new Coordinate(selectedMatch.getValue().getX(), selectedMatch.getValue().getY());
+			
+			//Convert measurements from inches into meters
+			tagPosition = UnitConversionUtilities.convertFromInchesToMeters(tagPosition);
 		}
 
 		return tagPosition;

@@ -9,6 +9,7 @@ import com.traintrax.navigation.service.mdu.InertialMotionPositionAlgorithmInter
 import com.traintrax.navigation.service.mdu.MotionDetectionUnitInterface;
 import com.traintrax.navigation.service.mdu.RfidTagDetectedNotification;
 import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.UnitConversionUtilities;
 
 /**
  * Class is responsible for observing changes to a train that belongs to the
@@ -18,7 +19,7 @@ import com.traintrax.navigation.service.position.Coordinate;
  * 
  */
 public class TrainMonitor implements TrainMonitorInterface {
-
+	
 	private final String trainId;
 	private ValueUpdate<Coordinate> lastKnownTrainPosition;
 	private final InertialMotionPositionAlgorithmInterface positionAlgorithm;
@@ -97,6 +98,9 @@ public class TrainMonitor implements TrainMonitorInterface {
 		}
 				
 		ValueUpdate<Coordinate> latestPositionUpdate = positionAlgorithm.calculatePosition(newGyroscopeMeasurements, newAccelerometerMeasurements, positionUpdates);
+		
+		//Convert position from meters to inches
+		latestPositionUpdate = new ValueUpdate<Coordinate>(UnitConversionUtilities.convertFromMetersToInches(latestPositionUpdate.getValue()), latestPositionUpdate.getTimeObserved());
 		
 		this.lastKnownTrainPosition = latestPositionUpdate;
 		

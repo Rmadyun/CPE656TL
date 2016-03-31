@@ -34,7 +34,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 	 */
 
 	// Assuming that train is initially at rest at the start of time.
-	private static final double kineticFrictionOffset = 0.00; //0.35
+	private static final double kineticFrictionOffset = 0.35;
 
 	private final ThresholdFilter thresholdFilter = new ThresholdFilter(kineticFrictionOffset, 0);
 	private final AccelerometerCalibrationFilter accCalibrationFilter = new AccelerometerCalibrationFilter();
@@ -51,6 +51,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 
 	// TODO: Incorporate Last IMU Position Results
 	private ImuPositionResults lastImuPositionResults = null;
+	
 
 	/**
 	 * Constructor NOTE: Assuming that the train is a rest at initialization.

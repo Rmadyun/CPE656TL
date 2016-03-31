@@ -17,7 +17,8 @@ public interface TrainNavigationDatabaseInterface {
 	 * Lookup the position of an RFID Tag placed on the Positive Train
 	 * Control Test Bed track.
 	 * @param rfidTagIdentifier Unique identifier for the target RFID tag.
-	 * @return Position on the track of the RFID tag
+	 * @return Position on the track of the RFID tag (Relative position from the
+	 * origin in meters)
 	 */
 	Coordinate findTrackMarkerPosition(String rfidTagIdentifier);
 	
