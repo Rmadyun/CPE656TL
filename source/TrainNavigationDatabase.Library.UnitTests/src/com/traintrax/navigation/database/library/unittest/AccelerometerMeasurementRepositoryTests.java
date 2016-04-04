@@ -17,7 +17,7 @@ public class AccelerometerMeasurementRepositoryTests extends FilteredSearchRepos
         
         mySqlDatabaseAdapter.connect();
         
-        AccelerometerMeasurementRepository AccelerometerMeasurementRepository = new AccelerometerMeasurementRepository();
+        AccelerometerMeasurementRepository AccelerometerMeasurementRepository = new AccelerometerMeasurementRepository(mySqlDatabaseAdapter);
 		
 		return AccelerometerMeasurementRepository;
 	}

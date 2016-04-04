@@ -1,3 +1,4 @@
+import java.util.Calendar;
 import java.util.List;
 
 import com.traintrax.navigation.database.library.*;
@@ -11,6 +12,12 @@ public class DatabaseTestProgram {
 		MySqlDatabaseAdapter mySqlDatabaseAdapter = new MySqlDatabaseAdapter();
 
 		mySqlDatabaseAdapter.connect();
+		
+		RfidTagDetectedNotificationRepository rfidTagRepo = new RfidTagDetectedNotificationRepository(mySqlDatabaseAdapter);
+		
+		rfidTagRepo.add(new RfidTagDetectedNotification("00:00:00:00:01", Calendar.getInstance()));
+		
+		rfidTagRepo.find("1");
 
 		//importTrackMeasurements("/home/death/Documents/CPE658/TestTrackMeasurementsv2.csv", mySqlDatabaseAdapter);
 		importTrackMeasurements("/home/death/Documents/CPE658/MainTrackMeasurements.csv", mySqlDatabaseAdapter);
