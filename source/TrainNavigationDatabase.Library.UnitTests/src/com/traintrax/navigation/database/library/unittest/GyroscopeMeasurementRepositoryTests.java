@@ -17,7 +17,7 @@ public class GyroscopeMeasurementRepositoryTests extends FilteredSearchRepositor
         
         mySqlDatabaseAdapter.connect();
         
-        GyroscopeMeasurementRepository GyroscopeMeasurementRepository = new GyroscopeMeasurementRepository();
+        GyroscopeMeasurementRepository GyroscopeMeasurementRepository = new GyroscopeMeasurementRepository(mySqlDatabaseAdapter);
 		
 		return GyroscopeMeasurementRepository;
 	}
