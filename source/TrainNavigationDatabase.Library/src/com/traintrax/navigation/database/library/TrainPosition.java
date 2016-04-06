@@ -72,5 +72,57 @@ public class TrainPosition {
 	public Calendar getTimeAtPosition() {
 		return timeAtPosition;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((timeAtPosition == null) ? 0 : timeAtPosition.hashCode());
+		result = prime * result + ((trainId == null) ? 0 : trainId.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(x);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(z);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof TrainPosition))
+			return false;
+		TrainPosition other = (TrainPosition) obj;
+		if (timeAtPosition == null) {
+			if (other.timeAtPosition != null)
+				return false;
+		} else if (Math.abs(timeAtPosition.getTimeInMillis() - other.timeAtPosition.getTimeInMillis()) > 1000) //they are not equal if they are more than 1 sec difference between each other.
+			return false;
+		if (trainId == null) {
+			if (other.trainId != null)
+				return false;
+		} else if (!trainId.equals(other.trainId))
+			return false;
+		if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x))
+			return false;
+		if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.y))
+			return false;
+		if (Double.doubleToLongBits(z) != Double.doubleToLongBits(other.z))
+			return false;
+		return true;
+	}
+	
+	
 	
 }

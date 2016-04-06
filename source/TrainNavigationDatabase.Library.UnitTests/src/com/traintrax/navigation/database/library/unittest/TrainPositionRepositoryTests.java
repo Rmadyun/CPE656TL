@@ -17,7 +17,7 @@ public class TrainPositionRepositoryTests extends FilteredSearchRepositoryInterf
         
         mySqlDatabaseAdapter.connect();
         
-        TrainPositionRepository TrainPositionRepository = new TrainPositionRepository();
+        TrainPositionRepository TrainPositionRepository = new TrainPositionRepository(mySqlDatabaseAdapter);
 		
 		return TrainPositionRepository;
 	}
