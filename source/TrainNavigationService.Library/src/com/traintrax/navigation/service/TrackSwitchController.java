@@ -1,8 +1,10 @@
 package com.traintrax.navigation.service;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.traintrax.navigation.service.mdu.SerialPortMduCommunicationChannel;
 import com.traintrax.navigation.trackswitch.SwitchState;
 
 import jmri.jmrix.loconet.LnPacketizer;
@@ -28,6 +30,10 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 
 	private final LnPortController serialPortAdapter;
 	
+	//NOTE: Verified that Test Bed is configured to use the Default Prefix.
+	//Also verified that JMRI works with Windows.
+	//Serial port configured to 9600 8N1 works 
+	
 	private static final String DefaultPrefix = "L";
 	private static final String ApplicationName = "Train Navigation Service";
 	
@@ -39,7 +45,7 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	public TrackSwitchController() throws Exception{
 		//TODO: Figure out actual default values and assign
 		//elsewhere
-		this("/dev/ttyUSB0", DefaultPrefix);
+		this("/dev/ttyACM0", DefaultPrefix);
 	}
 	
 	/**
@@ -60,6 +66,10 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 		//LocoBuffer
     	
     	LnPortController serialPortAdapter = new PR3Adapter();
+    	
+    	SerialPortMduCommunicationChannel sc = new SerialPortMduCommunicationChannel(serialPort);
+    	
+    	InputStream is = sc.getInputStream();
     	
     	serialPortAdapter.openPort(serialPort, ApplicationName);
 	    serialPortAdapter.connect();

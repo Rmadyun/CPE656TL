@@ -95,6 +95,11 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 			List<AccelerometerMeasurement> accelerometerMeasurementsSinceLastUpdate,
 			List<ValueUpdate<Coordinate>> rfidTagDetectedLocations) {
 
+		if(gyroscopeMeasurementsSinceLastUpdate == null && accelerometerMeasurementsSinceLastUpdate == null && 
+				rfidTagDetectedLocations == null){
+			return this.lastKnownTrainPosition;
+		}
+		
 		// Sort gyroscope measurements in increasing order by time
 		if (gyroscopeMeasurementsSinceLastUpdate != null) {
 			Collections.sort(gyroscopeMeasurementsSinceLastUpdate);
@@ -130,7 +135,9 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 				// replace with filtered value
 				accelerometerMeasurementsSinceLastUpdate.set(i, accelerometerMeasurement);
 			}
-		} else {
+		} else if(gyroscopeMeasurementsSinceLastUpdate != null && accelerometerMeasurementsSinceLastUpdate != null) {
+			
+			
 			// Calibration
 			for (GyroscopeMeasurement m : gyroscopeMeasurementsSinceLastUpdate) {
 				imuCalibrator.addMeasurement(m);
