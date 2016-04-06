@@ -80,4 +80,50 @@ public class GyroscopeMeasurement implements Comparable<GyroscopeMeasurement> {
 		return Long.compare(this.timeMeasured.getTimeInMillis(), otherMeasurement.timeMeasured.getTimeInMillis());
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(radiansRotationPerSecondAlongXAxis);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(radiansRotationPerSecondAlongYAxis);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(radiansRotationPerSecondAlongZAxis);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((timeMeasured == null) ? 0 : timeMeasured.hashCode());
+		return result;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof GyroscopeMeasurement))
+			return false;
+		GyroscopeMeasurement other = (GyroscopeMeasurement) obj;
+		if (Double.doubleToLongBits(radiansRotationPerSecondAlongXAxis) != Double
+				.doubleToLongBits(other.radiansRotationPerSecondAlongXAxis))
+			return false;
+		if (Double.doubleToLongBits(radiansRotationPerSecondAlongYAxis) != Double
+				.doubleToLongBits(other.radiansRotationPerSecondAlongYAxis))
+			return false;
+		if (Double.doubleToLongBits(radiansRotationPerSecondAlongZAxis) != Double
+				.doubleToLongBits(other.radiansRotationPerSecondAlongZAxis))
+			return false;
+		if (timeMeasured == null) {
+			if (other.timeMeasured != null)
+				return false;
+		} else if (Math.abs(timeMeasured.getTimeInMillis() - other.timeMeasured.getTimeInMillis()) > 1000) //they are not equal if they are more than 500 ms difference between each other.
+			return false;
+		return true;
+	}
 }
