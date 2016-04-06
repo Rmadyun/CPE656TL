@@ -8,6 +8,7 @@ import com.traintrax.navigation.database.library.TrackBlock;
 import com.traintrax.navigation.database.library.TrackBlockSearchCriteria;
 import com.traintrax.navigation.database.rest.data.TrackBlockMatch;
 import com.traintrax.navigation.database.rest.data.TrackBlockSearchResults;
+import com.traintrax.navigation.database.rest.data.TrackPointSearchResults;
 
 /**
  * Restful Web client implementation of the Track Block Repository
@@ -17,6 +18,20 @@ import com.traintrax.navigation.database.rest.data.TrackBlockSearchResults;
  */
 public class RemoteTrackBlockRepository
 		implements FilteredSearchReadOnlyRepositoryInterface<TrackBlock, TrackBlockSearchCriteria> {
+	
+	//Configuration Defaults
+	/**
+	 * The Default Host Name to contact a local instance of the
+	 * repository
+	 */
+	public static final String DefaultHostName = "localhost";
+	
+	/**
+	 * Default network port to use to contact a repository
+	 */
+	public static int DefaultPort = 8182;
+	
+	
 	/**
 	 * Represents the location where requests to the Track Block repository can
 	 * be sent.
@@ -113,19 +128,43 @@ public class RemoteTrackBlockRepository
 	private final MessageDeserializerInterface<TrackBlockSearchResults> messageDeserializer;
 
 	/**
-	 * Constructor
+	 * Default constructor.
+	 * Defaulting to use Restlet as the web service client and JSON for the
+	 * serialization format.
 	 */
 	public RemoteTrackBlockRepository() {
-		this(new RestletWebServiceClient(), new JsonRepositoryMessageDeserializer<TrackBlockSearchResults>(TrackBlockSearchResults.class));
+	    this(new RestletWebServiceClient(), new JsonRepositoryMessageDeserializer<TrackBlockSearchResults>(TrackBlockSearchResults.class));
 	}
 
+	/**
+	 * Constructor.
+	 * Defaulting to use Restlet as the web service client and JSON for the
+	 * serialization format.
+	 * @param hostName Network name of the machine hosting the target repository
+	 * @param port Network port associated with the target repository
+	 */
+	public RemoteTrackBlockRepository(String hostName, int port) {
+	    this(hostName, port, new RestletWebServiceClient(), new JsonRepositoryMessageDeserializer<TrackBlockSearchResults>(TrackBlockSearchResults.class));
+	}
+	
+	/**
+	 * Constructor
+	 */
+	public RemoteTrackBlockRepository(String hostName, int port, RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<TrackBlockSearchResults> messageDeserializer) {
+
+		this.hostName = hostName;
+		this.port = port;
+		this.webServiceClient = webServiceClient;
+		this.messageDeserializer = messageDeserializer;
+	}
+	
 	/**
 	 * Constructor
 	 */
 	public RemoteTrackBlockRepository(RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<TrackBlockSearchResults> messageDeserializer) {
 
-		hostName = "localhost";
-		port = 8182;
+		this.hostName = DefaultHostName;
+		this.port = DefaultPort;
 		this.webServiceClient = webServiceClient;
 		this.messageDeserializer = messageDeserializer;
 	}

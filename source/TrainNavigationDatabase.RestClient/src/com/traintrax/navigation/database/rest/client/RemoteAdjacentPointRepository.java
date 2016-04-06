@@ -17,6 +17,19 @@ import com.traintrax.navigation.database.rest.data.AdjacentPointSearchResults;
  */
 public class RemoteAdjacentPointRepository
 		implements FilteredSearchReadOnlyRepositoryInterface<AdjacentPoint, AdjacentPointSearchCriteria> {
+	
+	//Configuration Defaults
+	/**
+	 * The Default Host Name to contact a local instance of the
+	 * repository
+	 */
+	public static final String DefaultHostName = "localhost";
+	
+	/**
+	 * Default network port to use to contact a repository
+	 */
+	public static int DefaultPort = 8182;
+	
 	/**
 	 * Represents the location where requests to the Adjacent Point repository can
 	 * be sent.
@@ -125,17 +138,43 @@ public class RemoteAdjacentPointRepository
 	private int port;
 
 	/**
-	 * Constructor
+	 * Default constructor.
+	 * Defaulting to use Restlet as the web service client and JSON for the
+	 * serialization format.
 	 */
 	public RemoteAdjacentPointRepository() {
-		this(new RestletWebServiceClient(), new JsonRepositoryMessageDeserializer<AdjacentPointSearchResults>(AdjacentPointSearchResults.class));
-
+	    this(new RestletWebServiceClient(), new JsonRepositoryMessageDeserializer<AdjacentPointSearchResults>(AdjacentPointSearchResults.class));
 	}
 
+	/**
+	 * Constructor.
+	 * Defaulting to use Restlet as the web service client and JSON for the
+	 * serialization format.
+	 * @param hostName Network name of the machine hosting the target repository
+	 * @param port Network port associated with the target repository
+	 */
+	public RemoteAdjacentPointRepository(String hostName, int port) {
+	    this(hostName, port, new RestletWebServiceClient(), new JsonRepositoryMessageDeserializer<AdjacentPointSearchResults>(AdjacentPointSearchResults.class));
+	}
+	
+	/**
+	 * Constructor
+	 */
+	public RemoteAdjacentPointRepository(String hostName, int port, RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<AdjacentPointSearchResults> messageDeserializer) {
+
+		this.hostName = hostName;
+		this.port = port;
+		this.webServiceClient = webServiceClient;
+		this.messageDeserializer = messageDeserializer;
+	}
+	
+	/**
+	 * Constructor
+	 */
 	public RemoteAdjacentPointRepository(RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<AdjacentPointSearchResults> messageDeserializer) {
 
-		hostName = "localhost";
-		port = 8182;
+		this.hostName = DefaultHostName;
+		this.port = DefaultPort;
 		this.webServiceClient = webServiceClient;
 		this.messageDeserializer = messageDeserializer;
 	}

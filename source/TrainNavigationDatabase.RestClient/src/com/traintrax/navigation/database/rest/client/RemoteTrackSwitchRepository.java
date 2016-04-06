@@ -17,6 +17,19 @@ import com.traintrax.navigation.database.rest.data.TrackSwitchSearchResults;
  */
 public class RemoteTrackSwitchRepository
 		implements FilteredSearchReadOnlyRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> {
+	
+	//Configuration Defaults
+	/**
+	 * The Default Host Name to contact a local instance of the
+	 * repository
+	 */
+	public static final String DefaultHostName = "localhost";
+	
+	/**
+	 * Default network port to use to contact a repository
+	 */
+	public static int DefaultPort = 8182;
+	
 	/**
 	 * Represents the location where requests to the Track Switch repository can
 	 * be sent.
@@ -153,16 +166,36 @@ public class RemoteTrackSwitchRepository
 	public RemoteTrackSwitchRepository() {
 	    this(new RestletWebServiceClient(), new JsonRepositoryMessageDeserializer<TrackSwitchSearchResults>(TrackSwitchSearchResults.class));
 	}
+
+	/**
+	 * Constructor.
+	 * Defaulting to use Restlet as the web service client and JSON for the
+	 * serialization format.
+	 * @param hostName Network name of the machine hosting the target repository
+	 * @param port Network port associated with the target repository
+	 */
+	public RemoteTrackSwitchRepository(String hostName, int port) {
+	    this(hostName, port, new RestletWebServiceClient(), new JsonRepositoryMessageDeserializer<TrackSwitchSearchResults>(TrackSwitchSearchResults.class));
+	}
 	
 	/**
 	 * Constructor
-	 * @param webServiceClient
-	 * @param messageDeserializer
+	 */
+	public RemoteTrackSwitchRepository(String hostName, int port, RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<TrackSwitchSearchResults> messageDeserializer) {
+
+		this.hostName = hostName;
+		this.port = port;
+		this.webServiceClient = webServiceClient;
+		this.messageDeserializer = messageDeserializer;
+	}
+	
+	/**
+	 * Constructor
 	 */
 	public RemoteTrackSwitchRepository(RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<TrackSwitchSearchResults> messageDeserializer) {
 
-		hostName = "localhost";
-		port = 8182;
+		this.hostName = DefaultHostName;
+		this.port = DefaultPort;
 		this.webServiceClient = webServiceClient;
 		this.messageDeserializer = messageDeserializer;
 	}
