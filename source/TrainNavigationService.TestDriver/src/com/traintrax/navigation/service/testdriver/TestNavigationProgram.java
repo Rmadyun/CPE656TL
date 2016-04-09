@@ -85,8 +85,9 @@ public class TestNavigationProgram {
 	}
 
 	private static void TestJmri() {
+		String serialPort = "/dev/ttyUSB0";
 		//String serialPort = "/dev/ttyACM0";
-		String serialPort = "COM4";
+		//String serialPort = "COM4";
 		String prefix = "L";
 		int switchNumber = 43;
 

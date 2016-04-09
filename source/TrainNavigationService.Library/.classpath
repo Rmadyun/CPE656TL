@@ -5,5 +5,11 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/home/death/repositories/CPE656TL/packages/JMRI-3.8/jmri.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TrainNavigationService.API"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/TrainNavigationDatabase.API"/>
+	<classpathentry kind="lib" path="/home/death/repositories/CPE656TL/packages/JMRI-3.8/lib/RXTXcomm.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/death/repositories/CPE656TL/packages/JMRI-3.8/lib/linux/x86_64"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

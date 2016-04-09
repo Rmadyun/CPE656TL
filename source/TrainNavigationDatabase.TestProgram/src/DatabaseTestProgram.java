@@ -22,6 +22,8 @@ public class DatabaseTestProgram {
 		//importTrackMeasurements("/home/death/Documents/CPE658/TestTrackMeasurementsv2.csv", mySqlDatabaseAdapter);
 		importTrackMeasurements("/home/death/Documents/CPE658/MainTrackMeasurements.csv", mySqlDatabaseAdapter);
 		importTrackSwitchMeasurements("/home/death/Documents/CPE658/TrackSwitchMeasurementsv2.csv", mySqlDatabaseAdapter);
+		//importTrackMeasurements("C:\\Users\\cs-testvm\\Desktop\\TrainTrax\\MySqlDatabase Setup\\MainTrackMeasurements.csv", mySqlDatabaseAdapter);
+		//importTrackSwitchMeasurements("C:\\Users\\cs-testvm\\Desktop\\TrainTrax\\MySqlDatabase Setup\\TrackSwitchMeasurementsv2.csv", mySqlDatabaseAdapter);
 
 	}
 
