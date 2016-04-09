@@ -66,10 +66,13 @@ public class TestNavigationProgram {
 			switch (com.getPortType()) {
 			default:
 			case CommPortIdentifier.PORT_SERIAL:
+
 				try {
-					CommPort thePort = com.open("CommUtil", 50);
-					thePort.close();
-					h.add(com);
+					if (!com.getName().contains("LPT")) {
+						CommPort thePort = com.open("CommUtil", 50);
+						thePort.close();
+						h.add(com);
+					}
 				} catch (PortInUseException e) {
 					System.out.println("Port, " + com.getName() + ", is in use.");
 				} catch (Exception e) {
@@ -82,7 +85,8 @@ public class TestNavigationProgram {
 	}
 
 	private static void TestJmri() {
-		String serialPort = "/dev/ttyACM0";
+		//String serialPort = "/dev/ttyACM0";
+		String serialPort = "COM4";
 		String prefix = "L";
 		int switchNumber = 43;
 
@@ -91,7 +95,7 @@ public class TestNavigationProgram {
 		trainNavigationServiceInterface = new TrainNavigationService();
 
 		try {
-			trainNavigationServiceInterface.SetSwitchState("SW43", SwitchState.ByPass);
+			trainNavigationServiceInterface.SetSwitchState("SW43", SwitchState.Pass);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,10 +118,14 @@ public class TestNavigationProgram {
 		GenericDatabaseInterface gdi = new MySqlDatabaseAdapter();
 		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> trackPointRepository = new TrackPointRepository(
 				gdi);
-		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.AccelerometerMeasurement, AccelerometerMeasurementSearchCriteria> accelerometerMeasurementRepository = new AccelerometerMeasurementRepository(gdi);
-		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.RfidTagDetectedNotification, RfidTagDetectedNotificationSearchCriteria> rfidTagNotificationRepository = new RfidTagDetectedNotificationRepository(gdi);
-		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.GyroscopeMeasurement, GyroscopeMeasurementSearchCriteria> gyroscopeMeasurementRepository = new GyroscopeMeasurementRepository(gdi);
-		FilteredSearchRepositoryInterface<TrainPosition, TrainPositionSearchCriteria> trainPositionRepository = new TrainPositionRepository(gdi);
+		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.AccelerometerMeasurement, AccelerometerMeasurementSearchCriteria> accelerometerMeasurementRepository = new AccelerometerMeasurementRepository(
+				gdi);
+		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.RfidTagDetectedNotification, RfidTagDetectedNotificationSearchCriteria> rfidTagNotificationRepository = new RfidTagDetectedNotificationRepository(
+				gdi);
+		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.GyroscopeMeasurement, GyroscopeMeasurementSearchCriteria> gyroscopeMeasurementRepository = new GyroscopeMeasurementRepository(
+				gdi);
+		FilteredSearchRepositoryInterface<TrainPosition, TrainPositionSearchCriteria> trainPositionRepository = new TrainPositionRepository(
+				gdi);
 
 		trainNavigationDatabase = new TrainNavigationDatabase(trackPointRepository, accelerometerMeasurementRepository,
 				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository);
@@ -430,16 +438,19 @@ public class TestNavigationProgram {
 
 		imuReadings = ImuMeasurementsReader
 				.ReadFile("/home/death/Documents/CPE658/sample-imu-data/02-17-2016/ImuUpdates.csv");
-		//imuReadings = ImuMeasurementsReader
-		//		.ReadFile("/home/death/Documents/CPE658/sample-imu-data/testdataandicd/Sample 3 - Imu.csv");
-		
+		// imuReadings = ImuMeasurementsReader
+		// .ReadFile("/home/death/Documents/CPE658/sample-imu-data/testdataandicd/Sample
+		// 3 - Imu.csv");
+
 		positionReadings = PositionMeasurementsReader
 				.ReadFile("/home/death/Documents/CPE658/sample-imu-data/02-17-2016/PositionUpdates-6inches.csv");
-		
-		//positionReadings = PositionMeasurementsReader
-		//		.ReadFile("/home/death/Documents/CPE658/sample-imu-data/02-17-2016/PositionUpdates-12 inches.csv");
 
-		//Combine all of the data so that if is entered into the algorithm in the order that it would be received
+		// positionReadings = PositionMeasurementsReader
+		// .ReadFile("/home/death/Documents/CPE658/sample-imu-data/02-17-2016/PositionUpdates-12
+		// inches.csv");
+
+		// Combine all of the data so that if is entered into the algorithm in
+		// the order that it would be received
 		List<ValueUpdate<Object>> timeline = new LinkedList<ValueUpdate<Object>>();
 
 		for (ValueUpdate<Tuple<GyroscopeMeasurement, AccelerometerMeasurement>> entry : imuReadings) {
@@ -454,13 +465,14 @@ public class TestNavigationProgram {
 
 		// Sort timeline
 		Collections.sort(timeline);
-		
-		double inchesToMeters = 2.54/100;
+
+		double inchesToMeters = 2.54 / 100;
 
 		// Calculate Position
 		// NOTE: Ball Parked an initial position based on the 02-17-16 data.
 		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(
-				new Coordinate(42.5*inchesToMeters, 61.1875 *inchesToMeters, 0), new EulerAngleRotation(0, 0, -Math.PI));
+				new Coordinate(42.5 * inchesToMeters, 61.1875 * inchesToMeters, 0),
+				new EulerAngleRotation(0, 0, -Math.PI));
 
 		try {
 			FileWriter fileWriter = new FileWriter("/home/death/debug_log.txt");
@@ -486,7 +498,8 @@ public class TestNavigationProgram {
 							accelerometerMeasurements, new LinkedList<ValueUpdate<Coordinate>>());
 				} else if (timePoint.getValue() instanceof Coordinate) {
 					bw.write("RFID Processed\n");
-					Coordinate positionReading = UnitConversionUtilities.convertFromInchesToMeters((Coordinate) timePoint.getValue());
+					Coordinate positionReading = UnitConversionUtilities
+							.convertFromInchesToMeters((Coordinate) timePoint.getValue());
 
 					ValueUpdate<Coordinate> positionMeasurement = new ValueUpdate<Coordinate>(positionReading,
 							timePoint.getTimeObserved());
@@ -519,19 +532,20 @@ public class TestNavigationProgram {
 		}
 
 		String positionFile = "/home/death/position.csv";
-		
+
 		try {
 			FileWriter fileWriter = new FileWriter(positionFile);
 			BufferedWriter bw = new BufferedWriter(fileWriter);
-			
+
 			// Write position to CSV
 
 			for (ValueUpdate<Coordinate> finalPosition : finalPositions) {
 
-				Coordinate positionInInches = UnitConversionUtilities.convertFromMetersToInches(finalPosition.getValue());
+				Coordinate positionInInches = UnitConversionUtilities
+						.convertFromMetersToInches(finalPosition.getValue());
 				String row = String.format("%f, %f, %f, %f\n",
 						finalPosition.getTimeObserved().getTimeInMillis() / 1000.0, positionInInches.getX(),
-						positionInInches.getY() , positionInInches.getZ());
+						positionInInches.getY(), positionInInches.getZ());
 				bw.write(row);
 			}
 
@@ -552,14 +566,14 @@ public class TestNavigationProgram {
 
 		// ReadTrainPositionsFromTrainNavigationService();
 
-		
-		  HashSet<CommPortIdentifier> ports = getAvailableSerialPorts();
-		  
-		  for(CommPortIdentifier p : ports){ System.out.println(p.getName()); }
-		 
+		HashSet<CommPortIdentifier> ports = getAvailableSerialPorts();
 
-		 //TestJmri();
-		//TestPositionAlgorithm();
+		for (CommPortIdentifier p : ports) {
+			System.out.println(p.getName());
+		}
+
+		 TestJmri();
+		// TestPositionAlgorithm();
 
 		// TestMduMeasurementRead();
 	}

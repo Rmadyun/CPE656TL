@@ -57,11 +57,21 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 	private static final int POLL_RATE_IN_MS = 10000;
 	private final Map<String, ValueUpdate<Coordinate>> trainPositionLut = new HashMap<>();
 
+	private static final String DEFAULT_MDU_SERIAL_PORT="COM5";
+	private static final String DEFAULT_PR3_SERIAL_PORT="COM4";
+	
+	/**
+	 * Default Constructor
+	 */
+	public TrainNavigationService(){
+	    this(DEFAULT_MDU_SERIAL_PORT, DEFAULT_PR3_SERIAL_PORT);
+	}
+	
 	/**
 	 * Default Constructor
 	 * @throws Exception Reports failure to configure the service to run.
 	 */
-	public TrainNavigationService(){
+	public TrainNavigationService(String mduSerialPort, String pr3SerialPort){
 		String trainId = DefaultTrainId;
 		Coordinate currentPosition = DefaultTrainPosition;
 		EulerAngleRotation currentOrientation = new EulerAngleRotation(0,0,0);
@@ -84,7 +94,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 		TrainMonitorInterface trainMonitor = new TrainMonitor(trainId, positionAlgorithm, motionDetectionUnit, trainNavigationDatabase);
 		TrackSwitchControllerInterface trainController = null;
 		try {
-			trainController = new TrackSwitchController();
+			trainController = new TrackSwitchController(pr3SerialPort, TrackSwitchController.DefaultPrefix);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
