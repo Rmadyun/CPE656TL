@@ -80,52 +80,27 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 
 		LnPortController serialPortAdapter = new PR3Adapter();
 
+		//JMRI 4.3 Code
+		// serialPortAdapter.setCommandStationType(LnCommandStationType.COMMAND_STATION_STANDALONE);
 		
-/*		  SerialPortMduCommunicationChannel sc = new
-		  SerialPortMduCommunicationChannel(serialPort);
-		 
-		 InputStream is = sc.getInputStream();*/
-		 
-
-		//serialPortAdapter.setCommandStationType(LnCommandStationType.COMMAND_STATION_STANDALONE);
+		//JMRI 3.8 Code
 		serialPortAdapter.setCommandStationType("Stand-alone LocoNet");
+				
 		serialPortAdapter.openPort(serialPort, ApplicationName);
 		serialPortAdapter.connect();
 		serialPortAdapter.configure();
-		
-		
-
-		LnPacketizer lnPacketizer = new LnPacketizer();
-
-		lnPacketizer.connectPort(serialPortAdapter);
-
 
 		this.serialPortAdapter = serialPortAdapter;
-		//this.locoNetInterface = serialPortAdapter.getSystemConnectionMemo().getLnTrafficController();
-		 
-	    PR3SystemConnectionMemo memo = (PR3SystemConnectionMemo) serialPortAdapter.getSystemConnectionMemo();
-	    this.locoNetInterface = memo.getLnTrafficController();
 		
+		//JMRI 4.3 Code
+		// this.locoNetInterface =
+		// serialPortAdapter.getSystemConnectionMemo().getLnTrafficController();
+
+		//JMRI 3.8 Code
+		PR3SystemConnectionMemo memo = (PR3SystemConnectionMemo) serialPortAdapter.getSystemConnectionMemo();
+		this.locoNetInterface = memo.getLnTrafficController();
+
 		selectMS100mode();
-		
-		byte[] rawLocoNetSwitchMessage = new byte[] { (byte) 0xB0, 0x43, 0x30, 0x55 };
-		
-		LocoNetMessage msg = new LocoNetMessage(4);
-		msg.setOpCode(0XB0);
-		msg.setElement(1, 0x2A);
-		msg.setElement(2, 0x30);
-		
-	       LocoNetMessage m = new LocoNetMessage(rawLocoNetSwitchMessage.length);
-	        for (int i = 0; i < rawLocoNetSwitchMessage.length; i++) {
-	            m.setElement(i, rawLocoNetSwitchMessage[i]);
-	        }
-
-
-		// Calculate checksum
-        //OutputStream outputStream  = this.serialPortAdapter.getOutputStream();
-		LocoNetMessage rawMsg = new LocoNetMessage(new byte[] { (byte) 0xB0, 0x2A, 0x30, 0x55});
-		lnPacketizer.sendLocoNetMessage(m);
-
 	}
 
 	/**
@@ -153,7 +128,7 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	 */
 	void selectMS100mode() {
 		// set to MS100 mode
-		
+
 		LocoNetMessage msg = new LocoNetMessage(6);
 		msg.setOpCode(0xD3);
 		msg.setElement(1, 0x10);
@@ -163,20 +138,22 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 		locoNetInterface.sendLocoNetMessage(msg);
 	}
 
-	
 	/**
-	 * Method decodes an incoming LOCONET message to determine if it
-	 * is a status message that reports the current mode of the PR3
-	 * @param msg LOCONET message to inspect for PR3 mode information.
-	 * @return Returns a value that describes the mode that the PR3 is in if
-	 * the LOCONET message is a PR3 status message. Otherwise, it returns null.
+	 * Method decodes an incoming LOCONET message to determine if it is a status
+	 * message that reports the current mode of the PR3
 	 * 
-	 * NOTE: This code was mostly taken and refactored from the JMRI source branch:
-	 * https://github.com/JMRI/JMRI 
+	 * @param msg
+	 *            LOCONET message to inspect for PR3 mode information.
+	 * @return Returns a value that describes the mode that the PR3 is in if the
+	 *         LOCONET message is a PR3 status message. Otherwise, it returns
+	 *         null.
+	 * 
+	 *         NOTE: This code was mostly taken and refactored from the JMRI
+	 *         source branch: https://github.com/JMRI/JMRI
 	 */
 	public String readPr3Mode(LocoNetMessage msg) {
 		String pr3Mode = null;
-		
+
 		if ((msg.getOpCode() == LnConstants.OPC_PEER_XFER) && (msg.getElement(1) == 0x10) && (msg.getElement(2) == 0x22)
 				&& (msg.getElement(3) == 0x22) && (msg.getElement(4) == 0x01)) { // Digitrax
 																					// form,
@@ -194,7 +171,7 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 				pr3Mode = "StatusMs100";
 			}
 		}
-		
+
 		return pr3Mode;
 	}
 
@@ -226,11 +203,24 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	public void ChangeSwitchState(String switchIdentifier, SwitchState switchState) {
 
 		int switchNumber = getSwitchNumber(switchIdentifier);
-		LnTurnout lnTurnout = new LnTurnout(prefix, switchNumber, locoNetInterface);
+		
+		//CS - Disabled as a part of troubleshooting difficulties controlling switches with
+		//JMRI
+		/*LnTurnout lnTurnout = new LnTurnout(prefix, switchNumber, locoNetInterface);
 
 		int commandedState = (switchState == SwitchState.Pass) ? LnTurnout.CLOSED : LnTurnout.THROWN;
 
-		lnTurnout.setCommandedState(commandedState);
+		lnTurnout.setCommandedState(commandedState); */
+		
+		LocoNetMessage msg = new LocoNetMessage(4);
+		msg.setOpCode(0XB0);
+		msg.setElement(1, (byte)((switchNumber - 1)&0xFF));
+		msg.setElement(2, (switchState == SwitchState.Pass) ? 0x30 : 0x10);
+		
+		//Calculate the checksum and assign it to the message.
+		msg.setParity();
+
+		this.locoNetInterface.sendLocoNetMessage(msg);
 
 		switchStateLut.put(switchIdentifier, switchState);
 	}

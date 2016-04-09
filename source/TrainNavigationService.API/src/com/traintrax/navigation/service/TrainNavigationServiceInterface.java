@@ -16,7 +16,7 @@ public interface TrainNavigationServiceInterface {
 	/**
 	 * Retrieves the last known position of a given train
 	 * @param trainIdentifier Unique ID for the train that we want to have the position for.
-	 * @return the last known position of a given train.
+	 * @return the last known position of a given train (in inches)
 	 */
 	ValueUpdate<Coordinate> GetLastKnownPosition(String trainIdentifier)throws Exception;
 	
