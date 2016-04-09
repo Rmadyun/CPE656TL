@@ -7,7 +7,6 @@ import java.util.Map;
 import com.traintrax.navigation.service.mdu.SerialPortMduCommunicationChannel;
 import com.traintrax.navigation.trackswitch.SwitchState;
 
-import jmri.jmrix.loconet.LnCommandStationType;
 import jmri.jmrix.loconet.LnConstants;
 import jmri.jmrix.loconet.LnPacketizer;
 import jmri.jmrix.loconet.LnPortController;
@@ -15,6 +14,7 @@ import jmri.jmrix.loconet.LnTurnout;
 import jmri.jmrix.loconet.LocoNetInterface;
 import jmri.jmrix.loconet.LocoNetMessage;
 import jmri.jmrix.loconet.pr3.PR3Adapter;
+import jmri.jmrix.loconet.pr3.PR3SystemConnectionMemo;
 
 /**
  * Class facilitates communication with switch controllers on the Positive Train
@@ -87,7 +87,8 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 		 InputStream is = sc.getInputStream();*/
 		 
 
-		serialPortAdapter.setCommandStationType(LnCommandStationType.COMMAND_STATION_STANDALONE);
+		//serialPortAdapter.setCommandStationType(LnCommandStationType.COMMAND_STATION_STANDALONE);
+		serialPortAdapter.setCommandStationType("Stand-alone LocoNet");
 		serialPortAdapter.openPort(serialPort, ApplicationName);
 		serialPortAdapter.connect();
 		serialPortAdapter.configure();
@@ -100,7 +101,10 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 
 
 		this.serialPortAdapter = serialPortAdapter;
-		this.locoNetInterface = serialPortAdapter.getSystemConnectionMemo().getLnTrafficController();
+		//this.locoNetInterface = serialPortAdapter.getSystemConnectionMemo().getLnTrafficController();
+		 
+	    PR3SystemConnectionMemo memo = (PR3SystemConnectionMemo) serialPortAdapter.getSystemConnectionMemo();
+	    this.locoNetInterface = memo.getLnTrafficController();
 		
 		selectMS100mode();
 		
