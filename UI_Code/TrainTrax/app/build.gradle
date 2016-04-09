@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 15
     buildToolsVersion "23.0.1"
 
     defaultConfig {
@@ -17,6 +17,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/services/org.restlet.engine.converter.ConverterHelper'
+    }
 }
 
 dependencies {
@@ -25,10 +34,15 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile files('libs/restlet-android-2.3.6/lib/org.restlet.jar')
-    compile files('libs/restlet-android-2.3.6/lib/org.restlet.ext.json.jar')
     compile files('libs/restlet-android-2.3.6/lib/com.google.gson_2.3/com.google.gson.jar')
-    compile project(':TrainNavigationDatabase.Library')
-    compile project(':TrainNavigationDatabase.RestClient')
-    compile project(':TrainNavigationDatabase.RestData')
-    compile project(':TrainNavigationDatabase.TestClient')
+    compile files('libs/restlet-android-2.3.6/lib/org.restlet.ext.httpclient.jar')
+    compile files('libs/restlet-android-2.3.6/lib/org.json_2.0/org.json.jar')
+    compile files('libs/restlet-android-2.3.6/lib/org.restlet.ext.json.jar')
+    compile files('libs/restlet-android-2.3.6/lib/org.restlet.ext.jackson.jar')
+    compile files('libs/TrainNavigationDatabase/TrainNavigationDatabase.API.jar')
+    compile files('libs/TrainNavigationDatabase/TrainNavigationDatabase.RestData.jar')
+    compile files('libs/TrainNavigationService/TrainNavigationService.API.jar')
+    compile files('libs/TrainNavigationService/TrainNavigationService.RestData.jar')
 }
+
+

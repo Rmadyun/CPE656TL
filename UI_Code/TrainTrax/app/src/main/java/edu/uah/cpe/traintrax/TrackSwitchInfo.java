@@ -1,5 +1,9 @@
 package edu.uah.cpe.traintrax;
 
+import com.traintrax.navigation.database.library.RepositoryEntry;
+import com.traintrax.navigation.database.library.TrackPoint;
+import com.traintrax.navigation.database.library.TrackSwitch;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,16 +35,12 @@ public class TrackSwitchInfo {
     }
 
     //pulls switch data from database (or wherever and sets all values
-    void SetAllSwitchData() {
+    void SetAllSwitchData(TrackGeometry trackGeometry) {
 
         //get the track points really need to only do this once
         // (being done in track switch and track diagram class )
-        TestTrackPointRepository trackPointRepository = new TestTrackPointRepository();
-        List<RepositoryEntry<TrackPoint>> trackPoints = trackPointRepository.findAll();
-
-        TestTrackSwitchRepository switchRepository = new TestTrackSwitchRepository();
-        List<RepositoryEntry<TrackSwitch>> trackSwitches = switchRepository.findAll();
-
+        List<RepositoryEntry<TrackPoint>> trackPoints = trackGeometry.getTrackPoints();
+        List<RepositoryEntry<TrackSwitch>> trackSwitches = trackGeometry.getSwitches();
 
         int index = 0;
 
@@ -105,11 +105,11 @@ public class TrackSwitchInfo {
 
     /**
      * Constructor
-     * @param
+     * @param trackGeometry Collected information about the track
     /* Default Constructor */
-     TrackSwitchInfo() {
+     TrackSwitchInfo(TrackGeometry trackGeometry) {
         this.num_switches = 0;
-         SetAllSwitchData();
+         SetAllSwitchData(trackGeometry);
 
     }
 

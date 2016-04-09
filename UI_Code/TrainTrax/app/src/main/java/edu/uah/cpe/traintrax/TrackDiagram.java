@@ -1,9 +1,12 @@
 package edu.uah.cpe.traintrax;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-//import TrainNavigationDatabase.*;
-
+import com.traintrax.navigation.database.library.*;
+import com.traintrax.navigation.database.rest.client.RemoteAdjacentPointRepository;
+import com.traintrax.navigation.database.rest.client.RemoteTrackBlockRepository;
+import com.traintrax.navigation.database.rest.client.RemoteTrackPointRepository;
 
 public class TrackDiagram
 {
@@ -41,7 +44,7 @@ public class TrackDiagram
     }
 
     //pulls switch data from database (or wherever and sets all values
-    void SetAllDiagramData() {
+    void SetAllDiagramData(TrackGeometry trackGeometry) {
 
         //GetCoordinate data from somewhere
         int num_cords = 0;
@@ -49,49 +52,54 @@ public class TrackDiagram
         Float xPos = 0.0f;
         Float yPos = 0.0f;
 
-        TestTrackBlockRepository trackBlockRepository = new TestTrackBlockRepository();
-        TestTrackPointRepository trackPointRepository = new TestTrackPointRepository();
-        TestAdjacentPointRepository adjacentPointRepository = new TestAdjacentPointRepository();
 
-        List<RepositoryEntry<TrackBlock>> trackBlocks = trackBlockRepository.findAll();
-        List<RepositoryEntry<TrackPoint>> trackPoints = trackPointRepository.findAll();
-        List<RepositoryEntry<AdjacentPoint>> adjacentPoints = adjacentPointRepository.findAll();
+        try {
 
-        Track trainTrack = Track.createTrack(trackBlocks, trackPoints, adjacentPoints);
+            List<RepositoryEntry<TrackBlock>> trackBlocks = trackGeometry.getTrackBlocks();
+            List<RepositoryEntry<TrackPoint>> trackPoints = trackGeometry.getTrackPoints();
+            List<RepositoryEntry<AdjacentPoint>> adjacentPoints = trackGeometry.getAdjacentPoints();
 
-        shapes = trainTrack.getShapes();
+            Track trainTrack = Track.createTrack(trackBlocks, trackPoints, adjacentPoints);
 
-        num_shapes = shapes.size();
-        coordinates = new ArrayList <ShapeCoordinate>(Arrays.asList(new ShapeCoordinate[num_shapes]));
+            shapes = trainTrack.getShapes();
 
-        int shapecount = 0;
-        for (Polygon shape : shapes) {
-            List<Vertex> points = shape.getVertices();
-            ShapeCoordinate temp_coord = new ShapeCoordinate();
-            num_cords =  points.size();
-            temp_coord.numberOfCoordinates = num_cords;
-            temp_coord.xposition = new ArrayList <Float>(Arrays.asList(new Float[num_cords]));
-            temp_coord.yposition = new ArrayList <Float>(Arrays.asList(new Float[num_cords]));
+            num_shapes = shapes.size();
+            coordinates = new ArrayList<ShapeCoordinate>(Arrays.asList(new ShapeCoordinate[num_shapes]));
 
-            //CreateDiagramArray(num_cords);
+            int shapecount = 0;
+            for (Polygon shape : shapes) {
+                List<Vertex> points = shape.getVertices();
+                ShapeCoordinate temp_coord = new ShapeCoordinate();
+                num_cords = points.size();
+                temp_coord.setnumCoords(num_cords);
 
-            for (int i = 0; i < num_cords; i++) {
-                Vertex point = points.get(i);
-                Coordinate position = point.getPosition();
-                float xcord = (float) position.getX();
-                float ycord = (float) position.getY();;
-                temp_coord.xposition.set(i, xcord);
-                temp_coord.yposition.set(i, ycord);
+                //CreateDiagramArray(num_cords);
+
+                for (int i = 0; i < num_cords; i++) {
+                    Vertex point = points.get(i);
+                    Coordinate position = point.getPosition();
+                    float xcord = (float) position.getX();
+                    float ycord = (float) position.getY();
+                    ;
+                    temp_coord.setXPosition(i, xcord);
+                    temp_coord.setYPosition(i, ycord);
+                }
+
+                coordinates.set(shapecount, temp_coord);
+                shapecount++;
+
+                // return;
+                //}
+
+            }
+            NavData = true;
+        }
+            catch (Exception exception){
+                exception.printStackTrace();
+
             }
 
-            coordinates.set(shapecount, temp_coord);
-            shapecount++;
 
-            // return;
-            //}
-
-        }
-        NavData = true;
     }
 
     int getXmax() {
@@ -138,11 +146,12 @@ public class TrackDiagram
     /**
      * Constructor
      *
-     * @param /* Default Constructor
+     * @param trackGeometry A description of all of the information known about the
+     *                      Positive Train control test bed
      */
-    public TrackDiagram() {
+    public TrackDiagram(TrackGeometry trackGeometry) {
         this.num_shapes = 0;
-        SetAllDiagramData();
+        SetAllDiagramData(trackGeometry);
         xmax = 210;
         ymax = 95;
         xpixel = 1920;
@@ -179,7 +188,11 @@ public class TrackDiagram
         }
 
         void setnumCoords(int num) {
-        numberOfCoordinates = num;
+
+            numberOfCoordinates = num;
+
+            xposition = new ArrayList<Float>(Arrays.asList(new Float[numberOfCoordinates]));
+            yposition = new ArrayList<Float>(Arrays.asList(new Float[numberOfCoordinates]));
         }
 
     }

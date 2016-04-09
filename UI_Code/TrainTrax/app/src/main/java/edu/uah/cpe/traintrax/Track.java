@@ -1,9 +1,7 @@
 package edu.uah.cpe.traintrax;
 
-/*import com.traintrax.navigation.database.library.AdjacentPoint;
-import com.traintrax.navigation.database.library.RepositoryEntry;
-import com.traintrax.navigation.database.library.TrackBlock;
-import com.traintrax.navigation.database.library.TrackPoint; */
+
+import com.traintrax.navigation.database.library.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +24,7 @@ public class Track {
 	 */
 	public Track(Collection<TrackBlockModel> trackBlockModels) {
 		super();
-		this.trackBlockModels = new ArrayList<>(trackBlockModels);
+		this.trackBlockModels = new ArrayList<TrackBlockModel>(trackBlockModels);
 	}
 
 

@@ -1,1 +1,1 @@
-include ':app', ':TrainNavigationDatabase.Library', ':TrainNavigationDatabase.RestClient', ':TrainNavigationDatabase.RestData', ':TrainNavigationDatabase.TestClient'
+include ':app'

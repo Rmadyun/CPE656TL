@@ -16,8 +16,6 @@ import java.util.List;
 
 public class MonitorView extends View {
     //set for 7 temp coordinates
-    TrackDiagram TrackDig = new TrackDiagram();
-    TrackSwitchInfo Switch = new TrackSwitchInfo();
 
     public MonitorView(Context context) {
         super(context);
@@ -34,99 +32,99 @@ public class MonitorView extends View {
     protected void onDraw(Canvas canvas) {
         // TODO Auto-generated method stub
 
-        Paint paint = new Paint();
-
         super.onDraw(canvas);
-        int x = getWidth();
-        int y = getHeight();
-        int radius;
-        radius = 100;
-        canvas.drawPaint(paint);
 
-        //Use Color.parseColor to define HTML colors
-        paint.setColor(Color.parseColor("#CCCfff"));
-        paint.setStrokeWidth(100);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.GREEN);
-        Path path = new Path();
+        TrackDiagram TrackDig = SharedObjectSingleton.getInstance().getTrackDiagram();
+        TrackSwitchInfo Switch = SharedObjectSingleton.getInstance().getTrackSwitchInfo();
 
-        // get default values for Track Diagram
-        int xmax = TrackDig.getXmax();
-        int ymax = TrackDig.getYmax();
-        int xpixel = TrackDig.getXpixel();
-        int ypixel = TrackDig.getYpixel();
-        int num_shapes = TrackDig.getNumShapes();
+        if(TrackDig != null && Switch != null) {
+            Paint paint = new Paint();
+            int x = getWidth();
+            int y = getHeight();
+            int radius;
+            radius = 100;
+            canvas.drawPaint(paint);
 
-        //set paint style
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(15);
+            //Use Color.parseColor to define HTML colors
+            paint.setColor(Color.parseColor("#CCCfff"));
+            paint.setStrokeWidth(100);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setColor(Color.GREEN);
+            Path path = new Path();
 
-        //Creates a path based on a collection of lines.
-        Path testPath = new Path();
+            // get default values for Track Diagram
+            int xmax = TrackDig.getXmax();
+            int ymax = TrackDig.getYmax();
+            int xpixel = TrackDig.getXpixel();
+            int ypixel = TrackDig.getYpixel();
+            int num_shapes = TrackDig.getNumShapes();
 
-        List<TrackDiagram.ShapeCoordinate> tmp;
-        tmp = TrackDig.coordinates;
+            //set paint style
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(15);
 
-        for (int i = 0; i < num_shapes; i++)
-        {
-            //testPath.reset();
-        TrackDiagram.ShapeCoordinate tempShape_cord;
-            tempShape_cord = tmp.get(i);
+            //Creates a path based on a collection of lines.
+            Path testPath = new Path();
 
-           int num_points = tempShape_cord.getnumCoords();
+            List<TrackDiagram.ShapeCoordinate> tmp;
+            tmp = TrackDig.coordinates;
 
-            //NOTE: This also could be done with edges of the polygons
-            //To simply draw each line that the polygon has.
-            for(int j = 0; j < num_points; j++ ){
-               float xcord = tempShape_cord.getXPosition(j);
-                float ycord = tempShape_cord.getYPosition(j);
+            for (int i = 0; i < num_shapes; i++) {
+                //testPath.reset();
+                TrackDiagram.ShapeCoordinate tempShape_cord;
+                tempShape_cord = tmp.get(i);
 
+                int num_points = tempShape_cord.getnumCoords();
+
+                //NOTE: This also could be done with edges of the polygons
+                //To simply draw each line that the polygon has.
+                for (int j = 0; j < num_points; j++) {
+                    float xcord = tempShape_cord.getXPosition(j);
+                    float ycord = tempShape_cord.getYPosition(j);
+
+                    xcord = (xcord / xmax) * xpixel;
+                    ycord = (ycord / ymax) * ypixel;
+
+                    if (j == 0) {
+                        testPath.moveTo(xcord, ycord);
+                    } else {
+                        testPath.lineTo(xcord, ycord);
+                    }
+                }
+
+                canvas.drawPath(testPath, paint);
+            }
+
+
+            int num_switches = Switch.getNum_switches();
+
+            for (int i = 0; i < num_switches; i++) {
+                float xcord = Switch.getXPosition(i);
+                float ycord = Switch.getYPosition(i);
+
+                //x = (x/xmax) * screen resolution;
+                // scale coordinates to resolution size
                 xcord = (xcord / xmax) * xpixel;
                 ycord = (ycord / ymax) * ypixel;
 
-                if(j== 0){
-                    testPath.moveTo(xcord, ycord);
+                //need to figure out a way to size this icon better
+                int xrect = ((int) xcord);
+                int yrect = ((int) ycord);
+
+                Bitmap switchstate;
+
+                Boolean state = false;
+                if (state == false) {
+                    switchstate = BitmapFactory.decodeResource(getResources(),
+                            R.drawable.bypass);
+                } else {
+                    switchstate = BitmapFactory.decodeResource(getResources(),
+                            R.drawable.pass);
                 }
-                else{
-                    testPath.lineTo(xcord, ycord);
-                }
+
+                canvas.drawBitmap(switchstate, null, new Rect(xrect, yrect, (xrect + 50), (yrect + 50)), null);
+                //canvas.drawBitmap(switchstate, 250.0f, 250.0f, paint)
             }
-
-            canvas.drawPath(testPath, paint);
-        }
-
-
-       int num_switches = Switch.getNum_switches();
-
-for (int i = 0; i < num_switches; i++)
-        {
-            float xcord = Switch.getXPosition(i);
-            float ycord = Switch.getYPosition(i);
-
-            //x = (x/xmax) * screen resolution;
-            // scale coordinates to resolution size
-            xcord = (xcord / xmax) * xpixel;
-            ycord = (ycord / ymax) * ypixel;
-
-            //need to figure out a way to size this icon better
-            int xrect = ((int) xcord);
-            int yrect = ((int) ycord);
-
-            Bitmap switchstate;
-
-            Boolean state = false;
-            if (state == false) {
-                switchstate = BitmapFactory.decodeResource(getResources(),
-                        R.drawable.bypass);
-            }
-            else
-            {
-                switchstate = BitmapFactory.decodeResource(getResources(),
-                        R.drawable.pass);
-            }
-
-            canvas.drawBitmap(switchstate, null, new Rect(xrect, yrect, (xrect + 50), (yrect + 50)), null);
-            //canvas.drawBitmap(switchstate, 250.0f, 250.0f, paint)
         }
     }
 

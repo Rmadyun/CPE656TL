@@ -11,9 +11,9 @@ import java.util.List;
  */
 public class TrackBlockModel {
 
-	private List<Vertex> points = new ArrayList<>();
-	private List<Vertex> boundaryPoints = new ArrayList<>();
-	private List<TrackBlockModel> adjacentBlocks = new ArrayList<>();
+	private List<Vertex> points = new ArrayList<Vertex>();
+	private List<Vertex> boundaryPoints = new ArrayList<Vertex>();
+	private List<TrackBlockModel> adjacentBlocks = new ArrayList<TrackBlockModel>();
 	private String blockName;
 	
 	public TrackBlockModel(String blockName){

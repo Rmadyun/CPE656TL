@@ -11,19 +11,45 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-;
+;import com.traintrax.navigation.service.rest.client.RemoteTrainNavigationService;
 
 public class MainActivity extends AppCompatActivity {
 
     final String module = "MainActivity";
     final Context context = this;
-    //private ListView listView;
-    TrackDiagram trackdata = new TrackDiagram();
+    final MainActivity activity = this;
+
+    String hostName = "10.0.2.2"; //"192.168.1.104";//"10.0.2.2";
+    Integer port = 8182;
+
+    private RetrieveTrackGeometryTask retrieveTrackGeometryTask = new RetrieveTrackGeometryTask(){
+        @Override
+        protected void onPostExecute(TrackGeometry trackGeometry) {
+            super.onPostExecute(trackGeometry);
+            SharedObjectSingleton.getInstance().setTrackDiagram(new TrackDiagram(trackGeometry));
+            SharedObjectSingleton.getInstance().setTrackSwitchInfo(new TrackSwitchInfo(trackGeometry));
+
+            //Find the main diagram view associated with the view
+            View diagramView = activity.findViewById(R.id.myview);
+
+            if(diagramView != null) {
+
+                //Force redrawing of the diagram now that we have retrieved
+                //track geometry information
+
+                diagramView.invalidate();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SharedObjectSingleton.getInstance().setTrainNavigationServiceInterface(new RemoteTrainNavigationService(hostName, 8183));
+
+        retrieveTrackGeometryTask.execute(hostName, port.toString());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

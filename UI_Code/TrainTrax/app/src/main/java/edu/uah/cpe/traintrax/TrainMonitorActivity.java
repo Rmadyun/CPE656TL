@@ -1,5 +1,6 @@
 package edu.uah.cpe.traintrax;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,12 +10,36 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.traintrax.navigation.service.TrainNavigationServiceEventSubscriber;
+import com.traintrax.navigation.service.TrainPositionUpdatedEvent;
+
 public class TrainMonitorActivity extends AppCompatActivity {
 
     final String module = "MainActivity";
     final Context context = this;
+    AppCompatActivity activity = this;
     //private ListView listView;
     //edu.uah.cpe.traintrax.TrackSwitch switchdata = new edu.uah.cpe.traintrax.TrackSwitch();
+
+    private TrainNavigationServiceEventSubscriber trainNavigationServiceEventSubscriber = new TrainNavigationServiceEventSubscriber(){
+        @Override
+        public void TrainPositionUpdated(TrainPositionUpdatedEvent event) {
+
+            final String message = "PositionUpdate: " + event.getTrainIdentifier() + " " + event.getPosition().getValue().getX();
+
+            //Make sure to run in the UI thread since this is invoked from a timer (i.e. separate thread)
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                    builder.setMessage(message);
+                }
+            });
+
+        }
+    };
+
 
 
     @Override
