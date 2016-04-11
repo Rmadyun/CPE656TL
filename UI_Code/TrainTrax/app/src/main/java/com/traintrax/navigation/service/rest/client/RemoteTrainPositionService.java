@@ -92,8 +92,8 @@ import com.traintrax.navigation.service.rest.data.TrainPositionUpdateMessage;
 	 */
 	public RemoteTrainPositionService(String hostName, int port, RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<TrainPositionUpdateMessage> messageDeserializer) {
 
-		hostName = "localhost";
-		port = 8182;
+		this.hostName = hostName;
+		this.port = port;
 		this.webServiceClient = webServiceClient;
 		this.messageDeserializer = messageDeserializer;
 	}

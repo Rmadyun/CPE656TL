@@ -3,10 +3,12 @@ package com.traintrax.navigation.service.rest.service;
 import org.restlet.data.Form;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.Representation;
+import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 
+import com.google.gson.Gson;
 import com.traintrax.navigation.service.TrainNavigationServiceInterface;
 import com.traintrax.navigation.service.ValueUpdate;
 import com.traintrax.navigation.service.position.Coordinate;
@@ -49,8 +51,13 @@ public class TrainPositionResource extends ServerResource {
 					trainPosition.getValue().getY(), trainPosition.getValue().getZ(),
 					trainPosition.getTimeObserved());
 			
+			Gson gson = new Gson();
 			
-			jsonRepresentation = new JsonRepresentation(response);
+			String serializedString = gson.toJson(response);
+			
+			//jsonRepresentation = new JsonRepresentation(response);
+			
+			jsonRepresentation = new StringRepresentation(serializedString);
 
 		} catch (Exception e) {
 			throw e;
