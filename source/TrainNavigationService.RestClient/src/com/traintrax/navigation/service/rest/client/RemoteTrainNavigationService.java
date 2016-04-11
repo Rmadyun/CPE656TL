@@ -1,6 +1,7 @@
 package com.traintrax.navigation.service.rest.client;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -46,13 +47,29 @@ public class RemoteTrainNavigationService implements TrainNavigationServiceInter
 			@Override
 			public void run() {
 
-				List<String> trainIds = trainIdentityService.getTrainIdentifiers();
+
+				List<String> trainIds = new ArrayList<String>();
+
+
+				try {
+					trainIds = trainIdentityService.getTrainIdentifiers();
+				}
+				catch(Exception exception){
+					exception.printStackTrace();
+				}
 
 				for (String trainId : trainIds) {
 
-					ValueUpdate<Coordinate> positionUpdate = trainPositionService.getLastKnownTrainPosition(trainId);
-					TrainPositionUpdatedEvent updatedEvent = new TrainPositionUpdatedEvent(trainId, positionUpdate);
-					eventPublisher.PublishEvent(updatedEvent);
+					try {
+
+
+						ValueUpdate<Coordinate> positionUpdate = trainPositionService.getLastKnownTrainPosition(trainId);
+						TrainPositionUpdatedEvent updatedEvent = new TrainPositionUpdatedEvent(trainId, positionUpdate);
+						eventPublisher.PublishEvent(updatedEvent);
+					}
+					catch(Exception exception){
+						exception.printStackTrace();
+					}
 				}
 
 			}
@@ -60,14 +77,23 @@ public class RemoteTrainNavigationService implements TrainNavigationServiceInter
 	}
 
 	/**
-	 * Constructor
+	 * Default Constructor
 	 */
 	public RemoteTrainNavigationService() {
-		hostName = "localhost";
-		port = 8182;
-		this.trainPositionService = new RemoteTrainPositionService();
-		this.trainIdentityService = new RemoteTrainIdentityService();
-		this.trackSwitchService = new RemoteTrackSwitchService();
+		this("localhost", 8182);
+	}
+
+	/**
+	 * Constructor
+	 * @param hostName Network address of the remote service being contacted
+	 * @param port Network port of the remote service being contacted
+	 */
+	public RemoteTrainNavigationService(String hostName, Integer port) {
+		this.hostName = hostName;
+		this.port = port;
+		this.trainPositionService = new RemoteTrainPositionService(hostName, port);
+		this.trainIdentityService = new RemoteTrainIdentityService(hostName, port);
+		this.trackSwitchService = new RemoteTrackSwitchService(hostName, port);
 
 		NotifierInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventNotifier = new TrainNavigationServiceEventNotifier();
 		PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher = new GenericPublisher<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent>(
