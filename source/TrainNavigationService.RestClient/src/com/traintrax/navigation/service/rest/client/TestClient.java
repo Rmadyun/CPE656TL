@@ -8,12 +8,14 @@ public class TestClient {
 
 	public static void main(String[] args) {
 		
-		RemoteTrainNavigationService service = new RemoteTrainNavigationService();
+		RemoteTrainNavigationService service = new RemoteTrainNavigationService("localhost", 8183);
 		
 		List<String> trainIds = service.GetKnownTrainIdentifiers();
 		
 		for(String entry : trainIds){
 			System.out.println(entry);
+			
+			System.out.println(service.GetLastKnownPosition(entry).getValue().getX());
 		}
 		
 		try {
