@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/home/death/repositories/CPE656TL/packages/restlet-jse-2.3.6/lib/com.google.gson_2.3/com.google.gson.jar"/>
+	<classpathentry kind="lib" path="C:/TrainTrax/CPE656TL-master/packages/com.google.gson_2.3/com.google.gson.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TrainNavigationDatabase.API"/>
 	<classpathentry kind="output" path="bin"/>

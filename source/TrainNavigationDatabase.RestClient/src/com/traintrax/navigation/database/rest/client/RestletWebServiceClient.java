@@ -2,7 +2,6 @@ package com.traintrax.navigation.database.rest.client;
 import java.io.IOException;
 
 import org.restlet.engine.Engine;
-import org.restlet.ext.httpclient.HttpClientHelper;
 import org.restlet.ext.jackson.JacksonConverter;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.ClientResource;
@@ -19,14 +18,6 @@ public class RestletWebServiceClient implements RestfulWebServiceClientInterface
 	 * Default Constructor
 	 */
 	public RestletWebServiceClient(){
-		
-		//Make sure that on Android the system is configured
-		//to handle serialization/deserialization and HTTP requests.
-		
-		Engine.getInstance().getRegisteredConverters().clear();
-		Engine.getInstance().getRegisteredConverters().add(new JacksonConverter());
-		Engine.getInstance().getRegisteredClients().clear();
-		Engine.getInstance().getRegisteredClients().add(new HttpClientHelper(null));
 	}
 	
 

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/home/death/repositories/CPE656TL/packages/restlet-jse-2.3.6/lib/org.restlet.jar"/>
+	<classpathentry kind="lib" path="C:/TrainTrax/CPE656TL-master/packages/org.restlet.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/death/repositories/CPE656TL/packages/restlet-jse-2.3.6/lib/org.restlet.ext.json.jar"/>
-	<classpathentry kind="lib" path="/home/death/repositories/CPE656TL/packages/restlet-jse-2.3.6/lib/org.json_2.0/org.json.jar"/>
+	<classpathentry kind="lib" path="C:/TrainTrax/CPE656TL-master/packages/org.restlet.ext.json.jar"/>
+	<classpathentry kind="lib" path="C:/TrainTrax/CPE656TL-master/packages/org.json_2.0/org.json.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TrainNavigationService.RestData"/>
-	<classpathentry kind="lib" path="/home/death/repositories/CPE656TL/packages/restlet-jse-2.3.6/lib/com.google.gson_2.3/com.google.gson.jar"/>
+	<classpathentry kind="lib" path="C:/TrainTrax/CPE656TL-master/packages/com.google.gson_2.3/com.google.gson.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TrainNavigationService.API"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TrainNavigationService.Library"/>
 	<classpathentry kind="output" path="bin"/>
