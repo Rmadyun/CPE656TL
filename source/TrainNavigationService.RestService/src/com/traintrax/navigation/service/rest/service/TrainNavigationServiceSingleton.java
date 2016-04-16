@@ -11,8 +11,12 @@ import com.traintrax.navigation.service.TrainNavigationServiceInterface;
  */
 public class TrainNavigationServiceSingleton {
 	
+	private static final String DEFAULT_MDU_SERIAL_PORT="/dev/null";
+	private static final String DEFAULT_PR3_SERIAL_PORT="/dev/null"; 
+	
+	
 	//Singleton instance
-	private static final TrainNavigationServiceInterface instance = new TrainNavigationService();
+	private static final TrainNavigationServiceInterface instance = new TrainNavigationService(DEFAULT_MDU_SERIAL_PORT, DEFAULT_PR3_SERIAL_PORT);
 	
 
 	/**

@@ -2,6 +2,9 @@ package com.traintrax.navigation.service.rest.client;
 import java.io.IOException;
 
 import org.restlet.ext.json.JsonRepresentation;
+
+import com.google.gson.Gson;
+import com.traintrax.navigation.service.rest.data.KnownTrainIdentifiersMessage;
 import com.traintrax.navigation.service.rest.data.TrackSwitchStateMessage;
 import com.traintrax.navigation.trackswitch.SwitchState;
 
@@ -74,18 +77,22 @@ import com.traintrax.navigation.trackswitch.SwitchState;
 
 	/**
 	 * Constructor
+	 * @param hostName Network address to use to contact service
+	 * @param port Network port to use to contact service
 	 */
-	public RemoteTrackSwitchService() {
-		this(new RestletWebServiceClient(), new JsonMessageDeserializer<TrackSwitchStateMessage>(TrackSwitchStateMessage.class));
+	public RemoteTrackSwitchService(String hostName, int port) {
 
+		this(hostName, port, new RestletWebServiceClient(), new JsonMessageDeserializer<TrackSwitchStateMessage>(TrackSwitchStateMessage.class));
 	}
 
 	/**
 	 * Constructor
+	 * @param hostName Network address to use to contact service
+	 * @param port Network port to use to contact service
 	 * @param webServiceClient Contact to the remote service
 	 * @param messageDeserializer Decodes messages received from the service
 	 */
-	public RemoteTrackSwitchService(RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<TrackSwitchStateMessage> messageDeserializer) {
+	public RemoteTrackSwitchService(String hostName, int port, RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<TrackSwitchStateMessage> messageDeserializer) {
 
 		hostName = "localhost";
 		port = 8182;
@@ -119,10 +126,10 @@ import com.traintrax.navigation.trackswitch.SwitchState;
 		String requestUrl = createTrackSwitchStateRequestUrl(hostName, port, Integer.parseInt(id));
 		
 		TrackSwitchStateMessage  trackSwitchStateMessage = new TrackSwitchStateMessage(id, switchState.toString());
-		
-		JsonRepresentation jsonRepresentation = new JsonRepresentation(trackSwitchStateMessage);
-		String message = jsonRepresentation.getText();
-		
+
+		Gson gson = new Gson();
+		String message = gson.toJson(trackSwitchStateMessage);
+
 		webServiceClient.post(requestUrl, message);
 	}
 }

@@ -2,6 +2,7 @@ package com.traintrax.navigation.service.rest.client;
 
 import com.traintrax.navigation.service.ValueUpdate;
 import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.rest.data.KnownTrainIdentifiersMessage;
 import com.traintrax.navigation.service.rest.data.TrainPositionUpdateMessage;
 
 /**
@@ -73,21 +74,26 @@ import com.traintrax.navigation.service.rest.data.TrainPositionUpdateMessage;
 
 	/**
 	 * Constructor
+	 * @param hostName Network address to use to contact service
+	 * @param port Network port to use to contact service
 	 */
-	public RemoteTrainPositionService() {
-		this(new RestletWebServiceClient(), new JsonMessageDeserializer<TrainPositionUpdateMessage>(TrainPositionUpdateMessage.class));
+	public RemoteTrainPositionService(String hostName, int port) {
+
+		this(hostName, port, new RestletWebServiceClient(), new JsonMessageDeserializer<TrainPositionUpdateMessage>(TrainPositionUpdateMessage.class));
 
 	}
 
 	/**
 	 * Constructor
+	 * @param hostName Network address to use to contact service
+	 * @param port Network port to use to contact service
 	 * @param webServiceClient Contact to the remote service
 	 * @param messageDeserializer Decodes messages received from the service
 	 */
-	public RemoteTrainPositionService(RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<TrainPositionUpdateMessage> messageDeserializer) {
+	public RemoteTrainPositionService(String hostName, int port, RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<TrainPositionUpdateMessage> messageDeserializer) {
 
-		hostName = "localhost";
-		port = 8182;
+		this.hostName = hostName;
+		this.port = port;
 		this.webServiceClient = webServiceClient;
 		this.messageDeserializer = messageDeserializer;
 	}

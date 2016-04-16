@@ -57,9 +57,12 @@ import com.traintrax.navigation.service.rest.data.TrainIdentifier;
 
 	/**
 	 * Constructor
+	 * @param hostName Network address to use to contact service
+	 * @param port Network port to use to contact service
 	 */
-	public RemoteTrainIdentityService() {
-		this(new RestletWebServiceClient(), new JsonMessageDeserializer<KnownTrainIdentifiersMessage>(KnownTrainIdentifiersMessage.class));
+	public RemoteTrainIdentityService(String hostName, int port) {
+
+		this(hostName, port, new RestletWebServiceClient(), new JsonMessageDeserializer<KnownTrainIdentifiersMessage>(KnownTrainIdentifiersMessage.class));
 
 	}
 
@@ -68,10 +71,9 @@ import com.traintrax.navigation.service.rest.data.TrainIdentifier;
 	 * @param webServiceClient Contact to the remote service
 	 * @param messageDeserializer Decodes messages received from the service
 	 */
-	public RemoteTrainIdentityService(RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<KnownTrainIdentifiersMessage> messageDeserializer) {
-
-		hostName = "localhost";
-		port = 8182;
+	public RemoteTrainIdentityService(String hostName, int port, RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<KnownTrainIdentifiersMessage> messageDeserializer) {
+		this.hostName = hostName;
+		this.port = port;
 		this.webServiceClient = webServiceClient;
 		this.messageDeserializer = messageDeserializer;
 	}

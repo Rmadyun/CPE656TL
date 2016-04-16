@@ -7,6 +7,7 @@ import java.util.Map;
 import com.traintrax.navigation.service.mdu.SerialPortMduCommunicationChannel;
 import com.traintrax.navigation.trackswitch.SwitchState;
 
+import gnu.io.CommPortIdentifier;
 import jmri.jmrix.loconet.LnConstants;
 import jmri.jmrix.loconet.LnPacketizer;
 import jmri.jmrix.loconet.LnPortController;
@@ -74,6 +75,9 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 
 		this.serialPort = serialPort;
 		this.prefix = prefix;
+		
+		//CommPortIdentifier commPortIdentifier = CommPortIdentifier.getPortIdentifier(serialPort);
+		
 
 		// Assumes we are using a MS100 compatible device, not a
 		// LocoBuffer
