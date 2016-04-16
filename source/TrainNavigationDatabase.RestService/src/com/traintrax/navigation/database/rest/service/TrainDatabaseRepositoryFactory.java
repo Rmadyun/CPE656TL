@@ -26,32 +26,22 @@ public class TrainDatabaseRepositoryFactory {
 	//Singleton instance
 	private static final TrainDatabaseRepositoryFactory instance = new TrainDatabaseRepositoryFactory();
 	
-	private final GenericDatabaseInterface databaseInterface;
-	private Boolean isConnected = false;
-	
+	private GenericDatabaseInterface databaseInterface;
+	private TrainNavigationDatabaseConfiguration dbConfiguration;
+		
+
 	/**
-	 * Constructor
+	 * Default Constructor
 	 */
 	private TrainDatabaseRepositoryFactory(){
-		databaseInterface = new MySqlDatabaseAdapter();
+		
 	}
-	
-	/**
-	 * Makes sure that the database has been connected to complete initialization
-	 */
-	private void connectionCheck(){
-		if(!isConnected){
-			databaseInterface.connect();
-			isConnected = true;
-		}
-	}
-	
+		
 	/**
 	 * Creates a new track point repository instance
 	 * @return A new track point repository instance
 	 */
 	public FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> createTrackPointRepository(){
-		connectionCheck();
 		
 		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> trackPointRepository = new TrackPointRepository(databaseInterface);
 		
@@ -62,9 +52,7 @@ public class TrainDatabaseRepositoryFactory {
 	 * Creates a new track switch repository instance
 	 * @return A new track switch repository instance
 	 */
-	public FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> createTrackSwitchRepository(){
-		connectionCheck();
-		
+	public FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> createTrackSwitchRepository(){		
 		FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> trackSwitchRepository = new TrackSwitchRepository(databaseInterface);
 		
 		return trackSwitchRepository;
@@ -74,9 +62,7 @@ public class TrainDatabaseRepositoryFactory {
 	 * Creates a new adjacent point repository instance
 	 * @return A new adjacent point repository instance
 	 */
-	public FilteredSearchRepositoryInterface<AdjacentPoint, AdjacentPointSearchCriteria> createAdjacentPointRepository(){
-		connectionCheck();
-		
+	public FilteredSearchRepositoryInterface<AdjacentPoint, AdjacentPointSearchCriteria> createAdjacentPointRepository(){		
 		FilteredSearchRepositoryInterface<AdjacentPoint, AdjacentPointSearchCriteria> adjacentPointRepository = new AdjacentPointRepository(databaseInterface);
 		
 		return adjacentPointRepository;
@@ -86,12 +72,29 @@ public class TrainDatabaseRepositoryFactory {
 	 * Creates a new track block repository instance
 	 * @return A new track block repository instance
 	 */
-	public FilteredSearchRepositoryInterface<TrackBlock, TrackBlockSearchCriteria> createTrackBlockRepository(){
-		connectionCheck();
-		
+	public FilteredSearchRepositoryInterface<TrackBlock, TrackBlockSearchCriteria> createTrackBlockRepository(){		
 		FilteredSearchRepositoryInterface<TrackBlock, TrackBlockSearchCriteria> trackBlockRepository = new TrackBlockRepository(databaseInterface);
 		
 		return trackBlockRepository;
+	}
+	
+	/**
+	 * Retrieves the current configuration used to setup database access
+	 * @return Configuration to use to setup database access
+	 */
+	public TrainNavigationDatabaseConfiguration getDbConfiguration() {
+		return dbConfiguration;
+	}
+
+	/**
+	 * Completes initialization of the factory for use.
+	 * @param dbConfiguration Configuration to use to setup database access
+	 */
+	public void initialize(TrainNavigationDatabaseConfiguration dbConfiguration) {
+		this.dbConfiguration = dbConfiguration;
+		databaseInterface = new MySqlDatabaseAdapter(dbConfiguration.getDbUsername(), dbConfiguration.getDbPassword(),
+				dbConfiguration.getDbName(), dbConfiguration.getDbHost(), dbConfiguration.getDbPort());
+		databaseInterface.connect();
 	}
 	
 	/**

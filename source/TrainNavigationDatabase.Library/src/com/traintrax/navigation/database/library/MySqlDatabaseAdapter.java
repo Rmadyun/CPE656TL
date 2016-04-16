@@ -20,15 +20,47 @@ import java.util.logging.Logger;
  */
 public class MySqlDatabaseAdapter implements GenericDatabaseInterface {
 	private Connection currentConnection = null;
+	private static final String DefaultUser = "root";
+	private static final String DefaultPassword = "root";
+	private static final String DefaultDbName = "TrainTrax";
+	private static final String DefaultHost = "localhost";
+	private static final int DefaultPort = 3306;
+	private String user;
+	private String password;
+	private String url;
+	
+	/**
+	 * Default Constructor
+	 * @param dbUsername Username to use to contact the database
+	 * @param dbPassword Password to use to access the database
+	 * @param dbName Name of the database to access
+	 * @param dbHost Network hostname or address to use to access the database
+	 * @param dbPort Network port to use to access the database
+	 */
+	public MySqlDatabaseAdapter() {
+	
+		this(DefaultUser, DefaultPassword, DefaultDbName, DefaultHost, DefaultPort);
+	}
+
+	/**
+	 * Constructor
+	 * @param dbUsername Username to use to contact the database
+	 * @param dbPassword Password to use to access the database
+	 * @param dbName Name of the database to access
+	 * @param dbHost Network hostname or address to use to access the database
+	 * @param dbPort Network port to use to access the database
+	 */
+	public MySqlDatabaseAdapter(String dbUsername, String dbPassword, String dbName,
+			String dbHost, int dbPort) {
+		this.user = dbUsername;
+		this.password = dbPassword;
+		this.url = String.format("jdbc:mysql://%s:%d/%s?autoReconnect=true&useSSL=true", dbHost, dbPort, dbName);
+	}
 
 	private Connection createNewConnection() {
 		Connection con = null;
 		Statement st = null;
 		ResultSet rs = null;
-
-		String url = "jdbc:mysql://localhost:3306/TrainTrax";
-		String user = "root";
-		String password = "root";
 
 		try {
 			con = DriverManager.getConnection(url, user, password);
@@ -289,7 +321,6 @@ public class MySqlDatabaseAdapter implements GenericDatabaseInterface {
 	    idConstraint = " WHERE " + primaryKey.getKey() + "=" + primaryKey.getValue();
 
 		if (!idConstraint.isEmpty()) {
-			//queryBuilder.append("\n");
 			queryBuilder.append(idConstraint);
 
 			String queryString = queryBuilder.toString();
