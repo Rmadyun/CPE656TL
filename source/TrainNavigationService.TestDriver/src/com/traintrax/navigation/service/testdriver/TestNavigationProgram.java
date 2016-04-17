@@ -148,7 +148,7 @@ public class TestNavigationProgram {
 				.generateStraightLine(currentOrientation.getRadiansRotationAlongZAxis(), lastStartupSample.getExpectedPosition().getValue(), initialSpeedInMetersPerSecond,
 						accelerationInMetersPerSecondSquared, numberOfSeconds, startTime, numSamplesBeforeTagEvent, kineticFrictionOffset);
 		
-		PositionTestCase straightLineWithInitialAccTestCase = new PositionTestCase("Train straightline with initial acceleration");
+		PositionTestCase straightLineWithInitialAccTestCase = new PositionTestCase("Train straightline with initial acceleration", currentPosition, currentOrientation);
 		
 		//straightLineWithInitialAccTestCase.appendTestCase(calibrationTestCase);
 		straightLineWithInitialAccTestCase.appendTestCase(startupTestCase);

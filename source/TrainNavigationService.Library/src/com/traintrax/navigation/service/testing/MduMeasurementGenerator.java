@@ -102,7 +102,7 @@ public class MduMeasurementGenerator {
 	 * @return New test case to use for verifying position estimation when traveling in a straight line.
 	 */
 	public static PositionTestCase generateStraightLine(double orientation, Coordinate initialPosition, double initialSpeedInMetersPerSecond, double accelerationInMetersPerSecondSquared, int numberOfSeconds, Calendar startTime, int numberOfMeasurementsBetweenRfidTagNotifications, double accKineticFrictionOffset){
-		PositionTestCase straightLineTestCase = new PositionTestCase("Straight Line Test Case");
+		PositionTestCase straightLineTestCase = new PositionTestCase("Straight Line Test Case", initialPosition, new EulerAngleRotation(0,0,orientation));
 		List<PositionTestSample> samples = straightLineTestCase.getSamples();
 		
 		Calendar timeMeasured = (Calendar) startTime.clone();
