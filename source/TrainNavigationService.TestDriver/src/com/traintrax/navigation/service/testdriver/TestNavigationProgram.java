@@ -93,9 +93,8 @@ public class TestNavigationProgram {
 
 		TrainNavigationServiceInterface trainNavigationServiceInterface = null;
 
-		trainNavigationServiceInterface = new TrainNavigationService();
-
 		try {
+			trainNavigationServiceInterface = new TrainNavigationService();
 			trainNavigationServiceInterface.SetSwitchState("SW43", SwitchState.Pass);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
