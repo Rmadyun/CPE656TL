@@ -50,6 +50,9 @@ public class Service {
 		commandlineOptions.addOption(hostPortOption);
 		commandlineOptions.addOption(dbUsernameOption);
 		commandlineOptions.addOption(dbPasswordOption);
+		commandlineOptions.addOption(dbNameOption);
+		commandlineOptions.addOption(dbHostnameOption);
+		commandlineOptions.addOption(dbPortOption);
 		commandlineOptions.addOption(helpOption);
 
 		DefaultParser defaultParser = new DefaultParser();
