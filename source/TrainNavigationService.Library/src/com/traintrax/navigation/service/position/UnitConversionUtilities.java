@@ -11,12 +11,12 @@ public class UnitConversionUtilities {
 	/**
 	 * Conversion factor to convert position measurements from meters to inches
 	 */
-	private static final double MetersToInches = 100/2.54;
+	public static final double MetersToInches = 100/2.54;
 	
 	/**
 	 * Conversion factor to convert position measurements from inches to meters
 	 */
-	private static final double InchesToMeters = 2.54/100;
+	public static final double InchesToMeters = 2.54/100;
 	
 	/**
 	 * Method converts coordinates expressed in meters to 

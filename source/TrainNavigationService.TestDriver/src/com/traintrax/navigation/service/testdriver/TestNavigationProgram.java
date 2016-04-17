@@ -36,6 +36,7 @@ import com.traintrax.navigation.service.TrainNavigationService;
 import com.traintrax.navigation.service.TrainNavigationServiceEvent;
 import com.traintrax.navigation.service.TrainNavigationServiceEventSubscriber;
 import com.traintrax.navigation.service.TrainNavigationServiceInterface;
+import com.traintrax.navigation.service.Triplet;
 import com.traintrax.navigation.service.Tuple;
 import com.traintrax.navigation.service.ValueUpdate;
 import com.traintrax.navigation.service.ValueUpdateComparator;
@@ -48,6 +49,7 @@ import com.traintrax.navigation.service.mdu.*;
 import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.UnitConversionUtilities;
 import com.traintrax.navigation.service.rotation.*;
+import com.traintrax.navigation.service.testing.MduMeasurementGenerator;
 import com.traintrax.navigation.trackswitch.SwitchState;
 
 import gnu.io.*;
@@ -86,8 +88,8 @@ public class TestNavigationProgram {
 
 	private static void TestJmri() {
 		String serialPort = "/dev/ttyUSB0";
-		//String serialPort = "/dev/ttyACM0";
-		//String serialPort = "COM4";
+		// String serialPort = "/dev/ttyACM0";
+		// String serialPort = "COM4";
 		String prefix = "L";
 		int switchNumber = 43;
 
@@ -109,10 +111,26 @@ public class TestNavigationProgram {
 		Coordinate currentPosition = new Coordinate(0, 0, 0);
 		EulerAngleRotation currentOrientation = new EulerAngleRotation(0, 0, 0);
 
-		MduCommunicationChannelInterface mduCommunicationChannel = new TestMduCommunicationChannel();
-		MduProtocolParserInterface mduProtocolParser = new MduProtocolParser();
-		MotionDetectionUnitInterface motionDetectionUnit = new MotionDetectionUnit(mduCommunicationChannel,
-				mduProtocolParser);
+		/*
+		 * MduCommunicationChannelInterface mduCommunicationChannel = new
+		 * TestMduCommunicationChannel(); MduProtocolParserInterface
+		 * mduProtocolParser = new MduProtocolParser();
+		 * MotionDetectionUnitInterface motionDetectionUnit = new
+		 * MotionDetectionUnit(mduCommunicationChannel, mduProtocolParser);
+		 */
+
+		double orientation = Math.PI / 4;
+		Coordinate initialPosition = new Coordinate(0, 0, 0);
+		double initialSpeedInMetersPerSecond = 1;
+		double accelerationInMetersPerSecondSquared = 0;
+		int numberOfSeconds = 10;
+		int numSamplesBeforeTagEvent = 3;
+		Calendar startTime = Calendar.getInstance();
+		List<Triplet<AccelerometerMeasurement, GyroscopeMeasurement, RfidTagDetectedNotification>> samples = MduMeasurementGenerator
+				.generateStraightLine(orientation, initialPosition, initialSpeedInMetersPerSecond,
+						accelerationInMetersPerSecondSquared, numberOfSeconds, startTime, numSamplesBeforeTagEvent);
+
+		SimulatedMotionDetectionUnit motionDetectionUnit = new SimulatedMotionDetectionUnit();
 
 		TrainNavigationDatabaseInterface trainNavigationDatabase;
 		GenericDatabaseInterface gdi = new MySqlDatabaseAdapter();
@@ -151,7 +169,27 @@ public class TestNavigationProgram {
 		TrainNavigationServiceInterface trainNavigationService = new TrainNavigationService(trainMonitor,
 				trainController, eventPublisher);
 
-		ReadTrainPositionsFromTrainNavigationService(trainNavigationService);
+		// ReadTrainPositionsFromTrainNavigationService(trainNavigationService);
+
+		String selectedTrain = "1";
+		for (Triplet<AccelerometerMeasurement, GyroscopeMeasurement, RfidTagDetectedNotification> sample : samples) {
+			//TODO: Figure out a way to fake the tag position lookup.
+			motionDetectionUnit.enqueueSample(sample);
+
+			ValueUpdate<Coordinate> trainPosition;
+			try {
+				trainPosition = trainNavigationService.GetLastKnownPosition(selectedTrain);
+
+				System.out.println(String.format("Current position of train %s: (%f, %f) at %s", selectedTrain,
+						trainPosition.getValue().getX(), trainPosition.getValue().getY(),
+						trainPosition.getTimeObserved().getTime()));
+
+				Thread.sleep(1000);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 	}
 
@@ -572,10 +610,11 @@ public class TestNavigationProgram {
 			System.out.println(p.getName());
 		}
 
-		 TestJmri();
+		// TestJmri();
 		// TestPositionAlgorithm();
 
-		// TestMduMeasurementRead();
+		TestMduMeasurementRead();
+
 	}
 
 }
