@@ -19,8 +19,6 @@ import org.restlet.data.Protocol;
 public class Service {
 
 
-	
-
 	/**
 	 * Main function invoked when the service launches.
 	 * 
