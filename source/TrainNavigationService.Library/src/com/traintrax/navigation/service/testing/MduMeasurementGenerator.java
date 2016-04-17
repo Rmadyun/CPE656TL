@@ -97,10 +97,13 @@ public class MduMeasurementGenerator {
 	 * @param accelerationInMetersPerSecondSquared constant rate of acceleration of the object in meters per second squared
 	 * @param numberOfSeconds Duration of seconds to generate for the sampling.
 	 * @param startTime Initial time reported by the sample.
-	 * @return
+	 * @param numberOfMeasurementsBetweenRfidTagNotifications Number of measurements to report before a RFID Tag position update should be injected.
+	 * @param accKineticFrictionOffset Amount to add an offset the accelerometer measurements to account for the force necessary to counter kinetic friction when the train is moving 
+	 * @return New test case to use for verifying position estimation when traveling in a straight line.
 	 */
-	public static List<Triplet<AccelerometerMeasurement, GyroscopeMeasurement, RfidTagDetectedNotification>> generateStraightLine(double orientation, Coordinate initialPosition, double initialSpeedInMetersPerSecond, double accelerationInMetersPerSecondSquared, int numberOfSeconds, Calendar startTime, int numberOfMeasurementsBetweenRfidTagNotifications){
-		List<Triplet<AccelerometerMeasurement, GyroscopeMeasurement, RfidTagDetectedNotification>> samples = new LinkedList<Triplet<AccelerometerMeasurement, GyroscopeMeasurement, RfidTagDetectedNotification>>();
+	public static PositionTestCase generateStraightLine(double orientation, Coordinate initialPosition, double initialSpeedInMetersPerSecond, double accelerationInMetersPerSecondSquared, int numberOfSeconds, Calendar startTime, int numberOfMeasurementsBetweenRfidTagNotifications, double accKineticFrictionOffset){
+		PositionTestCase straightLineTestCase = new PositionTestCase("Straight Line Test Case");
+		List<PositionTestSample> samples = straightLineTestCase.getSamples();
 		
 		Calendar timeMeasured = (Calendar) startTime.clone();
 		
@@ -118,31 +121,39 @@ public class MduMeasurementGenerator {
 		double speedX = initialSpeedInMetersPerSecond*Math.cos(orientation);
 		double speedY = initialSpeedInMetersPerSecond*Math.sin(orientation);
 		
+		double accOffX = accKineticFrictionOffset*Math.cos(orientation);
+		double accOffY = accKineticFrictionOffset*Math.sin(orientation);
 		double accX = accelerationInMetersPerSecondSquared*Math.cos(orientation);
 		double accY = accelerationInMetersPerSecondSquared*Math.sin(orientation);
 		
 	    for(int i = 0; i < numberOfSeconds; i++){
+	    	PositionTestSample positionTestSample = new PositionTestSample();
 	    	GyroscopeMeasurement gyrMeasurement = new GyroscopeMeasurement(0, 0, 0, 1, timeMeasured);
-	    	AccelerometerMeasurement accMeasurement = new AccelerometerMeasurement(new Acceleration(accX, accY, 0), 1, timeMeasured);
-			ValueUpdate<Coordinate> positionUpdate = new ValueUpdate<Coordinate>(new Coordinate(currentX, currentY, 0), timeMeasured);
+	    	AccelerometerMeasurement accMeasurement = new AccelerometerMeasurement(new Acceleration(accX+accOffX, accY+accOffY, 0), 1, timeMeasured);
+			ValueUpdate<Coordinate> rfidTagPosition = null;
+			ValueUpdate<Coordinate> expectedPosition = new ValueUpdate<Coordinate>(new Coordinate(currentX, currentY, 0), timeMeasured);
 	    	RfidTagDetectedNotification rfidTagDetectionNotification = null;
 	    	
 	    	if(rfidTagEventCountDown == 0)
 	    	{
-	    		rfidTagDetectionNotification = new RfidTagDetectedNotification("", timeMeasured);
+	    		rfidTagPosition = new ValueUpdate<Coordinate>(new Coordinate(currentX, currentY, 0), timeMeasured);
 	    		rfidTagEventCountDown = numberOfMeasurementsBetweenRfidTagNotifications;
-	    		System.out.printf("x: %f, y:%f, z:%f\n", positionUpdate.getValue().getX(), positionUpdate.getValue().getY(), positionUpdate.getValue().getZ());
+	    		System.out.printf("x: %f, y:%f, z:%f\n", rfidTagPosition.getValue().getX(), rfidTagPosition.getValue().getY(), rfidTagPosition.getValue().getZ());
 	    	}
 	    	else
 	    	{
 	    		rfidTagEventCountDown--;
 	    	}
 	    	
-	    	Triplet<AccelerometerMeasurement, GyroscopeMeasurement, RfidTagDetectedNotification> triplet = new Triplet<AccelerometerMeasurement, GyroscopeMeasurement, RfidTagDetectedNotification>(accMeasurement, gyrMeasurement, rfidTagDetectionNotification);
+	    	positionTestSample.setAccelerometerMeasurement(accMeasurement);
+	    	positionTestSample.setGyroscopeMeasurement(gyrMeasurement);
+	    	positionTestSample.setRfidTagDetectedNotification(rfidTagDetectionNotification);
+	    	positionTestSample.setRfidTagPosition(rfidTagPosition);
+	    	positionTestSample.setExpectedPosition(expectedPosition);
 
 	    	timeMeasured = (Calendar) timeMeasured.clone();
 	    	timeMeasured.add(Calendar.SECOND, 1);
-	    	samples.add(triplet);
+	    	samples.add(positionTestSample);
 	    	
 	    	//t=1
 	    	speedX = accX*1 + speedX;
@@ -152,7 +163,7 @@ public class MduMeasurementGenerator {
 	    }
 	    
 		
-		return samples;
+		return straightLineTestCase;
 	}
 
 }

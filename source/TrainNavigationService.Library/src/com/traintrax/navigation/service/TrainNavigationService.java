@@ -57,7 +57,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 	private final TrainMonitorInterface trainMonitor;
 	private final TrackSwitchControllerInterface trainController;
 	private final PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher;
-	private static final int POLL_RATE_IN_MS = 10000;
+	private static final int POLL_RATE_IN_MS = 5000;
 	private final Map<String, ValueUpdate<Coordinate>> trainPositionLut = new HashMap<>();
 	
 	/**

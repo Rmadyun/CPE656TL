@@ -1,6 +1,5 @@
 package com.traintrax.navigation.service.mdu;
 
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -8,9 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import com.traintrax.navigation.service.Triplet;
-import com.traintrax.navigation.service.position.Acceleration;
+import com.traintrax.navigation.service.testing.PositionTestSample;
 
 /**
  * Class facilitates simulates collaboration with a Motion Detection Unit
@@ -46,35 +43,37 @@ public class SimulatedMotionDetectionUnit implements MotionDetectionUnitInterfac
 	 * atomically enqueue all of the measurements in the sample. Assign null to
 	 * measurements that do not have a value to include.
 	 * 
-	 * @param sample
-	 *            sample to enqueue to be read from the service.
+	 * @param positionTestSamples
+	 *            samples to enqueue to be read from the service.
 	 */
-	public void enqueueSample(
-			Triplet<AccelerometerMeasurement, GyroscopeMeasurement, RfidTagDetectedNotification> sample) {
+	public void enqueueSamples(List<PositionTestSample> positionTestSamples) {
 
 		queueLock.lock();
 		try {
 			while (!accDone && !gyrDone && !rfDone)
+
 				try {
 					allMeasurementsRead.await();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			if (sample.getItem1() != null) {
-				// Add Accelerometer Measurement
-				collectedAccelerometerMeasurements.add(sample.getItem1());
-			}
 
-			if (sample.getItem2() != null) {
-				// Add Gyroscope Measurement
-				collectedGyroscopeMeasurements.add(sample.getItem2());
-			}
+			for (PositionTestSample positionTestSample : positionTestSamples) {
+				if (positionTestSample.getAccelerometerMeasurement() != null) {
+					// Add Accelerometer Measurement
+					collectedAccelerometerMeasurements.add(positionTestSample.getAccelerometerMeasurement());
+				}
 
-			if (sample.getItem3() != null) {
-				// Add RFID Tag Detected Notification
-				collectedRfidTagDetectionNotifications.add(sample.getItem3());
+				if (positionTestSample.getGyroscopeMeasurement() != null) {
+					// Add Gyroscope Measurement
+					collectedGyroscopeMeasurements.add(positionTestSample.getGyroscopeMeasurement());
+				}
 
+				if (positionTestSample.getRfidTagDetectedNotification() != null) {
+					// Add RFID Tag Detected Notification
+					collectedRfidTagDetectionNotifications.add(positionTestSample.getRfidTagDetectedNotification());
+				}
 			}
 
 			accDone = false;

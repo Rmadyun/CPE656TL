@@ -70,7 +70,7 @@ public class TrainMonitor implements TrainMonitorInterface {
 					(newRfidTagEvents.size() == 0)){				
 				//Wait if nothing is available
 				try{
-				    Thread.sleep(2000, 0);
+				    Thread.sleep(200, 0);
 				}
 				catch(Exception exception){
 					

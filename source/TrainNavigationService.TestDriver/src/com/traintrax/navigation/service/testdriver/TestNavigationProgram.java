@@ -50,6 +50,8 @@ import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.UnitConversionUtilities;
 import com.traintrax.navigation.service.rotation.*;
 import com.traintrax.navigation.service.testing.MduMeasurementGenerator;
+import com.traintrax.navigation.service.testing.PositionTestCase;
+import com.traintrax.navigation.service.testing.PositionTestSample;
 import com.traintrax.navigation.trackswitch.SwitchState;
 
 import gnu.io.*;
@@ -109,7 +111,7 @@ public class TestNavigationProgram {
 
 		String trainId = "1";
 		Coordinate currentPosition = new Coordinate(0, 0, 0);
-		EulerAngleRotation currentOrientation = new EulerAngleRotation(0, 0, 0);
+		EulerAngleRotation currentOrientation = new EulerAngleRotation(0, 0, Math.PI / 4);
 
 		/*
 		 * MduCommunicationChannelInterface mduCommunicationChannel = new
@@ -119,16 +121,38 @@ public class TestNavigationProgram {
 		 * MotionDetectionUnit(mduCommunicationChannel, mduProtocolParser);
 		 */
 
-		double orientation = Math.PI / 4;
-		Coordinate initialPosition = new Coordinate(0, 0, 0);
+		//Generates a test case where the train moves in a diagonal line and accelerates for 1 second,
+		//then moves at a constant speed for 10 seconds
 		double initialSpeedInMetersPerSecond = 1;
 		double accelerationInMetersPerSecondSquared = 0;
 		int numberOfSeconds = 10;
 		int numSamplesBeforeTagEvent = 3;
+		double kineticFrictionOffset = 0.35;
 		Calendar startTime = Calendar.getInstance();
-		List<Triplet<AccelerometerMeasurement, GyroscopeMeasurement, RfidTagDetectedNotification>> samples = MduMeasurementGenerator
-				.generateStraightLine(orientation, initialPosition, initialSpeedInMetersPerSecond,
-						accelerationInMetersPerSecondSquared, numberOfSeconds, startTime, numSamplesBeforeTagEvent);
+		
+		//Stay still for 50 samples so that calibration can complete.
+		PositionTestCase calibrationTestCase = MduMeasurementGenerator
+				.generateStraightLine(currentOrientation.getRadiansRotationAlongZAxis(), currentPosition, 0,
+						0, 50, startTime, Integer.MAX_VALUE,0);
+
+		startTime.add(Calendar.SECOND,  50);
+
+		//Accelerate the train for 1 second so that it reaches the constant speed needed
+		PositionTestCase startupTestCase = MduMeasurementGenerator
+				.generateStraightLine(currentOrientation.getRadiansRotationAlongZAxis(), currentPosition, 0,
+						1, 1, startTime, Integer.MAX_VALUE, kineticFrictionOffset);
+		PositionTestSample lastStartupSample = startupTestCase.getSamples().get(startupTestCase.getSamples().size()-1);
+
+		startTime.add(Calendar.SECOND,  1);
+		PositionTestCase testCase = MduMeasurementGenerator
+				.generateStraightLine(currentOrientation.getRadiansRotationAlongZAxis(), lastStartupSample.getExpectedPosition().getValue(), initialSpeedInMetersPerSecond,
+						accelerationInMetersPerSecondSquared, numberOfSeconds, startTime, numSamplesBeforeTagEvent, kineticFrictionOffset);
+		
+		PositionTestCase straightLineWithInitialAccTestCase = new PositionTestCase("Train straightline with initial acceleration");
+		
+		//straightLineWithInitialAccTestCase.appendTestCase(calibrationTestCase);
+		straightLineWithInitialAccTestCase.appendTestCase(startupTestCase);
+		straightLineWithInitialAccTestCase.appendTestCase(testCase);
 
 		SimulatedMotionDetectionUnit motionDetectionUnit = new SimulatedMotionDetectionUnit();
 
@@ -172,9 +196,15 @@ public class TestNavigationProgram {
 		// ReadTrainPositionsFromTrainNavigationService(trainNavigationService);
 
 		String selectedTrain = "1";
-		for (Triplet<AccelerometerMeasurement, GyroscopeMeasurement, RfidTagDetectedNotification> sample : samples) {
+		
+		//Get the calibration out of the way.
+		motionDetectionUnit.enqueueSamples(calibrationTestCase.getSamples());
+		
+		for (PositionTestSample sample : straightLineWithInitialAccTestCase.getSamples()) {
+			List<PositionTestSample> tempSamples = new LinkedList<PositionTestSample>();
+			tempSamples.add(sample);
 			//TODO: Figure out a way to fake the tag position lookup.
-			motionDetectionUnit.enqueueSample(sample);
+			motionDetectionUnit.enqueueSamples(tempSamples);
 
 			ValueUpdate<Coordinate> trainPosition;
 			try {
