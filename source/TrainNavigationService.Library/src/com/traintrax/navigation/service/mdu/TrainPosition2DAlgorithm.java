@@ -174,7 +174,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 
 			// Use RFID Tag Plus IMU
 			RfidTagPositionResults rfidTagPositionResults = calculationPositionFromRfidTagUpdates(startPosition,
-					endPosition);
+					endPosition, this.lastKnownTrainOrientation.getValue());
 			ImuPositionResults imuPositionResults = null;
 
 			// Update the last RFID Tag position results
@@ -287,7 +287,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 	 * @return Detailed information about the position of the train
 	 */
 	private RfidTagPositionResults calculationPositionFromRfidTagUpdates(ValueUpdate<Coordinate> initialPosition,
-			ValueUpdate<Coordinate> finalPosition) {
+			ValueUpdate<Coordinate> finalPosition, EulerAngleRotation initialOrientation) {
 
 		RfidTagPositionResults rfidTagPositionResults = new RfidTagPositionResults();
 
@@ -296,7 +296,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 		double distance = Math.sqrt(dx * dx + dy * dy);
 		double dt = (finalPosition.getTimeObserved().getTimeInMillis()
 				- initialPosition.getTimeObserved().getTimeInMillis()) / 1000.0;
-		double yaw = 0;
+		double yaw = initialOrientation.getRadiansRotationAlongZAxis();
 
 		if (distance != 0) {
 			yaw = Math.acos(dx / distance);
