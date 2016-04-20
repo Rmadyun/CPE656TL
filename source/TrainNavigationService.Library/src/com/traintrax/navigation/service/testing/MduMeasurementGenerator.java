@@ -130,6 +130,17 @@ public class MduMeasurementGenerator {
 	    	PositionTestSample positionTestSample = new PositionTestSample();
 	    	GyroscopeMeasurement gyrMeasurement = new GyroscopeMeasurement(0, 0, 0, 1, timeMeasured);
 	    	AccelerometerMeasurement accMeasurement = new AccelerometerMeasurement(new Acceleration(accX+accOffX, accY+accOffY, 0), 1, timeMeasured);
+
+	    	positionTestSample.setAccelerometerMeasurement(accMeasurement);
+	    	positionTestSample.setGyroscopeMeasurement(gyrMeasurement);
+
+	    	
+	    	//t=1
+	    	speedX = accX*1 + speedX;
+	    	currentX = (speedX*1)*UnitConversionUtilities.MetersToInches + currentX;
+	    	speedY = accY*1 + speedY;
+	    	currentY = (speedY*1)*UnitConversionUtilities.MetersToInches + currentY;
+	    	
 			ValueUpdate<Coordinate> rfidTagPosition = null;
 			ValueUpdate<Coordinate> expectedPosition = new ValueUpdate<Coordinate>(new Coordinate(currentX, currentY, 0), timeMeasured);
 	    	RfidTagDetectedNotification rfidTagDetectionNotification = null;
@@ -145,21 +156,19 @@ public class MduMeasurementGenerator {
 	    		rfidTagEventCountDown--;
 	    	}
 	    	
-	    	positionTestSample.setAccelerometerMeasurement(accMeasurement);
-	    	positionTestSample.setGyroscopeMeasurement(gyrMeasurement);
 	    	positionTestSample.setRfidTagDetectedNotification(rfidTagDetectionNotification);
 	    	positionTestSample.setRfidTagPosition(rfidTagPosition);
 	    	positionTestSample.setExpectedPosition(expectedPosition);
-
-	    	timeMeasured = (Calendar) timeMeasured.clone();
-	    	timeMeasured.add(Calendar.SECOND, 1);
-	    	samples.add(positionTestSample);
 	    	
-	    	//t=1
+/*	    	//t=1
 	    	speedX = accX*1 + speedX;
 	    	currentX = (speedX*1)*UnitConversionUtilities.MetersToInches + currentX;
 	    	speedY = accY*1 + speedY;
-	    	currentY = (speedY*1)*UnitConversionUtilities.MetersToInches + currentY;
+	    	currentY = (speedY*1)*UnitConversionUtilities.MetersToInches + currentY; */
+	    	
+	    	timeMeasured = (Calendar) timeMeasured.clone();
+	    	timeMeasured.add(Calendar.SECOND, 1);
+	    	samples.add(positionTestSample);
 	    }
 	    
 		
