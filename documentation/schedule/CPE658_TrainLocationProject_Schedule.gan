@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><project name="CPE 658 Train Trax: Train Location Project" company="" webLink="http://cathlorn.myjetbrains.com" view-date="2016-01-24" view-index="0" gantt-divider-location="552" resource-divider-location="300" version="2.7.1" locale="en_US">
     <description/>
     <view zooming-state="default:7" id="gantt-chart">
-        <field id="tpd3" name="Name" width="60" order="0"/>
-        <field id="tpd4" name="Begin date" width="14" order="1"/>
+        <field id="tpd3" name="Name" width="69" order="0"/>
+        <field id="tpd4" name="Begin date" width="5" order="1"/>
         <field id="tpd5" name="End date" width="25" order="2"/>
     </view>
     <view id="resource-table">
@@ -81,7 +81,7 @@ The rail car has been modified to improve the detection rate, and it has been ve
 3/28/16: Work was verified to be completed for this task.]]></notes>
             </task>
         </task>
-        <task id="10" name="Create Train Navigation GUI" meeting="false" start="2016-01-11" duration="87" complete="78" expand="true">
+        <task id="10" name="Create Train Navigation GUI" meeting="false" start="2016-01-11" duration="108" complete="78" expand="true">
             <task id="11" name="Display Position of the Train" color="#8cb6ce" meeting="false" start="2016-03-17" duration="14" complete="100" expand="true">
                 <notes><![CDATA[3/28/16: Completed preliminary implementation for reporting train position. We just need to verify it working with Train Navigation Service input.]]></notes>
             </task>
@@ -104,9 +104,11 @@ The rail car has been modified to improve the detection rate, and it has been ve
                 <notes><![CDATA[3/15/16: A Restful client class has been implemented for the GUI to contact the Train Navigation Service, but work needs to be done to make it portable into the Android OS. Furthemore, work has been done in the GUI to control switches according to the TrainNavigationServiceInterface that the Restful client confirms to.
 This issue can be closed once integration between the Train Navigation Service and the GUI has been tested and completed for switch control.]]></notes>
             </task>
-            <task id="17" name="Display Train Prediction &amp; History" color="#8cb6ce" meeting="false" start="2016-03-24" duration="14" complete="0" expand="true"/>
+            <task id="17" name="Display Train Prediction &amp; History" color="#8cb6ce" meeting="false" start="2016-04-14" duration="14" complete="0" expand="true">
+                <notes><![CDATA[4/5/16: Work for this view has been delayed due to attempts to integrate with the Train Navigation Service.]]></notes>
+            </task>
         </task>
-        <task id="18" name="Create Train Navigation Service" meeting="false" start="2016-01-11" duration="108" complete="79" expand="true">
+        <task id="18" name="Create Train Navigation Service" meeting="false" start="2016-01-11" duration="108" complete="78" expand="true">
             <task id="19" name="Calculate Train Position" meeting="false" start="2016-01-11" duration="73" complete="90" expand="true">
                 <task id="20" name="Calculate Orientation" color="#8cb6ce" meeting="false" start="2016-01-11" duration="24" complete="100" expand="true">
                     <task id="136" name="Implement Initial Orientation Algorithm" color="#8cb6ce" meeting="false" start="2016-01-11" duration="7" complete="100" expand="true"/>
@@ -158,16 +160,19 @@ This issue can be closed once integration between the Train Navigation Service a
 3/28/16: Deferring completing this task so that time can be spent collecting train track measurements and integrating the service with other subsystems. This may not be completed before the end of the term.]]></notes>
             </task>
         </task>
-        <task id="34" name="Create Train Navigation Database" meeting="false" start="2016-01-11" duration="101" complete="59" expand="true">
-            <task id="35" name="Report RFID Tag Position" meeting="false" start="2016-01-11" duration="94" complete="71" expand="true">
-                <task id="36" name="Enter Remaining RFID Tag Positions (Up to 80%)" color="#8cb6ce" meeting="false" start="2016-03-24" duration="21" complete="33" expand="true">
+        <task id="34" name="Create Train Navigation Database" meeting="false" start="2016-01-11" duration="101" complete="73" expand="true">
+            <task id="35" name="Report RFID Tag Position" meeting="false" start="2016-01-11" duration="94" complete="91" expand="true">
+                <task id="36" name="Enter Remaining RFID Tag Positions (Up to 80%)" color="#8cb6ce" meeting="false" start="2016-03-24" duration="21" complete="80" expand="true">
                     <notes><![CDATA[2/23/16: Delaying collecting the remaining track tag information so that work can be done for calculating train position using IMU data. This will determine where we place the remaining tags.
 3/9/16: Pushing back collecting RFID tag position data by another week because we still do not have an answer for how many that we need this is actively being worked.
 3/28/16: RFID Tags have been placed on the outermost loop. 
 Tags still need to be placed on the inner loop, the 2nd outermost loop, and the mid section loop.
 Position measurements have been made for the inner loop, and the outermost loop.
 Position measurements are still needed for the 2nd outermost loop, and the mid section loop.
-Tags and Position measurements are also needed for the offshoot deadends. (there should be 2 of those).]]></notes>
+Tags and Position measurements are also needed for the offshoot deadends. (there should be 2 of those).
+4/5/16: RFID Tags have been placed on the remainder of the inner loop. Position measurements have been taken of the 2nd outermost loop. Position measurements have been taken for the upper half of the mid section loop.
+Remaining work:
+Affixing tags on the 2nd outermost loop, Affixing tags on the mid section loop. Affix tags on any outstanding uncovered areas. Conducting measurements on the lower half of the mid section. Conducting measurements on any outstanding uncovered areas.]]></notes>
                 </task>
                 <task id="128" name="Collect RFID Tag Positions for Sample Track" color="#8cb6ce" meeting="false" start="2016-01-11" duration="14" complete="100" expand="true"/>
                 <task id="130" name="Lookup RFID Tag Position" color="#8cb6ce" meeting="false" start="2016-02-04" duration="7" complete="100" expand="true"/>
@@ -194,6 +199,9 @@ Tags and Position measurements are also needed for the offshoot deadends. (there
                 <notes><![CDATA[3/28/16: Deferring completing this task so that time can be spent collecting train track measurements and integrating the service with other subsystems. This may not be completed.]]></notes>
             </task>
         </task>
+        <task id="198" name="Create the TDD" color="#8cb6ce" meeting="false" start="2016-04-14" duration="7" complete="0" expand="true">
+            <notes><![CDATA[4/5/16: Created a New task to track when the TDD will be completed and reported by the team.]]></notes>
+        </task>
     </tasks>
     <resources/>
     <allocations/>
@@ -201,8 +209,8 @@ Tags and Position measurements are also needed for the offshoot deadends. (there
     <taskdisplaycolumns>
         <displaycolumn property-id="tpd2" order="-1" width="75" visible="false"/>
         <displaycolumn property-id="tpd6" order="-1" width="75" visible="false"/>
-        <displaycolumn property-id="tpd3" order="0" width="321" visible="true"/>
-        <displaycolumn property-id="tpd4" order="1" width="78" visible="true"/>
+        <displaycolumn property-id="tpd3" order="0" width="372" visible="true"/>
+        <displaycolumn property-id="tpd4" order="1" width="27" visible="true"/>
         <displaycolumn property-id="tpd7" order="-1" width="75" visible="false"/>
         <displaycolumn property-id="tpd8" order="-1" width="75" visible="false"/>
         <displaycolumn property-id="tpd12" order="-1" width="75" visible="false"/>
@@ -723,6 +731,62 @@ Tags and Position measurements are also needed for the offshoot deadends. (there
             <previous-task id="30" start="2016-04-14" duration="7" meeting="false" super="false"/>
             <previous-task id="31" start="2016-04-14" duration="7" meeting="false" super="false"/>
             <previous-task id="33" start="2016-04-21" duration="7" meeting="false" super="false"/>
+            <previous-task id="34" start="2016-01-11" duration="101" meeting="false" super="true"/>
+            <previous-task id="35" start="2016-01-11" duration="94" meeting="false" super="true"/>
+            <previous-task id="36" start="2016-03-24" duration="21" meeting="false" super="false"/>
+            <previous-task id="128" start="2016-01-11" duration="14" meeting="false" super="false"/>
+            <previous-task id="130" start="2016-02-04" duration="7" meeting="false" super="false"/>
+            <previous-task id="191" start="2016-02-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="37" start="2016-02-04" duration="14" meeting="false" super="true"/>
+            <previous-task id="186" start="2016-02-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="38" start="2016-02-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="39" start="2016-02-04" duration="7" meeting="false" super="false"/>
+            <previous-task id="196" start="2016-02-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="40" start="2016-04-07" duration="7" meeting="false" super="false"/>
+            <previous-task id="41" start="2016-04-07" duration="7" meeting="false" super="false"/>
+            <previous-task id="43" start="2016-04-14" duration="7" meeting="false" super="false"/>
+            <previous-task id="42" start="2016-04-14" duration="7" meeting="false" super="false"/>
+        </previous-tasks>
+        <previous-tasks name="Revised 04-05-2016: Adjusted Schedule based on Work Done in Sprint Week 12">
+            <previous-task id="0" start="2016-01-11" duration="80" meeting="false" super="true"/>
+            <previous-task id="3" start="2016-01-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="4" start="2016-01-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="5" start="2016-01-18" duration="38" meeting="false" super="false"/>
+            <previous-task id="6" start="2016-01-11" duration="80" meeting="false" super="true"/>
+            <previous-task id="156" start="2016-01-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="158" start="2016-02-18" duration="7" meeting="false" super="false"/>
+            <previous-task id="162" start="2016-02-25" duration="21" meeting="false" super="false"/>
+            <previous-task id="164" start="2016-02-25" duration="28" meeting="false" super="false"/>
+            <previous-task id="160" start="2016-03-24" duration="7" meeting="false" super="false"/>
+            <previous-task id="7" start="2016-03-17" duration="7" meeting="false" super="false"/>
+            <previous-task id="8" start="2016-03-17" duration="7" meeting="false" super="false"/>
+            <previous-task id="9" start="2016-03-17" duration="7" meeting="false" super="false"/>
+            <previous-task id="10" start="2016-01-11" duration="108" meeting="false" super="true"/>
+            <previous-task id="11" start="2016-03-17" duration="14" meeting="false" super="false"/>
+            <previous-task id="12" start="2016-01-11" duration="52" meeting="false" super="false"/>
+            <previous-task id="13" start="2016-03-03" duration="14" meeting="false" super="false"/>
+            <previous-task id="14" start="2016-03-03" duration="14" meeting="false" super="false"/>
+            <previous-task id="15" start="2016-03-10" duration="7" meeting="false" super="false"/>
+            <previous-task id="16" start="2016-03-17" duration="14" meeting="false" super="false"/>
+            <previous-task id="17" start="2016-04-14" duration="14" meeting="false" super="false"/>
+            <previous-task id="18" start="2016-01-11" duration="108" meeting="false" super="true"/>
+            <previous-task id="19" start="2016-01-11" duration="73" meeting="false" super="true"/>
+            <previous-task id="20" start="2016-01-11" duration="24" meeting="false" super="true"/>
+            <previous-task id="136" start="2016-01-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="138" start="2016-01-28" duration="7" meeting="false" super="false"/>
+            <previous-task id="21" start="2016-03-10" duration="7" meeting="false" super="false"/>
+            <previous-task id="22" start="2016-02-25" duration="7" meeting="false" super="false"/>
+            <previous-task id="23" start="2016-02-25" duration="7" meeting="false" super="false"/>
+            <previous-task id="24" start="2016-02-25" duration="28" meeting="false" super="false"/>
+            <previous-task id="25" start="2016-03-10" duration="7" meeting="false" super="false"/>
+            <previous-task id="26" start="2016-03-10" duration="7" meeting="false" super="false"/>
+            <previous-task id="27" start="2016-03-10" duration="7" meeting="false" super="false"/>
+            <previous-task id="28" start="2016-03-10" duration="7" meeting="false" super="false"/>
+            <previous-task id="29" start="2016-03-10" duration="14" meeting="false" super="false"/>
+            <previous-task id="30" start="2016-04-14" duration="7" meeting="false" super="false"/>
+            <previous-task id="31" start="2016-04-14" duration="7" meeting="false" super="false"/>
+            <previous-task id="33" start="2016-04-21" duration="7" meeting="false" super="false"/>
+            <previous-task id="198" start="2016-04-14" duration="7" meeting="false" super="false"/>
             <previous-task id="34" start="2016-01-11" duration="101" meeting="false" super="true"/>
             <previous-task id="35" start="2016-01-11" duration="94" meeting="false" super="true"/>
             <previous-task id="36" start="2016-03-24" duration="21" meeting="false" super="false"/>
