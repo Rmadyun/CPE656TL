@@ -21,6 +21,15 @@ public class TrainPositionUpdateMessage {
 	@SerializedName("z")
 	private double z;
 	
+	@SerializedName("velocityX")
+	private double velocityX;
+	
+	@SerializedName("velocityY")
+	private double velocityY;
+	
+	@SerializedName("velocityZ")
+	private double velocityZ;
+	
 	@SerializedName("timeMeasured")
 	private Calendar timeMeasured;
 
@@ -30,15 +39,22 @@ public class TrainPositionUpdateMessage {
 	 * @param x Width in inches from the origin
 	 * @param y Depth in inches from the origin
 	 * @param z Height in inches from the origin
-	 * @param timeMeasured Time that Train was measured to be at this position
+	 * @param velocityX Velocity in inches per second along the X-Axis of the coordinate frame.
+     * @param velocityY Velocity in inches per second along the Y-Axis of the coordinate frame.
+     * @param velocityZ Velocity in inches per second along the Z-Axis of the coordinate frame.
+	 * @param timeMeasured Time that Train was measured to be at this position 
 	 */
-	public TrainPositionUpdateMessage(String trainId, double x, double y, double z, Calendar timeMeasured) {
+	public TrainPositionUpdateMessage(String trainId, double x, double y, double z,
+			double velocityX, double velocityY, double velocityZ, Calendar timeMeasured) {
 		super();
 		this.trainId = trainId;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.timeMeasured = timeMeasured;
+		this.velocityX = velocityX;
+		this.velocityY = velocityY;
+		this.velocityZ = velocityZ;
 	}
 
 	/**
@@ -67,6 +83,28 @@ public class TrainPositionUpdateMessage {
 	 */
 	public double getZ() {
 		return z;
+	}
+	
+
+	/**
+	 * @return the velocityX
+	 */
+	public double getVelocityX() {
+		return velocityX;
+	}
+
+	/**
+	 * @return the velocityY
+	 */
+	public double getVelocityY() {
+		return velocityY;
+	}
+
+	/**
+	 * @return the velocityZ
+	 */
+	public double getVelocityZ() {
+		return velocityZ;
 	}
 
 	/**

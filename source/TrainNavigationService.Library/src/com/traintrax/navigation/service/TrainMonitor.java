@@ -3,13 +3,16 @@ package com.traintrax.navigation.service;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.traintrax.navigation.service.mdu.AccelerometerMeasurement;
-import com.traintrax.navigation.service.mdu.GyroscopeMeasurement;
-import com.traintrax.navigation.service.mdu.InertialMotionPositionAlgorithmInterface;
 import com.traintrax.navigation.service.mdu.MotionDetectionUnitInterface;
-import com.traintrax.navigation.service.mdu.RfidTagDetectedNotification;
+import com.traintrax.navigation.service.position.AccelerometerMeasurement;
 import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.GyroscopeMeasurement;
+import com.traintrax.navigation.service.position.InertialMotionPositionAlgorithmInterface;
+import com.traintrax.navigation.service.position.RfidTagDetectedNotification;
+import com.traintrax.navigation.service.position.TrainPositionEstimate;
 import com.traintrax.navigation.service.position.UnitConversionUtilities;
+import com.traintrax.navigation.service.position.Velocity;
+import com.traintrax.navigation.service.math.*;
 
 /**
  * Class is responsible for observing changes to a train that belongs to the
@@ -21,7 +24,7 @@ import com.traintrax.navigation.service.position.UnitConversionUtilities;
 public class TrainMonitor implements TrainMonitorInterface {
 	
 	private final String trainId;
-	private ValueUpdate<Coordinate> lastKnownTrainPosition;
+	private TrainPositionEstimate lastKnownTrainPosition;
 	private final InertialMotionPositionAlgorithmInterface positionAlgorithm;
 	private final MotionDetectionUnitInterface motionDetectionUnit;
 	private final TrainNavigationDatabaseInterface trainNavigationDatabase;
@@ -42,18 +45,45 @@ public class TrainMonitor implements TrainMonitorInterface {
 			TrainNavigationDatabaseInterface trainNavigationDatabase) {
 
 		this.trainId = trainId;
-		lastKnownTrainPosition = positionAlgorithm.calculatePosition(null,  null, null);
 		this.positionAlgorithm = positionAlgorithm;
 		this.motionDetectionUnit = motionDetectionUnit;
 		this.trainNavigationDatabase = trainNavigationDatabase;
+		lastKnownTrainPosition = calculatePosition(null,  null, null);
 	}
+	
+	
+	/**
+	 * Method determines an estimate on the position of the train
+	 * based on IMU measurements
+	 * @param gyroscopeMeasurementsSinceLastUpdate New Gyroscope measurements from the object (rad/s)
+	 * @param accelerometerMeasurementsSinceLastUpdate New Accelerometer measurements from the object (m/s^2)
+	 * @param positionUpdates Reported updates in the position of the object. This should be
+	 * the distance from the origin in inches (in inches) 
+	 * @return Calculated position of the train 
+	 */
+	private TrainPositionEstimate calculatePosition(List<GyroscopeMeasurement> gyroscopeMeasurementsSinceLastUpdate,
+			List<AccelerometerMeasurement> accelerometerMeasurementsSinceLastUpdate,
+			List<ValueUpdate<Coordinate>> positionUpdate){
+		
+		ValueUpdate<Tuple<Coordinate, Velocity>> latestPositionUpdate = positionAlgorithm.calculatePosition(gyroscopeMeasurementsSinceLastUpdate, accelerometerMeasurementsSinceLastUpdate, positionUpdate);
+		
+		Coordinate positionInInches = UnitConversionUtilities.convertFromMetersToInches(latestPositionUpdate.getValue().getItem1());
+		//NOTE: a three dimensional space vector allows a generic way to express any vector including velocity.
+		//The velocity class was not used here because it is specifically intended to store measurements in meters per second right now.
+		//An improvement would be to extend the class so that it can return its values with other units than meters/per second.
+		ThreeDimensionalSpaceVector velocityInInches = UnitConversionUtilities.convertFromMetersToInches(Velocity.ToThreeDimensionalSpaceVector(latestPositionUpdate.getValue().getItem2()));
+
+		return new TrainPositionEstimate(positionInInches, velocityInInches, latestPositionUpdate.getTimeObserved(), trainId);
+	}
+	
+	
 
 	/**
 	 * Blocks until there is another update on the target train's position.
 	 * 
 	 * @return Most recent update on the position of the train.
 	 */
-	public ValueUpdate<Coordinate> waitForNextPositionUpdate() {
+	public TrainPositionEstimate waitForNextPositionUpdate() {
 		List<GyroscopeMeasurement> newGyroscopeMeasurements;
 		List<AccelerometerMeasurement> newAccelerometerMeasurements;
 		List<RfidTagDetectedNotification> newRfidTagEvents;
@@ -97,15 +127,13 @@ public class TrainMonitor implements TrainMonitorInterface {
 			}
 		}
 				
-		ValueUpdate<Coordinate> latestPositionUpdate = positionAlgorithm.calculatePosition(newGyroscopeMeasurements, newAccelerometerMeasurements, positionUpdates);
+		TrainPositionEstimate latestPositionUpdate = calculatePosition(newGyroscopeMeasurements, newAccelerometerMeasurements, positionUpdates);
 		
-		//Convert position from meters to inches
-		latestPositionUpdate = new ValueUpdate<Coordinate>(UnitConversionUtilities.convertFromMetersToInches(latestPositionUpdate.getValue()), latestPositionUpdate.getTimeObserved());
 		
 		this.lastKnownTrainPosition = latestPositionUpdate;
 		
 		//Save collected information
-		trainNavigationDatabase.save(new TrainPositionEstimate(latestPositionUpdate.getValue(), latestPositionUpdate.getTimeObserved(), trainId));
+		trainNavigationDatabase.save(latestPositionUpdate);
 		
 		for(GyroscopeMeasurement measurement : newGyroscopeMeasurements){
 			trainNavigationDatabase.save(measurement);
@@ -136,7 +164,7 @@ public class TrainMonitor implements TrainMonitorInterface {
 	 * 
 	 * @return The last known position of the target train.
 	 */
-	public ValueUpdate<Coordinate> getLastKnownPosition() {
+	public TrainPositionEstimate getLastKnownPosition() {
 		return lastKnownTrainPosition;
 	}
 

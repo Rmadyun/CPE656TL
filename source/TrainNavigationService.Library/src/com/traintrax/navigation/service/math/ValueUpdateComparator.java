@@ -1,6 +1,8 @@
-package com.traintrax.navigation.service;
+package com.traintrax.navigation.service.math;
 
 import java.util.Comparator;
+
+import com.traintrax.navigation.service.ValueUpdate;
 
 /**
  * Custom class for comparing ValueUpdate values based on time.

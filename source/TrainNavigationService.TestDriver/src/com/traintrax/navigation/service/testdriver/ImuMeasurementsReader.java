@@ -8,11 +8,11 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.traintrax.navigation.service.mdu.GyroscopeMeasurement;
 import com.traintrax.navigation.service.position.Acceleration;
-import com.traintrax.navigation.service.Tuple;
+import com.traintrax.navigation.service.position.AccelerometerMeasurement;
+import com.traintrax.navigation.service.position.GyroscopeMeasurement;
 import com.traintrax.navigation.service.ValueUpdate;
-import com.traintrax.navigation.service.mdu.AccelerometerMeasurement;
+import com.traintrax.navigation.service.math.Tuple;
 
 /**
  * Class is responsible for importing track measurements from a CSV file.

@@ -13,6 +13,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.traintrax.navigation.service.position.Acceleration;
+import com.traintrax.navigation.service.position.AccelerometerMeasurement;
+import com.traintrax.navigation.service.position.GyroscopeMeasurement;
+import com.traintrax.navigation.service.position.RfidTagDetectedNotification;
 
 /**
  * Class facilitates communication with Motion Detection Unit hardware

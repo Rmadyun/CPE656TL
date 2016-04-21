@@ -1,7 +1,6 @@
 package com.traintrax.navigation.service.rest.service;
 
 import org.restlet.data.Form;
-import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;
@@ -10,8 +9,7 @@ import org.restlet.resource.ServerResource;
 
 import com.google.gson.Gson;
 import com.traintrax.navigation.service.TrainNavigationServiceInterface;
-import com.traintrax.navigation.service.ValueUpdate;
-import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.TrainPositionEstimate;
 import com.traintrax.navigation.service.rest.data.TrainPositionUpdateMessage;
 
 /**
@@ -39,7 +37,7 @@ public class TrainPositionResource extends ServerResource {
 
 			String idQuery = query.getValues(idQueryParameter);
 
-			ValueUpdate<Coordinate> trainPosition;
+			TrainPositionEstimate trainPosition;
 			if (idQuery != null && !idQuery.isEmpty()) {
 				trainPosition = trainNavigationService.GetLastKnownPosition(idQuery);
 			} else {
@@ -47,9 +45,10 @@ public class TrainPositionResource extends ServerResource {
                 throw new Exception("No ID specified");
 			}
 
-			TrainPositionUpdateMessage response = new TrainPositionUpdateMessage(idQuery, trainPosition.getValue().getX(),
-					trainPosition.getValue().getY(), trainPosition.getValue().getZ(),
-					trainPosition.getTimeObserved());
+			TrainPositionUpdateMessage response = new TrainPositionUpdateMessage(idQuery, trainPosition.getPosition().getX(),
+					trainPosition.getPosition().getY(), trainPosition.getPosition().getZ(),
+					trainPosition.getVelocity().getX(), trainPosition.getVelocity().getY(), trainPosition.getVelocity().getZ(),
+					trainPosition.getTimeAtPosition());
 			
 			Gson gson = new Gson();
 			

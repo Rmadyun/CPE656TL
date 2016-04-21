@@ -11,10 +11,11 @@ import com.traintrax.navigation.database.library.TrackPoint;
 import com.traintrax.navigation.database.library.TrackPointSearchCriteria;
 import com.traintrax.navigation.database.library.TrainPosition;
 import com.traintrax.navigation.database.library.TrainPositionSearchCriteria;
-import com.traintrax.navigation.service.mdu.AccelerometerMeasurement;
-import com.traintrax.navigation.service.mdu.GyroscopeMeasurement;
-import com.traintrax.navigation.service.mdu.RfidTagDetectedNotification;
+import com.traintrax.navigation.service.position.AccelerometerMeasurement;
 import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.GyroscopeMeasurement;
+import com.traintrax.navigation.service.position.RfidTagDetectedNotification;
+import com.traintrax.navigation.service.position.TrainPositionEstimate;
 import com.traintrax.navigation.service.position.UnitConversionUtilities;
 
 /**

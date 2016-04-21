@@ -1,8 +1,9 @@
-package com.traintrax.navigation.service.mdu;
+package com.traintrax.navigation.service.position;
 
 import java.util.List;
 
 import com.traintrax.navigation.service.ValueUpdate;
+import com.traintrax.navigation.service.math.Tuple;
 import com.traintrax.navigation.service.position.Coordinate;
 
 /**
@@ -19,10 +20,10 @@ public interface InertialMotionPositionAlgorithmInterface {
 	 * @param gyroscopeMeasurementsSinceLastUpdate New Gyroscope measurements from the object
 	 * @param accelerometerMeasurementsSinceLastUpdate New Accelerometer measurements from the object
 	 * @param positionUpdates Reported updates in the position of the object. This should be
-	 * the distance from the origin in meters
-	 * @return The estimated current position of the object.
+	 * the distance from the origin in meters 
+	 * @return The estimated current position (in meters) and velocity (in m/s) of the object 
 	 */
-	public ValueUpdate<Coordinate> calculatePosition(
+	public ValueUpdate<Tuple<Coordinate, Velocity>> calculatePosition(
 			List<GyroscopeMeasurement> gyroscopeMeasurementsSinceLastUpdate,
 			List<AccelerometerMeasurement> accelerometerMeasurementsSinceLastUpdate,
 			List<ValueUpdate<Coordinate>> positionUpdates);

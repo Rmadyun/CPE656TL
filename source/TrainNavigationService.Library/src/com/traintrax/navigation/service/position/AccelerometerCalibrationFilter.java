@@ -1,7 +1,5 @@
 package com.traintrax.navigation.service.position;
 
-import com.traintrax.navigation.service.mdu.AccelerometerMeasurement;
-
 /**
  * Class is responsible for adjust raw accelerometer
  * measurements according to specified calibration values.

@@ -2,6 +2,10 @@ package com.traintrax.navigation.service.mdu;
 
 import java.util.List;
 
+import com.traintrax.navigation.service.position.AccelerometerMeasurement;
+import com.traintrax.navigation.service.position.GyroscopeMeasurement;
+import com.traintrax.navigation.service.position.RfidTagDetectedNotification;
+
 /**
  * Interface facilitates communication with the Motion 
  * Detection Unit

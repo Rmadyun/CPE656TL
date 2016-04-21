@@ -15,7 +15,7 @@ public class TestClient {
 		for(String entry : trainIds){
 			System.out.println(entry);
 			
-			System.out.println(service.GetLastKnownPosition(entry).getValue().getX());
+			System.out.println(service.GetLastKnownPosition(entry).getPosition().getX());
 		}
 		
 		try {

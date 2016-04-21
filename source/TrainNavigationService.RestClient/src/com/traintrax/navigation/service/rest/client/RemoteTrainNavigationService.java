@@ -19,16 +19,6 @@ import com.traintrax.navigation.trackswitch.*;
  */
 public class RemoteTrainNavigationService implements TrainNavigationServiceInterface {
 
-	/**
-	 * Host name or IP of the target Restful web service
-	 */
-	private String hostName;
-
-	/**
-	 * IP port of the target Restful web service
-	 */
-	private int port;
-
 	private final RemoteTrainPositionService trainPositionService;
 
 	private final RemoteTrainIdentityService trainIdentityService;
@@ -63,7 +53,7 @@ public class RemoteTrainNavigationService implements TrainNavigationServiceInter
 					try {
 
 
-						ValueUpdate<Coordinate> positionUpdate = trainPositionService.getLastKnownTrainPosition(trainId);
+						TrainPositionEstimate positionUpdate = trainPositionService.getLastKnownTrainPosition(trainId);
 						TrainPositionUpdatedEvent updatedEvent = new TrainPositionUpdatedEvent(trainId, positionUpdate);
 						eventPublisher.PublishEvent(updatedEvent);
 					}
@@ -89,8 +79,6 @@ public class RemoteTrainNavigationService implements TrainNavigationServiceInter
 	 * @param port Network port of the remote service being contacted
 	 */
 	public RemoteTrainNavigationService(String hostName, Integer port) {
-		this.hostName = hostName;
-		this.port = port;
 		this.trainPositionService = new RemoteTrainPositionService(hostName, port);
 		this.trainIdentityService = new RemoteTrainIdentityService(hostName, port);
 		this.trackSwitchService = new RemoteTrackSwitchService(hostName, port);
@@ -105,7 +93,7 @@ public class RemoteTrainNavigationService implements TrainNavigationServiceInter
 	}
 
 	@Override
-	public ValueUpdate<Coordinate> GetLastKnownPosition(String trainIdentifier) {
+	public TrainPositionEstimate GetLastKnownPosition(String trainIdentifier) {
 		return trainPositionService.getLastKnownTrainPosition(trainIdentifier);
 	}
 

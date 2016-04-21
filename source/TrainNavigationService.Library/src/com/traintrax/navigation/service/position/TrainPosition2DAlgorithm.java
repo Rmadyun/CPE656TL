@@ -1,4 +1,4 @@
-package com.traintrax.navigation.service.mdu;
+package com.traintrax.navigation.service.position;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -6,17 +6,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.traintrax.navigation.service.Tuple;
 import com.traintrax.navigation.service.ValueUpdate;
-import com.traintrax.navigation.service.position.Acceleration;
-import com.traintrax.navigation.service.position.AccelerometerCalibrationFilter;
+import com.traintrax.navigation.service.math.Tuple;
 import com.traintrax.navigation.service.position.Coordinate;
-import com.traintrax.navigation.service.position.GyroscopeCalibrationFilter;
-import com.traintrax.navigation.service.position.ImuPositionResults;
-import com.traintrax.navigation.service.position.ImuState;
-import com.traintrax.navigation.service.position.RfidTagPositionResults;
-import com.traintrax.navigation.service.position.ThresholdFilter;
-import com.traintrax.navigation.service.position.Velocity;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 
 /**
@@ -84,20 +76,20 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 	 * Determines the current position of the train
 	 * 
 	 * @param gyroscopeMeasurementsSinceLastUpdate
-	 *            New Gyroscope measurements
+	 *            New Gyroscope measurements (rad/s)
 	 * @param accelerometerMeasurementsSinceLastUpdate
-	 *            New Accelerometer measurements
+	 *            New Accelerometer measurements (m/s^2)
 	 * @param rfidTagDetectedEvents
-	 *            New RFID tag detected events
-	 * @return The estimated current position of the train.
+	 *            New RFID tag detected events (location in meters)
+	 * @return The estimated current position (in meters) and velocity (in m/s) of the train.
 	 */
-	public ValueUpdate<Coordinate> calculatePosition(List<GyroscopeMeasurement> gyroscopeMeasurementsSinceLastUpdate,
+	public ValueUpdate<Tuple<Coordinate, Velocity>> calculatePosition(List<GyroscopeMeasurement> gyroscopeMeasurementsSinceLastUpdate,
 			List<AccelerometerMeasurement> accelerometerMeasurementsSinceLastUpdate,
 			List<ValueUpdate<Coordinate>> rfidTagDetectedLocations) {
 
 		if(gyroscopeMeasurementsSinceLastUpdate == null && accelerometerMeasurementsSinceLastUpdate == null && 
 				rfidTagDetectedLocations == null){
-			return this.lastKnownTrainPosition;
+			return new ValueUpdate<Tuple<Coordinate, Velocity>>(new Tuple<Coordinate, Velocity>(this.lastKnownTrainPosition.getValue(), this.lastKnownTrainVelocity.getValue()), this.lastKnownTrainPosition.getTimeObserved());
 		}
 		
 		// Sort gyroscope measurements in increasing order by time
@@ -279,7 +271,8 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 		System.out.println(String.format("orientation: %f rads\n",
 				lastKnownTrainOrientation.getValue().getRadiansRotationAlongZAxis()));
 
-		return lastKnownTrainPosition;
+		
+		return new ValueUpdate<Tuple<Coordinate, Velocity>>(new Tuple<Coordinate, Velocity>(lastKnownTrainPosition.getValue(), lastKnownTrainVelocity.getValue()), lastKnownTrainPosition.getTimeObserved());
 	}
 
 	/**

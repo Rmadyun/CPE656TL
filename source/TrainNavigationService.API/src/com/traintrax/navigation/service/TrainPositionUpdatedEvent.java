@@ -1,6 +1,7 @@
 package com.traintrax.navigation.service;
 
 import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.TrainPositionEstimate;
 
 /**
  * Event notifies that the new information about the position of a train has been determined
@@ -10,17 +11,17 @@ import com.traintrax.navigation.service.position.Coordinate;
 public class TrainPositionUpdatedEvent extends TrainNavigationServiceEvent {
 
 	private final String trainIdentifier;
-	private final ValueUpdate<Coordinate> position;
+	private final TrainPositionEstimate position;
 	
 	/**
 	 * Constructor 
 	 * @param trainIdentifier Unique identifier for the train
-	 * @param position Details on the new data on the position of the train
+	 * @param positionUpdate Details on the new data on the position of the train
 	 */
-	public TrainPositionUpdatedEvent(String trainIdentifier, ValueUpdate<Coordinate> position) {
+	public TrainPositionUpdatedEvent(String trainIdentifier, TrainPositionEstimate positionUpdate) {
 		super();
 		this.trainIdentifier = trainIdentifier;
-		this.position = position;
+		this.position = positionUpdate;
 	}
 	/**
 	 * Retrieves the Train ID
@@ -33,7 +34,7 @@ public class TrainPositionUpdatedEvent extends TrainNavigationServiceEvent {
 	 * Retrieves the train position estimate recorded in this event
 	 * @return the train position estimate recorded in this event
 	 */
-	public ValueUpdate<Coordinate> getPosition() {
+	public TrainPositionEstimate getPosition() {
 		return position;
 	}
 	

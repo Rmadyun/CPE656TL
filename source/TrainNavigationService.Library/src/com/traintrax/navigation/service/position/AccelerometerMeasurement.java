@@ -1,8 +1,6 @@
-package com.traintrax.navigation.service.mdu;
+package com.traintrax.navigation.service.position;
 
 import java.util.Calendar;
-
-import com.traintrax.navigation.service.position.Acceleration;
 
 /**
  * @author death

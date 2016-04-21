@@ -27,7 +27,7 @@ import com.traintrax.navigation.service.events.GenericPublisher;
 import com.traintrax.navigation.service.events.NotifierInterface;
 import com.traintrax.navigation.service.events.PublisherInterface;
 import com.traintrax.navigation.service.events.TrainNavigationServiceEventNotifier;
-import com.traintrax.navigation.service.mdu.InertialMotionPositionAlgorithmInterface;
+import com.traintrax.navigation.service.math.ThreeDimensionalSpaceVector;
 import com.traintrax.navigation.service.mdu.MduCommunicationChannelInterface;
 import com.traintrax.navigation.service.mdu.MduProtocolParser;
 import com.traintrax.navigation.service.mdu.MduProtocolParserInterface;
@@ -35,8 +35,10 @@ import com.traintrax.navigation.service.mdu.MotionDetectionUnit;
 import com.traintrax.navigation.service.mdu.MotionDetectionUnitInterface;
 import com.traintrax.navigation.service.mdu.SerialPortMduCommunicationChannel;
 import com.traintrax.navigation.service.mdu.SimulatedMotionDetectionUnit;
-import com.traintrax.navigation.service.mdu.TrainPosition2DAlgorithm;
 import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.InertialMotionPositionAlgorithmInterface;
+import com.traintrax.navigation.service.position.TrainPosition2DAlgorithm;
+import com.traintrax.navigation.service.position.TrainPositionEstimate;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 import com.traintrax.navigation.trackswitch.SwitchState;
 
@@ -58,7 +60,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 	private final TrackSwitchControllerInterface trainController;
 	private final PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher;
 	private static final int POLL_RATE_IN_MS = 5000;
-	private final Map<String, ValueUpdate<Coordinate>> trainPositionLut = new HashMap<>();
+	private final Map<String, TrainPositionEstimate> trainPositionLut = new HashMap<>();
 	
 	/**
 	 * Default train identifier to use if none are specified.
@@ -194,9 +196,18 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 	 */
 	private void initialize(String trainId, Coordinate currentPosition, TrainMonitorInterface trainMonitor, TrackSwitchControllerInterface trainController, PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher){
 
-		trainPositionLut.put(trainId, new ValueUpdate<Coordinate>(currentPosition, Calendar.getInstance()));
+		//Assuming train is at rest upon initialization
+		trainPositionLut.put(trainId, new TrainPositionEstimate(currentPosition, new ThreeDimensionalSpaceVector(0,0,0), Calendar.getInstance(), trainId));
 		
 		setupTimer();
+	}
+	
+	/**
+	 * Method initializes all of the known switches on the rail system to be
+	 * in a known state.
+	 */
+	private void initializeAllSwitchesToKnownState(){
+		
 	}
 	
 	/**
@@ -207,7 +218,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 			  @Override
 			  public void run() {
 			    
-				  ValueUpdate<Coordinate> positionUpdate = trainMonitor.waitForNextPositionUpdate();
+				  TrainPositionEstimate positionUpdate = trainMonitor.waitForNextPositionUpdate();
 				  TrainPositionUpdatedEvent updatedEvent = new TrainPositionUpdatedEvent(trainMonitor.getTrainId(), positionUpdate);
 				  
 				  trainPositionLut.put(updatedEvent.getTrainIdentifier(), updatedEvent.getPosition());
@@ -253,7 +264,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 	}
 
 	@Override
-	public ValueUpdate<Coordinate> GetLastKnownPosition(String trainIdentifier) {
+	public TrainPositionEstimate GetLastKnownPosition(String trainIdentifier) {
 		return trainPositionLut.get(trainIdentifier);
 	}
 

@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.traintrax.navigation.service.mdu.GyroscopeMeasurement;
 import com.traintrax.navigation.service.mdu.RotationUtilities;
+import com.traintrax.navigation.service.position.GyroscopeMeasurement;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 import com.traintrax.navigation.service.rotation.Quat4d;
 

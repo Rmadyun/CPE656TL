@@ -1,9 +1,10 @@
 package com.traintrax.navigation.service;
 
-import com.traintrax.navigation.service.mdu.AccelerometerMeasurement;
-import com.traintrax.navigation.service.mdu.GyroscopeMeasurement;
-import com.traintrax.navigation.service.mdu.RfidTagDetectedNotification;
+import com.traintrax.navigation.service.position.AccelerometerMeasurement;
 import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.GyroscopeMeasurement;
+import com.traintrax.navigation.service.position.RfidTagDetectedNotification;
+import com.traintrax.navigation.service.position.TrainPositionEstimate;
 
 /**
  * Interface responsible for contacting the Train

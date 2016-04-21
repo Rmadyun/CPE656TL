@@ -1,7 +1,5 @@
 package com.traintrax.navigation.service.position;
 
-import com.traintrax.navigation.service.mdu.GyroscopeMeasurement;
-
 /**
  * Class is responsible for adjust raw gyroscope
  * measurements according to specified calibration values.

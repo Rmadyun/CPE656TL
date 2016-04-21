@@ -1,5 +1,6 @@
 package com.traintrax.navigation.service.mdu;
 
+import com.traintrax.navigation.service.position.GyroscopeMeasurement;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 
 ///Class is responsible for monitoring changes

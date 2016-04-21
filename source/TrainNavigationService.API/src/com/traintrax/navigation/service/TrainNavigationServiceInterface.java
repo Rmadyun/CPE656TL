@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.TrainPositionEstimate;
 import com.traintrax.navigation.trackswitch.SwitchState;
 
 /**
@@ -18,7 +19,7 @@ public interface TrainNavigationServiceInterface {
 	 * @param trainIdentifier Unique ID for the train that we want to have the position for.
 	 * @return the last known position of a given train (in inches)
 	 */
-	ValueUpdate<Coordinate> GetLastKnownPosition(String trainIdentifier)throws Exception;
+	TrainPositionEstimate GetLastKnownPosition(String trainIdentifier)throws Exception;
 	
 	/**
 	 * Retrieves the unique ID associated with each train known by the service.

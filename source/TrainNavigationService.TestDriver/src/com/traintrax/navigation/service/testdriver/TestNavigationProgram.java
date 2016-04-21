@@ -36,18 +36,21 @@ import com.traintrax.navigation.service.TrainNavigationService;
 import com.traintrax.navigation.service.TrainNavigationServiceEvent;
 import com.traintrax.navigation.service.TrainNavigationServiceEventSubscriber;
 import com.traintrax.navigation.service.TrainNavigationServiceInterface;
-import com.traintrax.navigation.service.Triplet;
-import com.traintrax.navigation.service.Tuple;
 import com.traintrax.navigation.service.ValueUpdate;
-import com.traintrax.navigation.service.ValueUpdateComparator;
 import com.traintrax.navigation.service.events.GenericPublisher;
 import com.traintrax.navigation.service.events.NotifierInterface;
 import com.traintrax.navigation.service.events.PublisherInterface;
 import com.traintrax.navigation.service.events.TrainNavigationServiceEventNotifier;
 import com.traintrax.navigation.service.math.*;
 import com.traintrax.navigation.service.mdu.*;
+import com.traintrax.navigation.service.position.AccelerometerMeasurement;
 import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.GyroscopeMeasurement;
+import com.traintrax.navigation.service.position.InertialMotionPositionAlgorithmInterface;
+import com.traintrax.navigation.service.position.TrainPosition2DAlgorithm;
+import com.traintrax.navigation.service.position.TrainPositionEstimate;
 import com.traintrax.navigation.service.position.UnitConversionUtilities;
+import com.traintrax.navigation.service.position.Velocity;
 import com.traintrax.navigation.service.rotation.*;
 import com.traintrax.navigation.service.testing.MduMeasurementGenerator;
 import com.traintrax.navigation.service.testing.PositionTestCase;
@@ -206,13 +209,13 @@ public class TestNavigationProgram {
 			//TODO: Figure out a way to fake the tag position lookup.
 			motionDetectionUnit.enqueueSamples(tempSamples);
 
-			ValueUpdate<Coordinate> trainPosition;
+			TrainPositionEstimate trainPositionEstimate;
 			try {
-				trainPosition = trainNavigationService.GetLastKnownPosition(selectedTrain);
+				trainPositionEstimate = trainNavigationService.GetLastKnownPosition(selectedTrain);
 
 				System.out.println(String.format("Current position of train %s: (%f, %f) at %s", selectedTrain,
-						trainPosition.getValue().getX(), trainPosition.getValue().getY(),
-						trainPosition.getTimeObserved().getTime()));
+						trainPositionEstimate.getPosition().getX(), trainPositionEstimate.getPosition().getY(),
+						trainPositionEstimate.getTimeAtPosition().getTime()));
 
 				Thread.sleep(1000);
 			} catch (Exception e) {
@@ -485,24 +488,24 @@ public class TestNavigationProgram {
 			e.printStackTrace();
 		}
 
-		ValueUpdate<Coordinate> trainPosition = null;
+		TrainPositionEstimate trainPositionEstimate = null;
 		try {
-			trainPosition = trainNavigationService.GetLastKnownPosition(selectedTrain);
+			trainPositionEstimate = trainNavigationService.GetLastKnownPosition(selectedTrain);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		System.out.println(String.format("Current position of train %s: (%f, %f) at %s", selectedTrain,
-				trainPosition.getValue().getX(), trainPosition.getValue().getY(),
-				trainPosition.getTimeObserved().getTime()));
+				trainPositionEstimate.getPosition().getX(), trainPositionEstimate.getPosition().getY(),
+				trainPositionEstimate.getTimeAtPosition().getTime()));
 
 	}
 
 	private static void TestPositionAlgorithm() {
 		List<ValueUpdate<Tuple<GyroscopeMeasurement, AccelerometerMeasurement>>> imuReadings;
 		List<ValueUpdate<Coordinate>> positionReadings;
-		List<ValueUpdate<Coordinate>> finalPositions = new LinkedList<ValueUpdate<Coordinate>>();
+		List<ValueUpdate<Tuple<Coordinate,Velocity>>> finalPositions = new LinkedList<ValueUpdate<Tuple<Coordinate, Velocity>>>();
 
 		imuReadings = ImuMeasurementsReader
 				.ReadFile("/home/death/Documents/CPE658/sample-imu-data/02-17-2016/ImuUpdates.csv");
@@ -548,7 +551,7 @@ public class TestNavigationProgram {
 
 			for (ValueUpdate<Object> timePoint : timeline) {
 
-				ValueUpdate<Coordinate> positionUpdate = null;
+				ValueUpdate<Tuple<Coordinate,Velocity>> positionUpdate = null;
 				if (timePoint.getValue() instanceof Tuple<?, ?>) {
 					bw.write("IMU Processed\n");
 					Tuple<GyroscopeMeasurement, AccelerometerMeasurement> imuReading = (Tuple<GyroscopeMeasurement, AccelerometerMeasurement>) timePoint
@@ -580,8 +583,8 @@ public class TestNavigationProgram {
 				}
 
 				if (positionUpdate != null) {
-					String row = String.format("%f, %f, %f, %f\n", positionUpdate.getValue().getX(),
-							positionUpdate.getValue().getY(), positionUpdate.getValue().getZ(),
+					String row = String.format("%f, %f, %f, %f\n", positionUpdate.getValue().getItem1().getX(),
+							positionUpdate.getValue().getItem1().getY(), positionUpdate.getValue().getItem1().getZ(),
 							positionUpdate.getTimeObserved().getTimeInMillis() / 1000.0);
 
 					bw.write(row);
@@ -607,10 +610,10 @@ public class TestNavigationProgram {
 
 			// Write position to CSV
 
-			for (ValueUpdate<Coordinate> finalPosition : finalPositions) {
+			for (ValueUpdate<Tuple<Coordinate, Velocity>> finalPosition : finalPositions) {
 
 				Coordinate positionInInches = UnitConversionUtilities
-						.convertFromMetersToInches(finalPosition.getValue());
+						.convertFromMetersToInches(finalPosition.getValue().getItem1());
 				String row = String.format("%f, %f, %f, %f\n",
 						finalPosition.getTimeObserved().getTimeInMillis() / 1000.0, positionInInches.getX(),
 						positionInInches.getY(), positionInInches.getZ());

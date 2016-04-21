@@ -14,12 +14,17 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.traintrax.navigation.service.Tuple;
 import com.traintrax.navigation.service.ValueUpdate;
+import com.traintrax.navigation.service.math.Tuple;
 import com.traintrax.navigation.service.mdu.*;
 import com.traintrax.navigation.service.position.Acceleration;
+import com.traintrax.navigation.service.position.AccelerometerMeasurement;
 import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.GyroscopeMeasurement;
+import com.traintrax.navigation.service.position.InertialMotionPositionAlgorithmInterface;
+import com.traintrax.navigation.service.position.TrainPosition2DAlgorithm;
 import com.traintrax.navigation.service.position.UnitConversionUtilities;
+import com.traintrax.navigation.service.position.Velocity;
 import com.traintrax.navigation.service.rotation.*;
 import com.traintrax.navigation.service.testing.MduMeasurementGenerator;
 import com.traintrax.navigation.service.testing.PositionTestCase;
@@ -229,17 +234,17 @@ public class TrainPositionAlgorithmTests {
 				positionUpdates.add(positionUpdate);
 			}
 
-			ValueUpdate<Coordinate> actualPositionUpdate = positionAlgorithm.calculatePosition(gyroscopeMeasurements,
+			ValueUpdate<Tuple<Coordinate,Velocity>> actualPositionUpdate = positionAlgorithm.calculatePosition(gyroscopeMeasurements,
 					accelerometerMeasurements, positionUpdates);
 
-			if (actualPositionUpdate.getValue().getX() > 0 || actualPositionUpdate.getValue().getY() > 0) {
+			if (actualPositionUpdate.getValue().getItem1().getX() > 0 || actualPositionUpdate.getValue().getItem1().getY() > 0) {
 
 				System.out.println(String.format("Expected position of train %s: (%f, %f) at %s", "1",
 						expectedPositionUpdate.getValue().getX(), expectedPositionUpdate.getValue().getY(),
 						expectedPositionUpdate.getTimeObserved().getTime()));
 
 				System.out.println(String.format("Actual position of train %s: (%f, %f) at %s", "1",
-						actualPositionUpdate.getValue().getX(), actualPositionUpdate.getValue().getY(),
+						actualPositionUpdate.getValue().getItem1().getX(), actualPositionUpdate.getValue().getItem1().getY(),
 						actualPositionUpdate.getTimeObserved().getTime()));
 
 			}
@@ -252,13 +257,13 @@ public class TrainPositionAlgorithmTests {
 			 tolerance);
 			 
 			 //Assert.assertTrue(Math.abs(actualPositionUpdate.getTimeObserved().getTimeInMillis() - expectedPositionUpdate.getTimeObserved().getTimeInMillis()) < 1000);
-			 assertEquals(actualPositionUpdate.getValue().getX(),
+			 assertEquals(actualPositionUpdate.getValue().getItem1().getX(),
 			 expectedPositionUpdate.getValue().getX(), tolerance);
 			 
-			 assertEquals(actualPositionUpdate.getValue().getY(),
+			 assertEquals(actualPositionUpdate.getValue().getItem1().getY(),
 			 expectedPositionUpdate.getValue().getY(), tolerance);
 			 
-			 assertEquals(actualPositionUpdate.getValue().getZ(),
+			 assertEquals(actualPositionUpdate.getValue().getItem1().getZ(),
 			 expectedPositionUpdate.getValue().getZ(), tolerance);
 			 
 		}
