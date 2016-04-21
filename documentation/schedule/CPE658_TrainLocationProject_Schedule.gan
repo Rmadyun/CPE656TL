@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="CPE 658 Train Trax: Train Location Project" company="" webLink="http://cathlorn.myjetbrains.com" view-date="2016-01-01" view-index="0" gantt-divider-location="442" resource-divider-location="300" version="2.7.2" locale="en_US">
+<?xml version="1.0" encoding="UTF-8"?><project name="CPE 658 Train Trax: Train Location Project" company="" webLink="http://cathlorn.myjetbrains.com" view-date="2016-01-01" view-index="0" gantt-divider-location="442" resource-divider-location="300" version="2.7.1" locale="en_US">
     <description/>
     <view zooming-state="default:8" id="gantt-chart">
         <field id="tpd3" name="Name" width="69" order="0"/>
@@ -161,9 +161,9 @@ This issue can be closed once integration between the Train Navigation Service a
 3/28/16: Deferring completing this task so that time can be spent collecting train track measurements and integrating the service with other subsystems. This may not be completed before the end of the term.]]></notes>
             </task>
         </task>
-        <task id="34" name="Create Train Navigation Database" meeting="false" start="2016-01-11" duration="101" complete="91" expand="true">
-            <task id="35" name="Report RFID Tag Position" meeting="false" start="2016-01-11" duration="101" complete="95" expand="true">
-                <task id="36" name="Enter Remaining RFID Tag Positions (Up to 80%)" color="#8cb6ce" meeting="false" start="2016-03-24" duration="28" complete="90" expand="true">
+        <task id="34" name="Create Train Navigation Database" meeting="false" start="2016-01-11" duration="101" complete="92" expand="true">
+            <task id="35" name="Report RFID Tag Position" meeting="false" start="2016-01-11" duration="101" complete="97" expand="true">
+                <task id="36" name="Enter Remaining RFID Tag Positions (Up to 80%)" color="#8cb6ce" meeting="false" start="2016-03-24" duration="28" complete="95" expand="true">
                     <notes><![CDATA[2/23/16: Delaying collecting the remaining track tag information so that work can be done for calculating train position using IMU data. This will determine where we place the remaining tags.
 3/9/16: Pushing back collecting RFID tag position data by another week because we still do not have an answer for how many that we need this is actively being worked.
 3/28/16: RFID Tags have been placed on the outermost loop. 
@@ -175,7 +175,8 @@ Tags and Position measurements are also needed for the offshoot deadends. (there
 Remaining work:
 Affixing tags on the 2nd outermost loop, Affixing tags on the mid section loop. Affix tags on any outstanding uncovered areas. Conducting measurements on the lower half of the mid section. Conducting measurements on any outstanding uncovered areas.
 4/13/16: Tags have been placed on the 2nd outer most loop and the upper half of the mid section track. The only tags that need to be placed are those on the lower half of the mid section track, Loop Change points (4 => 1 for each change point), and the 2 major dead ends of the track (Approx 6 points each): This should be a total of 29 remaining tags out of (Approx 270)
-Everything has been measured except for the Loop Change Points, and the 2 major dead ends of the track.]]></notes>
+Everything has been measured except for the Loop Change Points, and the 2 major dead ends of the track.
+4/19/16: All of the tags have been measured. Work remains to be done to record the mappings between the RFID tags and the labels of the test track (approx 42 tags)]]></notes>
                 </task>
                 <task id="128" name="Collect RFID Tag Positions for Sample Track" color="#8cb6ce" meeting="false" start="2016-01-11" duration="14" complete="100" expand="true"/>
                 <task id="130" name="Lookup RFID Tag Position" color="#8cb6ce" meeting="false" start="2016-02-04" duration="7" complete="100" expand="true"/>
@@ -205,8 +206,9 @@ Everything has been measured except for the Loop Change Points, and the 2 major 
                 <notes><![CDATA[3/28/16: Deferring completing this task so that time can be spent collecting train track measurements and integrating the service with other subsystems. This may not be completed.]]></notes>
             </task>
         </task>
-        <task id="198" name="Create the TDD" color="#8cb6ce" meeting="false" start="2016-04-14" duration="7" complete="0" expand="true">
-            <notes><![CDATA[4/5/16: Created a New task to track when the TDD will be completed and reported by the team.]]></notes>
+        <task id="198" name="Create the TDD" color="#8cb6ce" meeting="false" start="2016-04-14" duration="14" complete="50" expand="true">
+            <notes><![CDATA[4/5/16: Created a New task to track when the TDD will be completed and reported by the team.
+4/19/16: Content for testing the Train Navigation Service has been created. Work still needs to be done to populate the Train Navigation Database section details and provide requirements traceability. The initial draft of Train Navigation GUI tests are present. The original content for the MDU testing is present.]]></notes>
         </task>
     </tasks>
     <resources/>
@@ -864,6 +866,62 @@ Everything has been measured except for the Loop Change Points, and the 2 major 
             <previous-task id="43" start="2016-04-14" duration="7" meeting="false" super="false"/>
             <previous-task id="42" start="2016-04-14" duration="7" meeting="false" super="false"/>
             <previous-task id="198" start="2016-04-14" duration="7" meeting="false" super="false"/>
+        </previous-tasks>
+        <previous-tasks name="Revised 04-19-2016: Adjusted Schedule based on Work Done in Sprint Week 14">
+            <previous-task id="0" start="2016-01-11" duration="80" meeting="false" super="true"/>
+            <previous-task id="3" start="2016-01-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="4" start="2016-01-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="5" start="2016-01-18" duration="38" meeting="false" super="false"/>
+            <previous-task id="6" start="2016-01-11" duration="80" meeting="false" super="true"/>
+            <previous-task id="156" start="2016-01-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="158" start="2016-02-18" duration="7" meeting="false" super="false"/>
+            <previous-task id="162" start="2016-02-25" duration="21" meeting="false" super="false"/>
+            <previous-task id="164" start="2016-02-25" duration="28" meeting="false" super="false"/>
+            <previous-task id="160" start="2016-03-24" duration="7" meeting="false" super="false"/>
+            <previous-task id="7" start="2016-03-17" duration="7" meeting="false" super="false"/>
+            <previous-task id="8" start="2016-03-17" duration="7" meeting="false" super="false"/>
+            <previous-task id="9" start="2016-03-17" duration="7" meeting="false" super="false"/>
+            <previous-task id="10" start="2016-01-11" duration="108" meeting="false" super="true"/>
+            <previous-task id="11" start="2016-03-17" duration="14" meeting="false" super="false"/>
+            <previous-task id="12" start="2016-01-11" duration="52" meeting="false" super="false"/>
+            <previous-task id="13" start="2016-03-03" duration="14" meeting="false" super="false"/>
+            <previous-task id="14" start="2016-03-03" duration="14" meeting="false" super="false"/>
+            <previous-task id="15" start="2016-03-10" duration="7" meeting="false" super="false"/>
+            <previous-task id="16" start="2016-03-17" duration="14" meeting="false" super="false"/>
+            <previous-task id="17" start="2016-04-14" duration="14" meeting="false" super="false"/>
+            <previous-task id="18" start="2016-01-11" duration="108" meeting="false" super="true"/>
+            <previous-task id="19" start="2016-01-11" duration="73" meeting="false" super="true"/>
+            <previous-task id="20" start="2016-01-11" duration="24" meeting="false" super="true"/>
+            <previous-task id="136" start="2016-01-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="138" start="2016-01-28" duration="7" meeting="false" super="false"/>
+            <previous-task id="21" start="2016-03-10" duration="7" meeting="false" super="false"/>
+            <previous-task id="22" start="2016-02-25" duration="7" meeting="false" super="false"/>
+            <previous-task id="23" start="2016-02-25" duration="7" meeting="false" super="false"/>
+            <previous-task id="24" start="2016-02-25" duration="28" meeting="false" super="false"/>
+            <previous-task id="25" start="2016-03-10" duration="7" meeting="false" super="false"/>
+            <previous-task id="26" start="2016-03-10" duration="7" meeting="false" super="false"/>
+            <previous-task id="27" start="2016-03-10" duration="7" meeting="false" super="false"/>
+            <previous-task id="28" start="2016-03-10" duration="7" meeting="false" super="false"/>
+            <previous-task id="29" start="2016-03-10" duration="14" meeting="false" super="false"/>
+            <previous-task id="30" start="2016-04-14" duration="7" meeting="false" super="false"/>
+            <previous-task id="31" start="2016-04-14" duration="7" meeting="false" super="false"/>
+            <previous-task id="33" start="2016-04-21" duration="7" meeting="false" super="false"/>
+            <previous-task id="34" start="2016-01-11" duration="101" meeting="false" super="true"/>
+            <previous-task id="35" start="2016-01-11" duration="101" meeting="false" super="true"/>
+            <previous-task id="36" start="2016-03-24" duration="28" meeting="false" super="false"/>
+            <previous-task id="128" start="2016-01-11" duration="14" meeting="false" super="false"/>
+            <previous-task id="130" start="2016-02-04" duration="7" meeting="false" super="false"/>
+            <previous-task id="191" start="2016-02-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="37" start="2016-02-04" duration="14" meeting="false" super="true"/>
+            <previous-task id="186" start="2016-02-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="38" start="2016-02-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="39" start="2016-02-04" duration="7" meeting="false" super="false"/>
+            <previous-task id="196" start="2016-02-11" duration="7" meeting="false" super="false"/>
+            <previous-task id="40" start="2016-04-07" duration="7" meeting="false" super="false"/>
+            <previous-task id="41" start="2016-04-07" duration="7" meeting="false" super="false"/>
+            <previous-task id="43" start="2016-04-14" duration="7" meeting="false" super="false"/>
+            <previous-task id="42" start="2016-04-14" duration="7" meeting="false" super="false"/>
+            <previous-task id="198" start="2016-04-14" duration="14" meeting="false" super="false"/>
         </previous-tasks>
     </previous>
     <roles roleset-name="Default"/>
