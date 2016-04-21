@@ -1,0 +1,61 @@
+[Dependency Install]
+Run mysql-installer-community-5.7.11.0.msi.
+Select the default developer setup configuration.
+Follow the steps of the installation wizard  until you click Finish to complete the installation.
+Run JMRI.4.2.1-R6b48b4.exe
+Select 'Install for anyone using this computer'.
+Click Next and continue to follow the instructions on the install wizard until you click Finish to complete the installation.
+Unzip CPE656TL-master.zip
+Move the extracted folder into your desired folder location
+Unzip restlet-jse-2.3.6.zip
+
+[Database Data Install]
+root/root are the default credential used for the MySQL Database
+3306 is the default DB port
+localhost is the default DB host name
+Call install_train_data.bat to install the Train Navigation Data from scratch and initialize tables.
+
+[Database Data Uninstall]
+root/root are the default credential used for the MySQL Database
+3306 is the default DB port
+localhost is the default DB host name
+Call clear_train_data.bat to remove all of the data in the database
+
+[Source Install]
+Move the extracted folder into your desired folder location.
+Unzip eclipse-java-mars-2-win32-x86_64.zip
+Move the extracted eclipse folder into your desired folder location.
+Double click into the extracted eclipse folder
+Run eclipse.exe
+Goto File->Import->General->Existing Projects into Workspace
+Browse to CPE656TL-master->source. 
+Click OK
+Include all of the folders/projects
+Click Finish
+
+[Operation]
+root/root are the default credential used for the MySQL Database
+3306 is the default DB port
+localhost is the default DB host name
+8182 is the default Navigation Database Rest Service port
+8183 is the defualt Navigation Service Rest Service port
+COM4 is the default COM Port for the PR3
+COM5 is the defautl COM Port for communication with the MDU
+Run CPE656TL-master/install/run_nav_service.bat to run the Train Navigation Service Rest Service
+Run CPE656TL-master/install/run_nav_service.bat to run the Train Navigation Database Rest Service
+
+
+#Ignore from Here
+
+Unzip rxtx-2.1-7-bins-r2.zip
+Move the extracted folder into your desired folder location
+
+Right click on the TrainNavigationDatabase.Library project.
+Build Path->Configure Build Path. A window should appear.
+Click on the Libraries tab.
+Remove the MySQL Adapter Link. 
+Click 'Add External Library'
+Browse to the folder below and include mysql-connector-java-5.1.38-bin.jar.
+C:\Program Files (x86)\MySQL\Connector.J 5.1
+Repeat these steps to add restlet-2.3.6.jar to The TrainNavigationDatabase and TrainNavigationService projects.
+

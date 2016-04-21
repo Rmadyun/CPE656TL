@@ -1,0 +1,9 @@
+USE TrainTrax;
+DELETE FROM Raw_Accelerometer;
+DELETE FROM Raw_Gyroscope;
+DELETE FROM Raw_RfidTagReader;
+DELETE FROM Train_Position;
+DELETE FROM Track_Block;
+DELETE FROM Track_Point;
+DELETE FROM Track_Switch;
+DELETE FROM Adjacent_Points;

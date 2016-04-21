@@ -1,0 +1,78 @@
+#Script to initialize the TrainTrax Database
+#11/27/15
+
+CREATE DATABASE TrainTrax;
+USE TrainTrax;
+
+CREATE TABLE IF NOT EXISTS Raw_Accelerometer (
+    measurement_id int(32) NOT NULL AUTO_INCREMENT,
+    x DOUBLE PRECISION DEFAULT 0,
+    y DOUBLE PRECISION DEFAULT 0,
+    z DOUBLE PRECISION DEFAULT 0,
+    timestamp TIMESTAMP DEFAULT "0/0/0000 00:00:00",
+    PRIMARY KEY(measurement_id)
+    );
+
+CREATE TABLE IF NOT EXISTS Raw_Gyroscope (
+    measurement_id int(32) NOT NULL AUTO_INCREMENT,
+    x DOUBLE PRECISION DEFAULT 0,
+    y DOUBLE PRECISION DEFAULT 0,
+    z DOUBLE PRECISION DEFAULT 0,
+    timestamp TIMESTAMP DEFAULT "0/0/0000 00:00:00",
+    PRIMARY KEY(measurement_id)
+    );
+
+CREATE TABLE IF NOT EXISTS Raw_RfidTagReader (
+    measurement_id int(32) NOT NULL AUTO_INCREMENT,
+    rfid_tag varchar(256) DEFAULT "",
+    timestamp TIMESTAMP DEFAULT "0/0/0000 00:00:00",
+    PRIMARY KEY(measurement_id)
+    );
+
+
+CREATE TABLE IF NOT EXISTS Train_Position (
+    measurement_id int(32) NOT NULL AUTO_INCREMENT,
+    x DOUBLE PRECISION DEFAULT 0,
+    y DOUBLE PRECISION DEFAULT 0,
+    z DOUBLE PRECISION DEFAULT 0,
+    train_id varchar(256) DEFAULT "",
+    timestamp TIMESTAMP DEFAULT "0/0/0000 00:00:00",
+    PRIMARY KEY(measurement_id)
+    );
+
+CREATE TABLE IF NOT EXISTS Track_Block (
+    block_id int(32) NOT NULL AUTO_INCREMENT,
+    block_name varchar(256) DEFAULT "",
+    PRIMARY KEY(block_id)
+    );
+
+CREATE TABLE IF NOT EXISTS Track_Point (
+    point_id int(32) NOT NULL AUTO_INCREMENT,
+    point_name varchar(256) DEFAULT "",
+    type varchar(256) DEFAULT "",
+    x DOUBLE PRECISION DEFAULT 0,
+    y DOUBLE PRECISION DEFAULT 0,
+    z DOUBLE PRECISION DEFAULT 0,
+    block_id int(32) DEFAULT NULL,
+    tag_name varchar(256) DEFAULT "",
+    PRIMARY KEY(point_id)
+    );
+
+
+CREATE TABLE IF NOT EXISTS Track_Switch (
+    switch_id int(32) NOT NULL AUTO_INCREMENT,
+    switch_name varchar(256) DEFAULT "",
+    point_id int(32) DEFAULT NULL,
+    pass_block_id int(32) DEFAULT NULL,
+    bypass_block_id int(32) DEFAULT NULL,
+    PRIMARY KEY(switch_id)
+    );
+
+
+CREATE TABLE IF NOT EXISTS Adjacent_Points (
+    list_id int(32) NOT NULL AUTO_INCREMENT,
+    point_id int(32) DEFAULT NULL,
+    adjacent_point_id int(32) DEFAULT NULL,
+    PRIMARY KEY(list_id)
+    );
+
