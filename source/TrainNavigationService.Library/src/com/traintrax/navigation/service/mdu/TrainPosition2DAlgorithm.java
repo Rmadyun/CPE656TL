@@ -184,10 +184,19 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 				// Include IMU measurements
 
 				List<GyroscopeMeasurement> postRfidTagGyroscopeMeasurements;
+				
+				//In order to prevent IMU measurements from happening on the
+				//edge case of where IMU measurements occur exactly when
+				//an RFID Tag event is receive, the starting point of searching for points
+				//will be 1 millisecond after the last RFID tag received.
+				
+				Calendar imuMeasurementStart = (Calendar) endPosition.getTimeObserved().clone();
+				imuMeasurementStart.add(Calendar.MILLISECOND, 1);
+				
 
 				if (gyroscopeMeasurementsSinceLastUpdate.size() > 0) {
 					postRfidTagGyroscopeMeasurements = selectGyroscopeMeasurementsByTime(
-							gyroscopeMeasurementsSinceLastUpdate, endPosition.getTimeObserved(),
+							gyroscopeMeasurementsSinceLastUpdate, imuMeasurementStart,
 							gyroscopeMeasurementsSinceLastUpdate.get(gyroscopeMeasurementsSinceLastUpdate.size() - 1)
 									.getTimeMeasured());
 				} else {
@@ -195,7 +204,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 				}
 
 				List<AccelerometerMeasurement> postRfidTagAccelerometerMeasurements = selectAccelerometerMeasurementsByTime(
-						accelerometerMeasurementsSinceLastUpdate, endPosition.getTimeObserved(),
+						accelerometerMeasurementsSinceLastUpdate, imuMeasurementStart,
 						accelerometerMeasurementsSinceLastUpdate
 								.get(accelerometerMeasurementsSinceLastUpdate.size() - 1).getTimeMeasured());
 
