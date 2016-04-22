@@ -81,7 +81,7 @@ public class Track {
     	//Associate vertices
     	for(RepositoryEntry<AdjacentPoint> entry : adjacentPointsList){
     		String pointId = Integer.toString(entry.getValue().getPointId());
-    		String adjacentPointId = Integer.toString(entry.getValue().getAdjacenPointId());
+    		String adjacentPointId = Integer.toString(entry.getValue().getAdjacentPointId());
     		Vertex pointVertex = vertexLut.get(pointId);
     		Vertex adjacentPointVertex = vertexLut.get(adjacentPointId);
     		

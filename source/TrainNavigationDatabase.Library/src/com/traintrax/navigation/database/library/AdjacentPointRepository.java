@@ -58,7 +58,7 @@ public class AdjacentPointRepository implements FilteredSearchRepositoryInterfac
 			List<KeyValuePair> kvps = new ArrayList<KeyValuePair>();
 
 			KeyValuePair pointIdKvp = new KeyValuePair(PointIdColumn, SqlUtilities.createSqlInt(adjacentPoint.getPointId()));
-			KeyValuePair adjacentPointIdKvp = new KeyValuePair(AdjacentPointIdColumn, SqlUtilities.createSqlInt(adjacentPoint.getAdjacenPointId()));
+			KeyValuePair adjacentPointIdKvp = new KeyValuePair(AdjacentPointIdColumn, SqlUtilities.createSqlInt(adjacentPoint.getAdjacentPointId()));
 			
 			kvps.add(pointIdKvp);
 			kvps.add(adjacentPointIdKvp);

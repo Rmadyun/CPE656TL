@@ -100,7 +100,7 @@ public class DataImportUtilities {
 		// Find AdjacentPoint
 		AdjacentPointSearchCriteria adjacentPointSearchCriteria = new AdjacentPointSearchCriteria();
 		adjacentPointSearchCriteria.setPointId(Integer.toString(adjacentPoint.getPointId()));
-		adjacentPointSearchCriteria.setAdjacentPointId(Integer.toString(adjacentPoint.getAdjacenPointId()));
+		adjacentPointSearchCriteria.setAdjacentPointId(Integer.toString(adjacentPoint.getAdjacentPointId()));
 		List<RepositoryEntry<AdjacentPoint>> results = adjacentPointRepository.find(adjacentPointSearchCriteria);
 
 		if (results.isEmpty()) {

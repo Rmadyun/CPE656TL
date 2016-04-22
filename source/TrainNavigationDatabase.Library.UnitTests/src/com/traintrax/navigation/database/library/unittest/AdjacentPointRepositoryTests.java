@@ -26,7 +26,7 @@ public class AdjacentPointRepositoryTests extends FilteredSearchRepositoryInterf
 	}
 	
 	AdjacentPoint createModifiedEntry(AdjacentPoint originalEntry){
-		AdjacentPoint updatedAdjacentPoint = new AdjacentPoint(originalEntry.getAdjacenPointId()+1,
+		AdjacentPoint updatedAdjacentPoint = new AdjacentPoint(originalEntry.getAdjacentPointId()+1,
 				originalEntry.getPointId());
 		
 		return updatedAdjacentPoint;
@@ -116,7 +116,7 @@ public class AdjacentPointRepositoryTests extends FilteredSearchRepositoryInterf
 		AdjacentPoint newEntry = createNewEntry();
 		AdjacentPointSearchCriteria searchCriteria = new AdjacentPointSearchCriteria();
 
-		searchCriteria.setAdjacentPointId(Integer.toString(newEntry.getAdjacenPointId()));
+		searchCriteria.setAdjacentPointId(Integer.toString(newEntry.getAdjacentPointId()));
 		
 		TestFindSearchCriteria(repository, newEntry, searchCriteria);
 
@@ -149,7 +149,7 @@ public class AdjacentPointRepositoryTests extends FilteredSearchRepositoryInterf
 		AdjacentPointSearchCriteria searchCriteria = new AdjacentPointSearchCriteria();
 
 		searchCriteria.setPointId(Integer.toString(newEntry.getPointId()));
-		searchCriteria.setAdjacentPointId(Integer.toString(newEntry.getAdjacenPointId()));
+		searchCriteria.setAdjacentPointId(Integer.toString(newEntry.getAdjacentPointId()));
 		
 		TestFindSearchCriteria(repository, newEntry, searchCriteria);
 		

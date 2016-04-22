@@ -27,7 +27,7 @@ public class AdjacentPointSearchResults {
 			AdjacentPointMatch trackPointMatch = new AdjacentPointMatch(
 					match.getId(),
 					Integer.toString(match.getValue().getPointId()),
-					Integer.toString(match.getValue().getAdjacenPointId()));
+					Integer.toString(match.getValue().getAdjacentPointId()));
 			
 			adjacentPointMatches.add(trackPointMatch); 
 		}

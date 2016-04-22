@@ -32,7 +32,7 @@ public class AdjacentPoint {
 	 * 
 	 * @return
 	 */
-	public int getAdjacenPointId(){
+	public int getAdjacentPointId(){
 		return adjacentPointId;
 	}
 
