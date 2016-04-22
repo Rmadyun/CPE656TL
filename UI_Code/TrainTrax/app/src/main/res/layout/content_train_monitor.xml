@@ -14,20 +14,10 @@
     android:orientation="vertical"
     android:weightSum="1">
 
-    <Button
-        android:layout_width="300dp"
-        android:layout_height="82dp"
-        android:text="Display History"
-        android:textColor="#ffffff"
-        android:background="?attr/colorPrimary"
-        android:id="@+id/button"
-        android:onClick="onMonitorButtonClicked"
-        android:layout_gravity="right"/>
-
-<edu.uah.cpe.traintrax.MonitorView
+    <edu.uah.cpe.traintrax.MonitorView
     android:id="@+id/myview"
+        android:layout_marginTop="40dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />
-
 
 </LinearLayout>

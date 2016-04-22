@@ -2,9 +2,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="edu.uah.cpe.traintrax.MainActivity">
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+    <item android:id="@+id/action_portnum" android:title="@string/action_portnum"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_ipaddress" android:title="@string/action_ipaddress"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_save" android:title="@string/action_save"
+        android:orderInCategory="100" app:showAsAction="never" />
 </menu>

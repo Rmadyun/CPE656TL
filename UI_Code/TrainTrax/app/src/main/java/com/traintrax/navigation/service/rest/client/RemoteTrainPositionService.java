@@ -1,7 +1,9 @@
 package com.traintrax.navigation.service.rest.client;
 
 import com.traintrax.navigation.service.ValueUpdate;
+import com.traintrax.navigation.service.math.ThreeDimensionalSpaceVector;
 import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.TrainPositionEstimate;
 import com.traintrax.navigation.service.rest.data.KnownTrainIdentifiersMessage;
 import com.traintrax.navigation.service.rest.data.TrainPositionUpdateMessage;
 
@@ -105,11 +107,12 @@ import com.traintrax.navigation.service.rest.data.TrainPositionUpdateMessage;
 	 *            Adjacent point match from Restful web service query to convert
 	 * @return Repository Entry representation of the adjacent point
 	 */
-	private ValueUpdate<Coordinate> convertToPositionUpdate(TrainPositionUpdateMessage trainPositionMessage) {
+	private TrainPositionEstimate convertToPositionUpdate(TrainPositionUpdateMessage trainPositionMessage) {
 
 		Coordinate location = new Coordinate(trainPositionMessage.getX(), trainPositionMessage.getY(), trainPositionMessage.getZ());
+		ThreeDimensionalSpaceVector velocity = new ThreeDimensionalSpaceVector(trainPositionMessage.getVelocityX(),trainPositionMessage.getVelocityY(),trainPositionMessage.getVelocityZ());
 		
-		ValueUpdate<Coordinate> positionUpdate = new ValueUpdate<Coordinate>(location, trainPositionMessage.getTimeMeasured());
+		TrainPositionEstimate positionUpdate = new TrainPositionEstimate(location, velocity, trainPositionMessage.getTimeMeasured(), trainPositionMessage.getTrainId());
 
 		return positionUpdate;
 	}
@@ -119,11 +122,11 @@ import com.traintrax.navigation.service.rest.data.TrainPositionUpdateMessage;
 	 * @param id Unique ID of the train we want the position for
 	 * @return The last known position of a given train.
 	 */
-	public ValueUpdate<Coordinate> getLastKnownTrainPosition(String id) {
+	public TrainPositionEstimate getLastKnownTrainPosition(String id) {
 
 		String requestUrl = createTrainPositionRequestUrl(hostName, port, Integer.parseInt(id));
 		
-		ValueUpdate<Coordinate> match = null;
+		TrainPositionEstimate match = null;
 		String response = webServiceClient.sendRequest(requestUrl);
 		TrainPositionUpdateMessage results = messageDeserializer.deserialize(response);
 

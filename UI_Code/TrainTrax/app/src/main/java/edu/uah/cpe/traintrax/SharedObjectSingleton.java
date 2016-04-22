@@ -13,6 +13,7 @@ public class SharedObjectSingleton {
 
     private TrackDiagram trackDiagram;
     private TrackSwitchInfo trackSwitchInfo;
+    private TrainPosInfo trainPosInfo;
     private TrainNavigationServiceInterface trainNavigationServiceInterface;
 
     /**
@@ -61,6 +62,18 @@ public class SharedObjectSingleton {
      */
     public void setTrackSwitchInfo(TrackSwitchInfo trackSwitchInfo) {
         this.trackSwitchInfo = trackSwitchInfo;
+    }
+
+    public TrainPosInfo getTrainPosInfo() {
+        return trainPosInfo;
+    }
+
+    /**
+     * Assigns a collection of all of the information about train positions on the track
+     * @param trainPosInfo Information about all of the trains on the track
+     */
+    public void setTrainPosInfo(TrainPosInfo trainPosInfo) {
+        this.trainPosInfo = trainPosInfo;
     }
 
     /**
