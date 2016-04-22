@@ -1,5 +1,8 @@
 package com.traintrax.navigation.service;
 
+import java.util.List;
+
+import com.traintrax.navigation.database.library.TrackSwitch;
 import com.traintrax.navigation.service.position.AccelerometerMeasurement;
 import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.GyroscopeMeasurement;
@@ -23,6 +26,12 @@ public interface TrainNavigationDatabaseInterface {
 	 */
 	Coordinate findTrackMarkerPosition(String rfidTagIdentifier);
 	
+	/**
+	 * Lists all of the known track switches on the track
+	 * @return All of the known track switches on the track
+	 */
+	List<TrackSwitch> getTrackSwitches();
+
 	/**
 	 * Persists an estimate of a given train's position.
 	 * @param trainPosition Train position estimate to save

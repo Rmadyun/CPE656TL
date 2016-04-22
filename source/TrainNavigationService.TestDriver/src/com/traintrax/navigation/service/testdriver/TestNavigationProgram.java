@@ -23,6 +23,9 @@ import com.traintrax.navigation.database.library.RfidTagDetectedNotificationSear
 import com.traintrax.navigation.database.library.TrackPoint;
 import com.traintrax.navigation.database.library.TrackPointRepository;
 import com.traintrax.navigation.database.library.TrackPointSearchCriteria;
+import com.traintrax.navigation.database.library.TrackSwitch;
+import com.traintrax.navigation.database.library.TrackSwitchRepository;
+import com.traintrax.navigation.database.library.TrackSwitchSearchCriteria;
 import com.traintrax.navigation.database.library.TrainPosition;
 import com.traintrax.navigation.database.library.TrainPositionRepository;
 import com.traintrax.navigation.database.library.TrainPositionSearchCriteria;
@@ -171,9 +174,11 @@ public class TestNavigationProgram {
 				gdi);
 		FilteredSearchRepositoryInterface<TrainPosition, TrainPositionSearchCriteria> trainPositionRepository = new TrainPositionRepository(
 				gdi);
+		FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> trackSwitchRepository = new TrackSwitchRepository(
+				gdi);
 
 		trainNavigationDatabase = new TrainNavigationDatabase(trackPointRepository, accelerometerMeasurementRepository,
-				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository);
+				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository, trackSwitchRepository);
 
 		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(currentPosition,
 				currentOrientation);

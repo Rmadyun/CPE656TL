@@ -1,5 +1,7 @@
 package com.traintrax.navigation.service;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.traintrax.navigation.database.library.AccelerometerMeasurementSearchCriteria;
@@ -9,6 +11,8 @@ import com.traintrax.navigation.database.library.RepositoryEntry;
 import com.traintrax.navigation.database.library.RfidTagDetectedNotificationSearchCriteria;
 import com.traintrax.navigation.database.library.TrackPoint;
 import com.traintrax.navigation.database.library.TrackPointSearchCriteria;
+import com.traintrax.navigation.database.library.TrackSwitch;
+import com.traintrax.navigation.database.library.TrackSwitchSearchCriteria;
 import com.traintrax.navigation.database.library.TrainPosition;
 import com.traintrax.navigation.database.library.TrainPositionSearchCriteria;
 import com.traintrax.navigation.service.position.AccelerometerMeasurement;
@@ -32,6 +36,7 @@ public class TrainNavigationDatabase implements TrainNavigationDatabaseInterface
 	private FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.RfidTagDetectedNotification, RfidTagDetectedNotificationSearchCriteria> rfidTagNotificationRepository;
 	private FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.GyroscopeMeasurement, GyroscopeMeasurementSearchCriteria> gyroscopeMeasurementRepository;
 	private FilteredSearchRepositoryInterface<TrainPosition, TrainPositionSearchCriteria> trainPositionRepository;
+	private FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> trackSwitchRepository;
 
 	/**
 	 * Constructor
@@ -40,18 +45,20 @@ public class TrainNavigationDatabase implements TrainNavigationDatabaseInterface
 	 * @param gyroscopeMeasurementRepository Saves gyroscope measurements
 	 * @param rfidTagNotificationRepository Saves RFID Tag Detected notifications
 	 * @param trainPositionRepository Saves train position estimates
+	 * @param trackSwitchRepository Provides switch information
 	 */
 	public TrainNavigationDatabase(
 			FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> trackPointRepository,
 			FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.AccelerometerMeasurement, AccelerometerMeasurementSearchCriteria> accelerometerMeasurementRepository,
 			FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.GyroscopeMeasurement, GyroscopeMeasurementSearchCriteria> gyroscopeMeasurementRepository,
 		    FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.RfidTagDetectedNotification, RfidTagDetectedNotificationSearchCriteria> rfidTagNotificationRepository,
-		    FilteredSearchRepositoryInterface<TrainPosition, TrainPositionSearchCriteria> trainPositionRepository) {
+		    FilteredSearchRepositoryInterface<TrainPosition, TrainPositionSearchCriteria> trainPositionRepository, FilteredSearchRepositoryInterface<TrackSwitch,TrackSwitchSearchCriteria> trackSwitchRepository) {
 		    
 		    this.trackPointRepository = trackPointRepository;
 		    this.accelerometerMeasurementRepository = accelerometerMeasurementRepository;
 		    this.gyroscopeMeasurementRepository = gyroscopeMeasurementRepository;
 		    this.rfidTagNotificationRepository = rfidTagNotificationRepository;
+		    this.trackSwitchRepository = trackSwitchRepository;
 		    this.trainPositionRepository = trainPositionRepository;
 	}
 	
@@ -77,6 +84,25 @@ public class TrainNavigationDatabase implements TrainNavigationDatabaseInterface
 		}
 
 		return tagPosition;
+	}
+	
+	/**
+	 * Lists all of the known track switches on the track
+	 * @return All of the known track switches on the track
+	 */
+	public List<TrackSwitch> getTrackSwitches(){
+		
+		List<RepositoryEntry<TrackSwitch>> trackSwitches;
+		
+		trackSwitches = trackSwitchRepository.findAll();
+		
+		List<TrackSwitch> switchList = new LinkedList<TrackSwitch>();
+		
+		for(RepositoryEntry<TrackSwitch> trackSwitch : trackSwitches){
+			switchList.add(trackSwitch.getValue());
+		}
+		
+		return switchList;
 	}
 	
 	/**
