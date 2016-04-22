@@ -20,6 +20,9 @@ import com.traintrax.navigation.database.library.RfidTagDetectedNotificationSear
 import com.traintrax.navigation.database.library.TrackPoint;
 import com.traintrax.navigation.database.library.TrackPointRepository;
 import com.traintrax.navigation.database.library.TrackPointSearchCriteria;
+import com.traintrax.navigation.database.library.TrackSwitch;
+import com.traintrax.navigation.database.library.TrackSwitchRepository;
+import com.traintrax.navigation.database.library.TrackSwitchSearchCriteria;
 import com.traintrax.navigation.database.library.TrainPosition;
 import com.traintrax.navigation.database.library.TrainPositionRepository;
 import com.traintrax.navigation.database.library.TrainPositionSearchCriteria;
@@ -162,16 +165,17 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.RfidTagDetectedNotification, RfidTagDetectedNotificationSearchCriteria> rfidTagNotificationRepository = new RfidTagDetectedNotificationRepository(gdi);
 		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.GyroscopeMeasurement, GyroscopeMeasurementSearchCriteria> gyroscopeMeasurementRepository = new GyroscopeMeasurementRepository(gdi);
 		FilteredSearchRepositoryInterface<TrainPosition, TrainPositionSearchCriteria> trainPositionRepository = new TrainPositionRepository(gdi);
+		FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> trackSwitchRepository = new TrackSwitchRepository(gdi);
 		
 		trainNavigationDatabase = new TrainNavigationDatabase(trackPointRepository, accelerometerMeasurementRepository,
-				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository);
+				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository, trackSwitchRepository);
 		
 		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(currentPosition, currentOrientation);
 		
 		TrainMonitorInterface trainMonitor = new TrainMonitor(trainId, positionAlgorithm, motionDetectionUnit, trainNavigationDatabase);
 		TrackSwitchControllerInterface trainController = null;
 		try {
-			trainController = new TrackSwitchController(pr3SerialPort, TrackSwitchController.DefaultPrefix);
+			trainController = new TrackSwitchController(pr3SerialPort, TrackSwitchController.DefaultPrefix, trainNavigationDatabase);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -184,6 +188,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 		this.trainMonitor = trainMonitor;
 		this.trainController = trainController;
 		this.eventPublisher = eventPublisher;
+		
 	
 		initialize(trainId, currentPosition, trainMonitor, trainController, eventPublisher);
 	}
@@ -192,23 +197,17 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 	 * Completes initialization of the class.
 	 * @param trainMonitor Determines train position
 	 * @param trainController Controls switches
-	 * @param eventPublisher Notifiers subscribers of changes within the service or monitored trains
+	 * @param eventPublisher Notifiers subscribers of changes within the service or monitored trains 
 	 */
 	private void initialize(String trainId, Coordinate currentPosition, TrainMonitorInterface trainMonitor, TrackSwitchControllerInterface trainController, PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher){
 
 		//Assuming train is at rest upon initialization
 		trainPositionLut.put(trainId, new TrainPositionEstimate(currentPosition, new ThreeDimensionalSpaceVector(0,0,0), Calendar.getInstance(), trainId));
-		
+				
 		setupTimer();
 	}
 	
-	/**
-	 * Method initializes all of the known switches on the rail system to be
-	 * in a known state.
-	 */
-	private void initializeAllSwitchesToKnownState(){
-		
-	}
+
 	
 	/**
 	 * Configures the timer to run for listening to train events

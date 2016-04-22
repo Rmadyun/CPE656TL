@@ -2,8 +2,10 @@ package com.traintrax.navigation.service;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.traintrax.navigation.database.library.TrackSwitch;
 import com.traintrax.navigation.service.mdu.SerialPortMduCommunicationChannel;
 import com.traintrax.navigation.trackswitch.SwitchState;
 
@@ -35,6 +37,8 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 
 	private final LnPortController serialPortAdapter;
 
+	private TrainNavigationDatabaseInterface trainNavigationDatabase;
+
 	// NOTE: Verified that Test Bed is configured to use the Default Prefix.
 	// Also verified that JMRI works with Windows.
 	// Serial port configured to 9600 8N1 works
@@ -54,7 +58,7 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	public TrackSwitchController() throws Exception {
 		// TODO: Figure out actual default values and assign
 		// elsewhere
-		this(DefaultSerialPort, DefaultPrefix);
+		this(DefaultSerialPort, DefaultPrefix, null);
 	}
 
 	/**
@@ -67,14 +71,16 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	 *            with multiple 'connections' to layout hardware. It determines
 	 *            which LocoNet subnet that should be associated with the Port
 	 *            controller
+	 * @param trainNavigationDatabase Contact for information about the train track and to save measuremnts            
 	 * @throws Exception
 	 *             Reports any type of failure involved with connecting to the
 	 *             controller
 	 */
-	public TrackSwitchController(String serialPort, String prefix) throws Exception {
+	public TrackSwitchController(String serialPort, String prefix, TrainNavigationDatabaseInterface trainNavigationDatabase) throws Exception {
 
 		this.serialPort = serialPort;
 		this.prefix = prefix;
+		this.trainNavigationDatabase = trainNavigationDatabase;
 		
 		//CommPortIdentifier commPortIdentifier = CommPortIdentifier.getPortIdentifier(serialPort);
 		
@@ -105,6 +111,33 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 		this.locoNetInterface = memo.getLnTrafficController();
 
 		selectMS100mode();
+		
+		
+		//Note a better check for null may be necessary if the DB is used outside
+		//of only initialization. In fact, requiring a non-null value may be necessary.
+		if(trainNavigationDatabase != null)
+		{
+		    initializeAllSwitchesToKnownState(trainNavigationDatabase);
+		}
+	}
+	
+	/**
+	 * Method initializes all of the known switches on the rail system to be
+	 * in a known state.
+	 * @param trainNavigationDatabase Contact for information about the train track and to save measuremnts
+	 */
+	private void initializeAllSwitchesToKnownState(TrainNavigationDatabaseInterface trainNavigationDatabase){
+		
+		
+		List<TrackSwitch> switches = trainNavigationDatabase.getTrackSwitches();
+		
+		//Set all switches into pass.
+		
+		for(TrackSwitch trackSwitch : switches){
+			
+			ChangeSwitchState(trackSwitch.getSwitchName(), SwitchState.Pass);
+		}
+		
 	}
 
 	/**
