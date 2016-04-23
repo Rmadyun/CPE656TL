@@ -27,6 +27,27 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 	private static final int MduProtocolMtuSize = 20;
 
 	/**
+	 * Size of the header that is a part of every MDU Protocol message
+	 */
+	private static final int MduProtocolHeaderSize = 3;
+
+	// MDU Protocol fields
+	private static final byte ImuReading = 0x03;
+	private static final byte RfidReading = 0x04;
+	private static final byte RoundTripTimeTestRequest = 0x05;
+	private static final byte RoundTripTimeTestResponse = 0x06;
+	private static final byte Identification = 0x07;
+	private static final byte TimeRequest = 0x08;
+	private static final byte TimeResponse = 0x09;
+
+	private static final int ImuReadingPacketSize = 20;
+	private static final int RfidReadingPacketSize = 13;
+	private static final int IdentificationPacketSize = 4;
+	private static final int RoundtripTimeRequestPacketSize = 4;
+
+	private static final int MessageTypeOffset = 2;
+
+	/**
 	 * Assigns the contents of the packet buffer header
 	 * 
 	 * @param numberOfPacketBytesStored
@@ -35,9 +56,41 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 	 *            Reference to the packet buffer byte array
 	 */
 	private void setPacketBufferHeader(int numberOfPacketBytesStored, byte[] packetBuffer) {
-		//Assuming that the packet buffer header size is 1 for now
-		
+		// Assuming that the packet buffer header size is 1 for now
+
 		packetBuffer[0] = (byte) numberOfPacketBytesStored;
+	}
+
+	/**
+	 * Determines what size the packet should be
+	 * 
+	 * @return Returns the size in bytes that are expected. Returns -1 if it
+	 *         cannot be determined.
+	 */
+	private int getExpectedMessageLength(byte[] packetBuffer, int packetSize) {
+
+		int expectedMessageLength = -1;
+
+		if (packetSize >= MduProtocolHeaderSize) {
+			// Assuming that every MDU Protocol Message Type has a fixed length
+			byte messageType = packetBuffer[PacketBufferHeaderSize + MessageTypeOffset];
+
+			if (messageType == ImuReading) {
+				expectedMessageLength = ImuReadingPacketSize;
+			} else if (messageType == RfidReading) {
+				expectedMessageLength = RfidReadingPacketSize;
+			} else if (messageType == Identification) {
+				expectedMessageLength = IdentificationPacketSize;
+
+			} else if (messageType == RoundTripTimeTestRequest) {
+				expectedMessageLength = RoundtripTimeRequestPacketSize;
+			} else {
+				// TODO: Add more messages
+			}
+
+		}
+
+		return expectedMessageLength;
 	}
 
 	/**
@@ -55,11 +108,11 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 
 	@Override
 	public byte[] getNextMduPacket(InputStream mduInputStream) throws IOException {
-		
+
 		byte[] packetBuffer = new byte[PacketBufferHeaderSize + MduProtocolMtuSize];
 		int packetBufferSize = 0;
 		boolean appendingMduMessage = true;
-		//Initially report the buffer as empty
+		// Initially report the buffer as empty
 		setPacketBufferHeader(packetBufferSize, packetBuffer);
 
 		if (mduInputStream == null) {
@@ -69,7 +122,7 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 
 			while (appendingMduMessage) {
 				int readValue = -1;
-				
+
 				readValue = mduInputStream.read();
 
 				if (readValue >= 0) {
@@ -80,7 +133,7 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 						System.out.println(
 								"WARNING (MDU Protocol Parsing): MTU exceeded while searching for end of packet. Dropping earliest bytes.");
 
-						// Shift everything left
+						// Shift everything left by 1 byte
 						for (int i = 0; i < (packetBuffer.length - 1); i++) {
 							packetBuffer[i] = packetBuffer[i + 1];
 						}
@@ -91,11 +144,43 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 					packetBuffer[PacketBufferHeaderSize + packetBufferSize - 1] = readByte;
 
 					if (readByte == NewLineCharacter) {
-						// Write packet buffer header
-						setPacketBufferHeader(packetBufferSize, packetBuffer);
+						int expectedLen = getExpectedMessageLength(packetBuffer, packetBufferSize);
 
-						// Mark to Save Buffer
-						appendingMduMessage = false;
+						if (expectedLen < 0) {
+							// Do Nothing
+						} else if (packetBufferSize > expectedLen) {
+							// Look for the first occurrence of the new line and
+							// start the buffer there.
+							int firstNewLineIndex = -1;
+							for (int i = 0; i < (packetBufferSize - 1); i++) {
+								if (packetBuffer[PacketBufferHeaderSize + i] == NewLineCharacter) {
+									firstNewLineIndex = PacketBufferHeaderSize + i;
+									break;
+								}
+							}
+							int numberBytesToShift = firstNewLineIndex + 1;
+
+							// Shift past the first New Line Character found and
+							// retry
+							for (int j = 0; j < numberBytesToShift; j++) {
+
+								// Shift everything left by 1 byte
+								for (int i = 0; i < (packetBuffer.length - 1); i++) {
+									packetBuffer[i] = packetBuffer[i + 1];
+								}
+							}
+
+						} else if (packetBufferSize == expectedLen) {
+
+							// Write packet buffer header
+							setPacketBufferHeader(packetBufferSize, packetBuffer);
+
+							// Mark to Save Buffer
+							appendingMduMessage = false;
+						} else { // packetBufferSize < expectedLen
+
+							// Do Nothing
+						}
 					}
 				}
 			}
@@ -107,6 +192,15 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 	@Override
 	public byte[] getPacketBytesStored(byte[] packetBuffer) {
 
-		return Arrays.copyOfRange(packetBuffer, PacketBufferHeaderSize, packetBuffer.length - PacketBufferHeaderSize + 1);
+		// return Arrays.copyOfRange(packetBuffer, PacketBufferHeaderSize,
+		// packetBuffer.length - PacketBufferHeaderSize + 1);
+		int len = getNumberOfPacketBytesStored(packetBuffer);
+		byte[] bufferCopy = new byte[len];
+		int offset = PacketBufferHeaderSize;
+		for (int i = 0; i < len; i++) {
+			bufferCopy[i] = packetBuffer[offset + i];
+		}
+
+		return bufferCopy;
 	}
 }

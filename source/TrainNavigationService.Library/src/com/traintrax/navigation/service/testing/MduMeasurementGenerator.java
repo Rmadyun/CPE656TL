@@ -8,7 +8,6 @@ import java.util.List;
 import com.traintrax.navigation.service.ValueUpdate;
 import com.traintrax.navigation.service.math.Matrix;
 import com.traintrax.navigation.service.math.ThreeDimensionalSpaceVector;
-import com.traintrax.navigation.service.math.Triplet;
 import com.traintrax.navigation.service.mdu.RotationUtilities;
 import com.traintrax.navigation.service.position.Acceleration;
 import com.traintrax.navigation.service.position.AccelerometerMeasurement;
@@ -62,6 +61,7 @@ public class MduMeasurementGenerator {
 	
 	/**
 	 * Generates Gyroscope measurements
+	 * @rotation Total rotation to be performed during gyroscope measurement generation.
 	 * @param startTime Time of the first sample
 	 * @param numberOfSeconds Time range for the samples that are reported
 	 * @return Generated gyroscope measurements
@@ -69,7 +69,6 @@ public class MduMeasurementGenerator {
 	 */
 	public static List<GyroscopeMeasurement> generateGyroscopeMeasurements(EulerAngleRotation rotation, int numberOfSeconds, Calendar startTime){
 		List<GyroscopeMeasurement> measurements = new ArrayList<GyroscopeMeasurement>();
-		EulerAngleRotation initialBodyFrameOrientation = new EulerAngleRotation(0,0,0);
 		Calendar timeMeasured = (Calendar) startTime.clone();
 
 	    double xAngleChangePerSample = rotation.getRadiansRotationAlongXAxis()/numberOfSeconds;
@@ -134,7 +133,6 @@ public class MduMeasurementGenerator {
 	    	positionTestSample.setAccelerometerMeasurement(accMeasurement);
 	    	positionTestSample.setGyroscopeMeasurement(gyrMeasurement);
 
-	    	
 	    	//t=1
 	    	speedX = accX*1 + speedX;
 	    	currentX = (speedX*1)*UnitConversionUtilities.MetersToInches + currentX;

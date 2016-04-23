@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
 
 /**
  * Serial port implementation of the MDU Communication Channel
@@ -30,6 +31,15 @@ public class SerialPortMduCommunicationChannel implements MduCommunicationChanne
 	public SerialPortMduCommunicationChannel(String portName) throws Exception {
 		CommPortIdentifier commPortIdentifier = CommPortIdentifier.getPortIdentifier(portName);
 		serialPort = commPortIdentifier.open(SerialPortOwner, OpenWaitTimeInMilliseconds);
+		
+	    SerialPort sp = (SerialPort) serialPort;
+	    
+	    int baudRate = 9600; // 9600bps
+        sp.setSerialPortParams(
+                baudRate,
+                SerialPort.DATABITS_8,
+                SerialPort.STOPBITS_1,
+                SerialPort.PARITY_NONE);
 	}
 
 	@Override
