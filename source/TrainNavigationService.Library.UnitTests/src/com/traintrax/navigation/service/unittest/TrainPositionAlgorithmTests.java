@@ -185,9 +185,63 @@ public class TrainPositionAlgorithmTests {
 		return straightLineWithInitialAccTestCase;
 	}
 
+	private PositionTestCase generateTestCaseForCircleAtOneRadianPerSecond() {
+		Coordinate currentPosition = new Coordinate(0, 0, 0);
+		EulerAngleRotation currentOrientation = new EulerAngleRotation(0, 0, Math.PI / 4);
+
+		// Generates a test case where the train moves in a diagonal line and
+		// accelerates for 1 second,
+		// then moves at a constant speed for 10 seconds
+		double initialSpeedInMetersPerSecond = 1;
+		double accelerationInMetersPerSecondSquared = 0;
+		int numberOfSeconds = 10;
+		int numSamplesBeforeTagEvent = 3;
+		double kineticFrictionOffset = 0.35;
+		Calendar startTime = Calendar.getInstance();
+		double angularSpeedInRadiansPerSecond = 1;
+
+		// Stay still for 50 samples so that calibration can complete.
+		PositionTestCase calibrationTestCase = MduMeasurementGenerator.generateStraightLine(
+				currentOrientation.getRadiansRotationAlongZAxis(), currentPosition, 0, 0, 50, startTime,
+				Integer.MAX_VALUE, 0);
+
+		startTime.add(Calendar.SECOND, 50);
+
+		// Accelerate the train for 1 second so that it reaches the constant
+		// speed needed
+		PositionTestCase startupTestCase = MduMeasurementGenerator.generateStraightLine(
+				currentOrientation.getRadiansRotationAlongZAxis(), currentPosition, 0, 1, 1, startTime,
+				Integer.MAX_VALUE, kineticFrictionOffset);
+		PositionTestSample lastStartupSample = startupTestCase.getSamples()
+				.get(startupTestCase.getSamples().size() - 1);
+
+		startTime.add(Calendar.SECOND, 1);
+		PositionTestCase testCase = MduMeasurementGenerator.generateCircle(
+				currentOrientation.getRadiansRotationAlongZAxis(), lastStartupSample.getExpectedPosition().getValue(),
+				initialSpeedInMetersPerSecond, accelerationInMetersPerSecondSquared, numberOfSeconds, startTime,
+				numSamplesBeforeTagEvent, kineticFrictionOffset, angularSpeedInRadiansPerSecond);
+
+		PositionTestCase straightLineWithInitialAccTestCase = new PositionTestCase(
+				"Train straightline with initial acceleration", currentPosition, currentOrientation);
+
+		straightLineWithInitialAccTestCase.appendTestCase(calibrationTestCase);
+		straightLineWithInitialAccTestCase.appendTestCase(startupTestCase);
+		straightLineWithInitialAccTestCase.appendTestCase(testCase);
+
+		return straightLineWithInitialAccTestCase;
+	}
+
+	
 	@Test
 	public void testCalculatePositionWithStraightLineAt45DegreeAngle() {
 		PositionTestCase testCase = generateTestCaseForStraightLineAt45DegreeAngle();
+
+		TestPositionAlgorithm(testCase);
+	}
+	
+	@Test
+	public void testCalculatePositionWithCircle() {
+		PositionTestCase testCase = generateTestCaseForCircleAtOneRadianPerSecond();
 
 		TestPositionAlgorithm(testCase);
 	}

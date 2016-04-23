@@ -238,8 +238,8 @@ public class MduMeasurementGenerator {
 	    	currentY = (speedY*1)*UnitConversionUtilities.MetersToInches + currentY;
 	    	
 	    	//Calculated the expected orientation at the end of this period
-	    	
-	    	
+	    	orientation = angularSpeedInRadiansPerSecond*dt;
+	    	speed = accelerationInMetersPerSecondSquared*dt + speed;
 	    	
 			ValueUpdate<Coordinate> rfidTagPosition = null;
 			ValueUpdate<Coordinate> expectedPosition = new ValueUpdate<Coordinate>(new Coordinate(currentX, currentY, 0), timeMeasured);
