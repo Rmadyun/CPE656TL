@@ -44,6 +44,9 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 	private static final int RfidReadingPacketSize = 13;
 	private static final int IdentificationPacketSize = 4;
 	private static final int RoundtripTimeRequestPacketSize = 4;
+	private static final int RoundtripTimeReplyPacketSize = 4;
+	private static final int TimeSyncRequestPacketSize = 4;
+	private static final int TimeSyncReplyPacketSize = 8;
 
 	private static final int MessageTypeOffset = 2;
 
@@ -84,6 +87,15 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 
 			} else if (messageType == RoundTripTimeTestRequest) {
 				expectedMessageLength = RoundtripTimeRequestPacketSize;
+
+			} else if (messageType == RoundTripTimeTestResponse) {
+				expectedMessageLength = RoundtripTimeReplyPacketSize;
+
+			} else if (messageType == TimeRequest) {
+				expectedMessageLength = TimeSyncRequestPacketSize;
+
+			} else if (messageType == TimeResponse) {
+				expectedMessageLength = TimeSyncReplyPacketSize;
 			} else {
 				// TODO: Add more messages
 			}

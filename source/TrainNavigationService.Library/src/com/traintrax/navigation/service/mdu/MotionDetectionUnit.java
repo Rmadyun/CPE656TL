@@ -161,6 +161,7 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 			GyroscopeMeasurement gyroscopeMeasurement = TryDecodeGyroscopeMeasurement(mduPacket,
 					lastGyroscopeMeasurement);
 			if (gyroscopeMeasurement != null) {
+				System.out.println("GYR Measurement Received");
 				collectedGyroscopeMeasurements.add(gyroscopeMeasurement);
 				lastGyroscopeMeasurement = gyroscopeMeasurement.getTimeMeasured();
 			}
@@ -168,18 +169,21 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 			AccelerometerMeasurement accelerometerMeasurement = TryDecodeAccelerometerMeasurement(mduPacket,
 					lastAccelerometerMeasurement);
 			if (accelerometerMeasurement != null) {
+				System.out.println("ACC Measurement Received");
 				collectedAccelerometerMeasurements.add(accelerometerMeasurement);
 				lastAccelerometerMeasurement = accelerometerMeasurement.getTimeMeasured();
 			}
 
 			RfidTagDetectedNotification rfidTagDetectedNotifiation = TryDecodeRfidTagDetectedNotification(mduPacket);
 			if (rfidTagDetectedNotifiation != null) {
+				System.out.println("RFID Tag Detection Notification Received");
 				collectedRfidTagDetectionNotifications.add(rfidTagDetectedNotifiation);
 			}
 
 			TrainIdentificationMessage trainIdentificationMessage = TryDecodeTrainIdentification(mduPacket);
 
 			if (trainIdentificationMessage != null) {
+				System.out.println("Train Identification Request Received");
 				// Send train identification reply
 
 				try {
@@ -191,6 +195,7 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 
 					outputStream.write(responsePacket);
 					outputStream.flush();
+					System.out.println("Train Identification Reply Sent");
 
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -202,8 +207,55 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 
 			if (roundTripTimeRequestMessage != null) {
 				System.out.println("RTT Request Received");
+				
+				// Send train identification reply
+
+				try {
+					OutputStream outputStream = mduCommunicationChannel.getOutputStream();
+
+					RoundTripTimeResponseMessage responseIdentificationMessage = new RoundTripTimeResponseMessage(
+							roundTripTimeRequestMessage);
+					byte[] responsePacket = RoundTripTimeResponseMessage.EncodeRoundTripTimeReply(responseIdentificationMessage);
+
+					outputStream.write(responsePacket);
+					outputStream.flush();
+					System.out.println("Round Trip Time Reply Sent");
+
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
 			}
+
+			
+			TimeSyncRequestMessage timeSyncRequestMessage = TimeSyncRequestMessage.TryDecodeTimeSyncRequest(mduPacket);
+
+			if (timeSyncRequestMessage != null) {
+				System.out.println("Time Sync Request Received");
+				
+				// Send train identification reply
+
+				try {
+					OutputStream outputStream = mduCommunicationChannel.getOutputStream();
+
+					TimeSyncResponseMessage responseIdentificationMessage = new TimeSyncResponseMessage(
+							timeSyncRequestMessage, Calendar.getInstance());
+					byte[] responsePacket = TimeSyncResponseMessage.EncodeTimeSyncReply(responseIdentificationMessage);
+
+					outputStream.write(responsePacket);
+					outputStream.flush();
+					System.out.println("Time Sync Reply Sent");
+
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+			
+			
 
 		} while (true);
 	}
