@@ -21,11 +21,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Handler;
 
-
+/**
+ * Class controls the train monitor display of the TrainMonitorView.
+ */
 public class MonitorView extends View {
-
-    //TrackDiagram TrackDig = new TrackDiagram();
-    //TrackSwitchInfo Switch = new TrackSwitchInfo();
     TrackDiagram TrackDig = SharedObjectSingleton.getInstance().getTrackDiagram();
     TrackSwitchInfo Switch = SharedObjectSingleton.getInstance().getTrackSwitchInfo();
     TrainPosInfo TrainPos = SharedObjectSingleton.getInstance().getTrainPosInfo();
@@ -67,7 +66,8 @@ public class MonitorView extends View {
         ypixel = TrackDig.getYpixel();
         num_shapes = TrackDig.getNumShapes();
         num_switches = Switch.getNum_switches();
-        num_trains = TrainPos.getNumTrains();
+        List<TrainInfo> trainPositions = TrainPos.getTrains();
+        num_trains = trainPositions.size();
 
         DisplayMetrics metrics = new DisplayMetrics();
 
@@ -81,21 +81,13 @@ public class MonitorView extends View {
 
         xpixel = widthPixels - 125;
         ypixel = heightPixels - 250;
-        //#TODO remove test values for displaying on my android device
-        //xpixel = 1920;
-        //ypixel = 850;
 
         int dontmoveflag = 0;
-
-        // TODO Auto-generated method stub
 
         Paint paint = new Paint();
 
         super.onDraw(canvas);
-        //int x = getWidth();
-        //int y = getHeight();
-        //int radius;
-        //radius = 100;
+
         canvas.drawPaint(paint);
 
         //Use Color.parseColor to define HTML colors
@@ -111,7 +103,7 @@ public class MonitorView extends View {
 
         List<TrackDiagram.ShapeCoordinate> tmp;
         tmp = TrackDig.coordinates;
-        String prevBlock = "";
+
         List<TrackDiagram.ShapeCoordinate> inactive_Shapes = new ArrayList<TrackDiagram.ShapeCoordinate>();
 
         for (int i = 0; i < num_shapes; i++) {
@@ -240,9 +232,11 @@ public class MonitorView extends View {
 
         //draw train stuff
         for (int i = 0; i < num_trains; i++) {
-            float xcord = TrainPos.getXPosition(i);
-            float ycord = TrainPos.getYPosition(i);
-            String name = TrainPos.getTrainID(i);
+            TrainInfo trainInfo = trainPositions.get(i);
+
+            float xcord = trainInfo.getXposition();
+            float ycord = trainInfo.getYposition();
+            String trainID = trainInfo.getTrainID();
 
             //x = (x/xmax) * screen resolution;
             // scale coordinates to resolution size
@@ -259,13 +253,6 @@ public class MonitorView extends View {
             Bitmap resizedBitmap = Bitmap.createScaledBitmap(train, 30, 30, false);
             canvas.drawBitmap(resizedBitmap, xcord, ycord, paint);
         }
-
-        //draw legend
-        Bitmap legend = BitmapFactory.decodeResource(getResources(),
-                R.drawable.legend);
-
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(legend, 450, 300, false);
-        canvas.drawBitmap(resizedBitmap, (xpixel / 2) - 150, ypixel - 400, paint);
     }
 
 

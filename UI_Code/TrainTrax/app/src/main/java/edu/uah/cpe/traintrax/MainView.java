@@ -154,6 +154,13 @@ public class MainView extends View {
 
                 canvas.drawPath(testPath, paint);
             }
+
+            //draw legend
+            Bitmap legend = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.legend);
+
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(legend, 450, 300, false);
+            canvas.drawBitmap(resizedBitmap, (xpixel / 2) - 150, ypixel - 400, paint);
         }
     }
 

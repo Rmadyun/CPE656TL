@@ -1,5 +1,6 @@
 package com.traintrax.navigation.service.rest.client;
 
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,116 +14,113 @@ import com.traintrax.navigation.trackswitch.*;
 
 /**
  * Restful Web client implementation of the Train Navigation Service
- * 
- * @author Corey Sanders
  *
+ * @author Corey Sanders
  */
 public class RemoteTrainNavigationService implements TrainNavigationServiceInterface {
 
-	private final RemoteTrainPositionService trainPositionService;
+    private final RemoteTrainPositionService trainPositionService;
 
-	private final RemoteTrainIdentityService trainIdentityService;
+    private final RemoteTrainIdentityService trainIdentityService;
 
-	private final RemoteTrackSwitchService trackSwitchService;
+    private final RemoteTrackSwitchService trackSwitchService;
 
-	private Timer timer = new Timer();
-	private final PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher;
-	private static final int POLL_RATE_IN_MS = 10000;
-
-	/**
-	 * Configures the timer to run for listening to train events
-	 */
-	private void setupTimer() {
-		timer.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
+    private final Timer timer;
+    private final PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher;
+    private static final int POLL_RATE_IN_MS = 100; //assuming a low latency network
 
 
-				List<String> trainIds = new ArrayList<String>();
+    /**
+     * Constructor
+     *
+     * @param hostName Network address of the remote service being contacted
+     * @param port     Network port of the remote service being contacted
+     */
+    public RemoteTrainNavigationService(String hostName, Integer port) {
+        this.trainPositionService = new RemoteTrainPositionService(hostName, port);
+        this.trainIdentityService = new RemoteTrainIdentityService(hostName, port);
+        this.trackSwitchService = new RemoteTrackSwitchService(hostName, port);
 
+        NotifierInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventNotifier = new TrainNavigationServiceEventNotifier();
+        PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher = new GenericPublisher<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent>(
+                eventNotifier);
 
-				try {
-					trainIds = trainIdentityService.getTrainIdentifiers();
-				}
-				catch(Exception exception){
-					exception.printStackTrace();
-				}
+        this.eventPublisher = eventPublisher;
 
-				for (String trainId : trainIds) {
+        this.timer = new Timer();
+        setupTimer();
 
-					try {
+    }
 
+    /**
+     * Configures the timer to run for listening to train events
+     */
+    private void setupTimer() {
 
-						TrainPositionEstimate positionUpdate = trainPositionService.getLastKnownTrainPosition(trainId);
-						TrainPositionUpdatedEvent updatedEvent = new TrainPositionUpdatedEvent(trainId, positionUpdate);
-						eventPublisher.PublishEvent(updatedEvent);
-					}
-					catch(Exception exception){
-						exception.printStackTrace();
-					}
-				}
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                ReadTrainPositions();
+            }
+        }, 0, POLL_RATE_IN_MS);
 
-			}
-		}, 0, POLL_RATE_IN_MS);
-	}
+    }
 
-	/**
-	 * Default Constructor
-	 */
-	public RemoteTrainNavigationService() {
-		this("localhost", 8182);
-	}
+    /**
+     * Method is responsible for reading the latest train position information and firing events
+     */
+    private void ReadTrainPositions() {
+        List<String> trainIds = new ArrayList<String>();
 
-	/**
-	 * Constructor
-	 * @param hostName Network address of the remote service being contacted
-	 * @param port Network port of the remote service being contacted
-	 */
-	public RemoteTrainNavigationService(String hostName, Integer port) {
-		this.trainPositionService = new RemoteTrainPositionService(hostName, port);
-		this.trainIdentityService = new RemoteTrainIdentityService(hostName, port);
-		this.trackSwitchService = new RemoteTrackSwitchService(hostName, port);
+        try {
+            trainIds = trainIdentityService.getTrainIdentifiers();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
 
-		NotifierInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventNotifier = new TrainNavigationServiceEventNotifier();
-		PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher = new GenericPublisher<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent>(
-				eventNotifier);
+        for (String trainId : trainIds) {
 
-		this.eventPublisher = eventPublisher;
+            try {
+                TrainPositionEstimate positionUpdate = trainPositionService.getLastKnownTrainPosition(trainId);
+                TrainPositionUpdatedEvent updatedEvent = new TrainPositionUpdatedEvent(trainId, positionUpdate);
+                eventPublisher.PublishEvent(updatedEvent);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }
+    }
 
-		setupTimer();
-	}
+    @Override
+    public TrainPositionEstimate GetLastKnownPosition(String trainIdentifier) {
+        return trainPositionService.getLastKnownTrainPosition(trainIdentifier);
+    }
 
-	@Override
-	public TrainPositionEstimate GetLastKnownPosition(String trainIdentifier) {
-		return trainPositionService.getLastKnownTrainPosition(trainIdentifier);
-	}
+    @Override
+    public List<String> GetKnownTrainIdentifiers() {
+        return trainIdentityService.getTrainIdentifiers();
+    }
 
-	@Override
-	public List<String> GetKnownTrainIdentifiers() {
-		return trainIdentityService.getTrainIdentifiers();
-	}
+    @Override
+    public SwitchState GetSwitchState(String switchIdentifier) {
 
-	@Override
-	public SwitchState GetSwitchState(String switchIdentifier) {
+        SwitchState switchState = trackSwitchService.getTrackSwitchState(switchIdentifier);
 
-		SwitchState switchState = trackSwitchService.getTrackSwitchState(switchIdentifier);
+        return switchState;
+    }
 
-		return switchState;
-	}
+    @Override
+    public void SetSwitchState(String switchIdentifier, SwitchState switchState) throws IOException {
 
-	@Override
-	public void SetSwitchState(String switchIdentifier, SwitchState switchState) throws IOException {
+        trackSwitchService.setSwitchState(switchIdentifier, switchState);
+    }
 
-		trackSwitchService.setSwitchState(switchIdentifier, switchState);
-	}
+    @Override
+    public void Subscribe(TrainNavigationServiceEventSubscriber subscriber) {
+        eventPublisher.Subscribe(subscriber);
+    }
 
-	@Override
-	public void Subscribe(TrainNavigationServiceEventSubscriber subscriber) {
-		eventPublisher.Subscribe(subscriber);
-	}
-
-	@Override
-	public void Unsubscribe(TrainNavigationServiceEventSubscriber subscriber) {
-		eventPublisher.Unsubscribe(subscriber);
-	}
+    @Override
+    public void Unsubscribe(TrainNavigationServiceEventSubscriber subscriber) {
+        eventPublisher.Unsubscribe(subscriber);
+    }
 }

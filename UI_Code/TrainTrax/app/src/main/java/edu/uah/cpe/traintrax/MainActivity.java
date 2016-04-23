@@ -43,7 +43,7 @@ public class MainActivity extends ActionBarActivity {
             super.onPostExecute(trackGeometry);
             SharedObjectSingleton.getInstance().setTrackDiagram(new TrackDiagram(trackGeometry));
             SharedObjectSingleton.getInstance().setTrackSwitchInfo(new TrackSwitchInfo(trackGeometry));
-            SharedObjectSingleton.getInstance().setTrainPosInfo(new TrainPosInfo(trackGeometry));
+            SharedObjectSingleton.getInstance().setTrainPosInfo(new TrainPosInfo());
 
             //Find the main diagram view associated with the view
             View diagramView = activity.findViewById(R.id.myview);
@@ -92,23 +92,6 @@ public class MainActivity extends ActionBarActivity {
         //track from the Train Navigation Database so that the GUI is not locked while reading happens.
         //(p.s. Android throws exception if you don't do this)
         retrieveTrackGeometryTask.execute(hostName, trainNavigationDatabasePort.toString());
-
-        //temp for testing remove #TODO
-        SharedObjectSingleton.getInstance().setTrackDiagram(new TrackDiagram(null));
-        SharedObjectSingleton.getInstance().setTrackSwitchInfo(new TrackSwitchInfo(null));
-        SharedObjectSingleton.getInstance().setTrainPosInfo(new TrainPosInfo(null));
-
-        //      Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-
-/*        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        }); */
     }
 
     @Override
