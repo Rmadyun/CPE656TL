@@ -37,7 +37,6 @@ import com.traintrax.navigation.service.mdu.MduProtocolParserInterface;
 import com.traintrax.navigation.service.mdu.MotionDetectionUnit;
 import com.traintrax.navigation.service.mdu.MotionDetectionUnitInterface;
 import com.traintrax.navigation.service.mdu.SerialPortMduCommunicationChannel;
-import com.traintrax.navigation.service.mdu.SimulatedMotionDetectionUnit;
 import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.InertialMotionPositionAlgorithmInterface;
 import com.traintrax.navigation.service.position.TrainPosition2DAlgorithm;
@@ -58,11 +57,11 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 	 */
 	private static final Coordinate DefaultTrainPosition = new Coordinate(0,0,0);
 	private final List<String> trainIds = new LinkedList<String>();
-	private Timer timer = new Timer();
+	private final Timer timer;
 	private final TrainMonitorInterface trainMonitor;
 	private final TrackSwitchControllerInterface trainController;
 	private final PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher;
-	private static final int POLL_RATE_IN_MS = 5000;
+	private static final int POLL_RATE_IN_MS = 50;
 	private final Map<String, TrainPositionEstimate> trainPositionLut = new HashMap<>();
 	
 	/**
@@ -133,6 +132,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 		this.trainMonitor = trainMonitor;
 		this.trainController = trainController;
 		this.eventPublisher = eventPublisher;
+		timer = new Timer();
 	
 		initialize("1", DefaultTrainPosition, trainMonitor, trainController, eventPublisher);
 	}
@@ -188,8 +188,8 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 		this.trainMonitor = trainMonitor;
 		this.trainController = trainController;
 		this.eventPublisher = eventPublisher;
+		timer = new Timer();
 		
-	
 		initialize(trainId, currentPosition, trainMonitor, trainController, eventPublisher);
 	}
 
