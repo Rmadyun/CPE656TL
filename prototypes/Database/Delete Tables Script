@@ -1,0 +1,14 @@
+#Script to initialize the TrainTrax Database
+#11/27/15
+
+CREATE DATABASE TrainTrax;
+CONNECT TrainTrax;
+
+DROP TABLE Raw_Accelerometer;
+DROP TABLE Raw_Gyroscope;
+DROP TABLE Raw_RfidTagReader;
+DROP TABLE Train_Position;
+DROP TABLE Track_Block;
+DROP TABLE Track_Point;
+DROP TABLE Track_Switch;
+DROP TABLE Adjacent_Points;
