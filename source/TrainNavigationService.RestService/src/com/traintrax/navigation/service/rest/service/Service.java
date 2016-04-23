@@ -111,11 +111,11 @@ public class Service {
 		//Initialize the service for use
 		TrainNavigationServiceSingleton.initialize(serviceConfiguration);
 
-		
 		//Initializes the Service
 		 // Create a new Restlet component and add a HTTP server connector to it
 	    Component component = new Component();
-	    component.getServers().add(Protocol.HTTP, 8183);
+	    
+	    component.getServers().add(Protocol.HTTP, serviceConfiguration.getHostPort());
 
 	    // Then attach it to the local host
 	    component.getDefaultHost().attach("/TrainPosition", TrainPositionResource.class);
