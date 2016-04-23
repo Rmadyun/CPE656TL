@@ -42,6 +42,15 @@ public class TrainNavigationServiceSingleton {
 				serviceConfiguration.getDbHost(), serviceConfiguration.getDbPort(), serviceConfiguration.getDbName(),
 				serviceConfiguration.getDbUsername(), serviceConfiguration.getDbPassword());
 	}
+	
+	/**
+	 * Initializes singleton with a specific instance
+	 * @param instance Instance to assign to the singleton.
+	 * This method is intended to be used to help with debugging.
+	 */
+	public static void initialize(TrainNavigationServiceInterface trainNavigationServiceInterface){
+		instance = trainNavigationServiceInterface;
+	}
 			
 	/**
 	 * Retrieves the singleton instance of the service to use for creating 

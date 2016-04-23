@@ -10,7 +10,7 @@ import org.restlet.data.Protocol;
 
 /**
  * Class responsible for launching the Restful Service
- * of the Train Navigation Database
+ * of the Train Navigation Service
  * @author Corey Sanders
  *
  */
