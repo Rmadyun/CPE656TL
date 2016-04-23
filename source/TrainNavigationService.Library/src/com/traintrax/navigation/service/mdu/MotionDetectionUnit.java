@@ -201,6 +201,7 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 			RoundTripTimeRequestMessage roundTripTimeRequestMessage = TryDecodeRoundTripTimeRequest(mduPacket);
 
 			if (roundTripTimeRequestMessage != null) {
+				System.out.println("RTT Request Received");
 
 			}
 

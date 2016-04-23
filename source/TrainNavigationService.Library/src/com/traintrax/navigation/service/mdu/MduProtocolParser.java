@@ -177,6 +177,7 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 
 							// Mark to Save Buffer
 							appendingMduMessage = false;
+							packetBufferSize = 0;
 						} else { // packetBufferSize < expectedLen
 
 							// Do Nothing
