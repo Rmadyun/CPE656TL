@@ -10,6 +10,7 @@ import org.apache.commons.cli.ParseException;
 
 import com.traintrax.navigation.database.library.AdjacentPoint;
 import com.traintrax.navigation.database.library.AdjacentPointRepository;
+import com.traintrax.navigation.database.library.AdjacentPointSearchCriteria;
 import com.traintrax.navigation.database.library.FilteredSearchRepositoryInterface;
 import com.traintrax.navigation.database.library.GenericDatabaseInterface;
 import com.traintrax.navigation.database.library.MySqlDatabaseAdapter;
@@ -87,11 +88,11 @@ public class DatabaseImportProgram {
 
 		mySqlDatabaseAdapter.connect();
 
+		importTrackSwitchMeasurements(trackSwitchCsv, mySqlDatabaseAdapter);
 		importTrackMeasurements(trackPointCsv, mySqlDatabaseAdapter);
-		importTrackSwitchMeasurements(trackSwitchCsv, mySqlDatabaseAdapter);		
-		
+
 	}
-	
+		
 	private static void importTrackSwitchMeasurements(String filename, GenericDatabaseInterface databaseInterface) {
 		List<TrackSwitchMeasurement> switchMeasurements = TrackSwitchMeasurementsReader.ReadFile(filename);
 
