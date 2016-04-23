@@ -13,11 +13,13 @@ public class DatabaseTestProgram {
 
 		mySqlDatabaseAdapter.connect();
 		
-		RfidTagDetectedNotificationRepository rfidTagRepo = new RfidTagDetectedNotificationRepository(mySqlDatabaseAdapter);
+		//RfidTagDetectedNotificationRepository rfidTagRepo = new RfidTagDetectedNotificationRepository(mySqlDatabaseAdapter);
 		
-		rfidTagRepo.add(new RfidTagDetectedNotification("00:00:00:00:01", Calendar.getInstance()));
+		//rfidTagRepo.add(new RfidTagDetectedNotification("00:00:00:00:01", Calendar.getInstance()));
 		
-		rfidTagRepo.find("1");
+		//rfidTagRepo.find("1");
+		
+		adjacencyCheck(mySqlDatabaseAdapter);
 	}
 	
 	private static void adjacencyCheck(GenericDatabaseInterface databaseInterface){
@@ -47,7 +49,7 @@ public class DatabaseTestProgram {
 				RepositoryEntry<TrackPoint> pointMatch = trackPointRepository.find(pointId.toString());
 				RepositoryEntry<TrackPoint> adjacentPointMatch = trackPointRepository.find(adjacentPointId.toString());
 
-				System.out.printf("Link between %s and %s is NOT bidirectional.", pointMatch.getValue().getPointName(), adjacentPointMatch.getValue().getPointName());				
+				System.out.printf("Link between %s and %s is NOT bidirectional.\n", pointMatch.getValue().getPointName(), adjacentPointMatch.getValue().getPointName());				
 			}
 		}
 		
