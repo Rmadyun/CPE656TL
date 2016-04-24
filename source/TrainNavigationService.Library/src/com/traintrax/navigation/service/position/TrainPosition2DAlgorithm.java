@@ -256,6 +256,20 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 						accelerometerMeasurementsSinceLastUpdate, imuMeasurementStart,
 						accelerometerMeasurementsSinceLastUpdate
 								.get(accelerometerMeasurementsSinceLastUpdate.size() - 1).getTimeMeasured());
+				
+
+				List<AccelerometerMeasurement> atRfidTagAccelerometerMeasurements = selectAccelerometerMeasurementsByTime(
+						accelerometerMeasurementsSinceLastUpdate, endPosition.getTimeObserved(),
+						endPosition.getTimeObserved());
+				
+				//Update the last known acceleration to be the one at the RFID tag measurement if available.
+				for(AccelerometerMeasurement a : atRfidTagAccelerometerMeasurements){
+
+					AccelerometerMeasurement adjustedMeasurement = changetoInertialFrame2d(a,
+							lastKnownTrainOrientation.getValue(), thresholdFilter);
+					
+					this.lastKnownTrainAcceleration = new ValueUpdate<Acceleration>(adjustedMeasurement.getAccelerationMeasurement(), adjustedMeasurement.getTimeMeasured());
+				}
 
 				imuPositionResults = calculatePositionFromImu(rfidTagPositionResults.getLastKnownTrainPosition(),
 						rfidTagPositionResults.getLastKnownTrainOrientation(),
@@ -311,10 +325,18 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 			}
 
 		} else if (imuCalibrator.isCalibrationComplete()) {
+			
+			if(gyroscopeMeasurementsSinceLastUpdate.size() > 0)
+			{
+				System.out.println("IMU Measurements available");
+			}
+			
 			// Use IMU data Only
 			ImuPositionResults imuPositionResults = calculatePositionFromImu(lastKnownTrainPosition,
 					lastKnownTrainOrientation, lastKnownTrainVelocity, lastKnownTrainAcceleration,
 					gyroscopeMeasurementsSinceLastUpdate, accelerometerMeasurementsSinceLastUpdate);
+			
+
 
 			// Save calculated values for future calculations
 			lastKnownTrainPosition = imuPositionResults.getLastKnownTrainPosition();
@@ -377,7 +399,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 			// Formula from the following:
 			// https://en.wikipedia.org/wiki/Unit_circle
 			// http://stackoverflow.com/questions/7586063/how-to-calculate-the-angle-between-a-line-and-the-horizontal-axis
-			yaw = Math.atan2(dy, dx) * 180 / Math.PI;
+			yaw = Math.atan2(dy, dx);
 		}
 
 		ValueUpdate<EulerAngleRotation> orientationUpdate = new ValueUpdate<EulerAngleRotation>(

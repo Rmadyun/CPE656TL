@@ -39,7 +39,10 @@ public class DiscretePositionCalculator {
 	public Tuple<EulerAngleRotation, Velocity> updatePosition(ValueUpdate<Coordinate> currentPosition) {
 		Tuple<EulerAngleRotation, Velocity> additionalTrainStateInfo = null;
 
-		if (previousPosition != null) {
+		if(previousPosition == null) {
+			previousPosition = currentPosition;
+		}
+		else if (previousPosition != null) {
 			ValueUpdate<EulerAngleRotation> newOrientationEstimate = calculateOrientation(previousPosition, currentPosition);
 			final double tolerance = 0.05; // 5 % tolerance
 
@@ -79,6 +82,10 @@ public class DiscretePositionCalculator {
 			{
 			    previousOrientationEstimate = newOrientationEstimate.getValue();
 			}
+			
+			//always update the previous position even if there is not change
+			//so that the timing used in the calculation is correct
+			previousPosition = currentPosition;
 		}
 
 		return additionalTrainStateInfo;
@@ -111,7 +118,7 @@ public class DiscretePositionCalculator {
 			// Formula from the following:
 			// https://en.wikipedia.org/wiki/Unit_circle
 			// http://stackoverflow.com/questions/7586063/how-to-calculate-the-angle-between-a-line-and-the-horizontal-axis
-			double yaw = Math.atan2(dy, dx) * 180 / Math.PI;
+			double yaw = Math.atan2(dy, dx);
 
 			estimatedOrientation = new ValueUpdate<EulerAngleRotation>(new EulerAngleRotation(0, 0, yaw),
 					finalPosition.getTimeObserved());

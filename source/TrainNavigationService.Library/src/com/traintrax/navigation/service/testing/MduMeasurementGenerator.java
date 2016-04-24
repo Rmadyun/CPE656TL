@@ -126,6 +126,7 @@ public class MduMeasurementGenerator {
 		double accOffY = accKineticFrictionOffset*Math.sin(orientation);
 		double accX = accelerationInMetersPerSecondSquared*Math.cos(orientation);
 		double accY = accelerationInMetersPerSecondSquared*Math.sin(orientation);
+		double dt = 1;
 		
 	    for(int i = 0; i < numberOfSeconds; i++){
 	    	PositionTestSample positionTestSample = new PositionTestSample();
@@ -136,10 +137,10 @@ public class MduMeasurementGenerator {
 	    	positionTestSample.setGyroscopeMeasurement(gyrMeasurement);
 
 	    	//t=1
-	    	speedX = accX*1 + speedX;
-	    	currentX = (speedX*1)*UnitConversionUtilities.MetersToInches + currentX;
+	    	speedX = accX*dt + speedX;
+	    	currentX = (speedX*dt) + currentX;
 	    	speedY = accY*1 + speedY;
-	    	currentY = (speedY*1)*UnitConversionUtilities.MetersToInches + currentY;
+	    	currentY = (speedY*dt) + currentY;
 	    	
 			ValueUpdate<Coordinate> rfidTagPosition = null;
 			ValueUpdate<Coordinate> expectedPosition = new ValueUpdate<Coordinate>(new Coordinate(currentX, currentY, 0), timeMeasured);
