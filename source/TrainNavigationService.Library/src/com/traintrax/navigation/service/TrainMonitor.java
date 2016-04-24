@@ -25,15 +25,21 @@ public class TrainMonitor implements TrainMonitorInterface {
 
 	private TrainPositionEstimate lastKnownTrainPosition;
 	private final InertialMotionPositionAlgorithmInterface positionAlgorithm;
-	private final Train train; // The latest info about the train being monitored
+	private final Train train; // The latest info about the train being
+								// monitored
 	private final TrainNavigationDatabaseInterface trainNavigationDatabase;
 
 	/**
 	 * Constructor
-	 * @param train Provides measurements from the train
-	 * @param positionAlgorithm Calculates train position from measurements
-	 * @param trainNavigationDatabase Stores position and measurements. Provides RFID tag position information
-	 * NOTE: Assuming that the train is a rest at initialization.
+	 * 
+	 * @param train
+	 *            Provides measurements from the train
+	 * @param positionAlgorithm
+	 *            Calculates train position from measurements
+	 * @param trainNavigationDatabase
+	 *            Stores position and measurements. Provides RFID tag position
+	 *            information NOTE: Assuming that the train is a rest at
+	 *            initialization.
 	 */
 	public TrainMonitor(Train train, InertialMotionPositionAlgorithmInterface positionAlgorithm,
 			TrainNavigationDatabaseInterface trainNavigationDatabase) {
@@ -79,10 +85,10 @@ public class TrainMonitor implements TrainMonitorInterface {
 	}
 
 	/**
-	 * Tries to retrieve another update on the target train's
-	 * position.
-	 * @return Most recent update on the position of the train if 
-	 * successful; Otherwise returns null.
+	 * Tries to retrieve another update on the target train's position.
+	 * 
+	 * @return Most recent update on the position of the train if successful;
+	 *         Otherwise returns null.
 	 */
 	public TrainPositionEstimate tryFetchNextPositionUpdate() {
 		List<GyroscopeMeasurement> newGyroscopeMeasurements;
@@ -125,10 +131,15 @@ public class TrainMonitor implements TrainMonitorInterface {
 			latestPositionUpdate = calculatePosition(newGyroscopeMeasurements, newAccelerometerMeasurements,
 					positionUpdates);
 
-			this.lastKnownTrainPosition = latestPositionUpdate;
+			if (positionAlgorithm.isInitialPositionFound()) {
 
-			// Save collected information
-			trainNavigationDatabase.save(latestPositionUpdate);
+				this.lastKnownTrainPosition = latestPositionUpdate;
+				// Save collected information
+				trainNavigationDatabase.save(latestPositionUpdate);
+			} else {
+				// Don't report position yet.
+				latestPositionUpdate = null;
+			}
 
 			for (GyroscopeMeasurement measurement : newGyroscopeMeasurements) {
 				trainNavigationDatabase.save(measurement);

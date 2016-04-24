@@ -27,5 +27,13 @@ public interface InertialMotionPositionAlgorithmInterface {
 			List<GyroscopeMeasurement> gyroscopeMeasurementsSinceLastUpdate,
 			List<AccelerometerMeasurement> accelerometerMeasurementsSinceLastUpdate,
 			List<ValueUpdate<Coordinate>> positionUpdates);
+	
+	/**
+	 * Indicates if the algorithm as determined a reliable
+	 * starting point to calculate train position
+	 * @return Returns if a reliable starting point has been found; 
+	 * Otherwise returns false.
+	 */
+	boolean isInitialPositionFound();
 
 }

@@ -162,6 +162,4 @@ public class DiscretePositionCalculator {
 		return lastReliableTrainPositionEstimate;
 	}
 	
-	
-
 }
