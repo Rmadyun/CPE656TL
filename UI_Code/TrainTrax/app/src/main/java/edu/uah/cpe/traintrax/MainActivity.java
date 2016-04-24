@@ -130,11 +130,12 @@ public class MainActivity extends ActionBarActivity {
 
         //Field used to receive input for a setting
         final EditText input = new EditText(context);
-        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+
         alertDialogBuilder.setView(input);
 
         //Edit Database Service Port Number
         if (id == R.id.action_nav_db_port) {
+            input.setInputType(InputType.TYPE_CLASS_NUMBER);
             String sport = String.valueOf(settings.getDatabasePortNumber());
             alertDialogBuilder.setTitle("Current database service port # is " + sport);
             alertDialogBuilder.setMessage("Enter Database Service Port #:");
@@ -151,6 +152,7 @@ public class MainActivity extends ActionBarActivity {
 
         //Edit Navigation Service Port Number
         if (id == R.id.action_nav_svc_port) {
+            input.setInputType(InputType.TYPE_CLASS_NUMBER);
             String sport = String.valueOf(settings.getNavigationServicePortNumber());
             alertDialogBuilder.setTitle("Current navigation service port # is " + sport);
             alertDialogBuilder.setMessage("Enter Navigation Service Port #:");
@@ -167,6 +169,7 @@ public class MainActivity extends ActionBarActivity {
 
         //Edit IP Address
         if (id == R.id.action_ipaddress) {
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
             String sipaddr = String.valueOf(settings.getHostName());
             alertDialogBuilder.setTitle("Current IP Address is set to " + sipaddr);
             alertDialogBuilder.setMessage("Enter IP Address:");
