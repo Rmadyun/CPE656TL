@@ -1,20 +1,42 @@
 package edu.uah.cpe.traintrax;
 
-
-
-/* Class is used to retrieve and set fields for the Settings Menu */
-
+/**
+ * Class is used to retrieve and set fields for the Settings Menu
+ */
 final public class MainSettings {
-    /* Private variable for port number */
-    private int portNum;
+
+    /**
+     * Default Port Number assigned for connecting to the Train Navigation Database Rest Service
+     */
+    public static final int DefaultDatabasePortNumber = 8182;
+
+    /**
+     * Default Port Number assigned for connecting to the Train Navigation Service Rest Service
+     */
+    public static final int DefaultNavServicePortNumber = 8183;
+
+    /**
+     * Default HostName assigned for the machine that hosts both the Train Navigation Service Rest Service and
+     * the Train Navigation Database Rest Service
+     */
+    public static final String DefaultHostname = "localhost";
+
+    /* Private variable for the train database rest service port number */
+    private int databasePortNumber;
+
+    /* Private variable for the train navigation service rest service port number */
+    private int navigationServicePortNumber;
+
     /* private variable for IP address */
     private String hostName;
+
+
     /* private variable to keep track of which dialog is being edited */
     private Boolean portFlag;
 
-    /* Gets the port number */
-    public int getPortNum() {
-        return portNum;
+    /* Gets the port number for the train database rest service */
+    public int getDatabasePortNumber() {
+        return databasePortNumber;
     }
 
     /* Gets the IP address */
@@ -23,37 +45,29 @@ final public class MainSettings {
     }
 
     /* Sets the search interval value */
-    public void setPortNum(int portNum) {
-        this.portNum = portNum;
+    public void setDatabasePortNumber(int databasePortNumber) {
+        this.databasePortNumber = databasePortNumber;
     }
 
     public void setHostName(String hostName) {
         this.hostName = hostName;
     }
 
-    /* Gets the portFlag  */
-    public Boolean getportFlag() {
-        return portFlag;
+    public int getNavigationServicePortNumber() {
+        return navigationServicePortNumber;
     }
 
-    public void setportFlag(Boolean portFlag) {
-        this.portFlag = portFlag;
+    public void setNavigationServicePortNumber(int navigationServicePortNumber) {
+        this.navigationServicePortNumber = navigationServicePortNumber;
     }
-
 
     /**
-     * Constructor
-     *
-     * @param portNum
-     * @param hostName &param portFlag
+     * Default Constructor
      */
-
-        /* Default Constructor */
     public MainSettings() {
-        //set to a default local ip address and port num 8182
-        this.portNum = 8182;
-        this.hostName = "127.0.0.1";
+        this.databasePortNumber = DefaultDatabasePortNumber;
+        this.navigationServicePortNumber = DefaultNavServicePortNumber;
+        this.hostName = DefaultHostname;
         this.portFlag = false;
     }
-
 }

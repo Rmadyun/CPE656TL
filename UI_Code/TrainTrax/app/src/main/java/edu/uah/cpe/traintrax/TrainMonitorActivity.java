@@ -80,7 +80,7 @@ public class TrainMonitorActivity extends AppCompatActivity {
 
 
             //Make sure to run in the UI thread since this is invoked from a timer (i.e. separate thread)
-            activity.runOnUiThread(new Runnable() {
+            /*activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     //Add any code here that needs to make changes to the UI
@@ -89,7 +89,7 @@ public class TrainMonitorActivity extends AppCompatActivity {
                     //Trigger the display to be referenced for the train monitor view
                     myView.invalidate();
                 }
-            });
+            }); */
 
         }
     };
