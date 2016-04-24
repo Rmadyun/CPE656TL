@@ -5,6 +5,9 @@ import org.restlet.Component;
 import org.restlet.data.Protocol;
 
 import com.traintrax.navigation.service.TrainNavigationServiceInterface;
+import com.traintrax.navigation.service.mdu.MduProtocolParser;
+import com.traintrax.navigation.service.mdu.MotionDetectionUnit;
+import com.traintrax.navigation.service.mdu.SerialPortMduCommunicationChannel;
 import com.traintrax.navigation.service.mdu.SimulatedMotionDetectionUnit;
 import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
@@ -21,6 +24,25 @@ import com.traintrax.navigation.service.testing.TrainNavigationServiceBuilder;
  *
  */
 public class DebugService {
+	
+	
+	/**
+	 * Method is responsible for create a train Navigation service instance with
+	 * a mock track switch controller and a real motion detection unit.
+	 * @return new Train Navigation Service instance
+	 * @throws Exception Reports any failure to create the Train Navigation Service instance
+	 */
+	private static TrainNavigationServiceInterface createTrainNavigationServiceWithFakeSwitchControllerAndRealMdu() throws Exception{
+		TrainNavigationServiceBuilder builder = TrainNavigationServiceBuilder.getBuilder();
+		
+		MotionDetectionUnit motionDetectionUnit = new MotionDetectionUnit(new SerialPortMduCommunicationChannel("/dev/ttyUSB0"), new MduProtocolParser());
+		
+		builder.setMotionDetectionUnitInterface(motionDetectionUnit);
+		
+		TrainNavigationServiceInterface  trainNavigationServiceInterface = builder.build();
+		
+		return trainNavigationServiceInterface;
+	}
 
 	/**
 	 * Main function invoked when the service launches.
@@ -29,10 +51,13 @@ public class DebugService {
 	 */
 	public static void main(String[] args) throws Exception {
 		
+		//Create a train navigation service instance with all simulated dependencies
 		TrainNavigationServiceBuilder builder = TrainNavigationServiceBuilder.getBuilder();
 		SimulatedMotionDetectionUnit simulatedMotionDetectionUnit = new SimulatedMotionDetectionUnit();
 		
 		builder.setMotionDetectionUnitInterface(simulatedMotionDetectionUnit);
+		
+		TrainNavigationServiceInterface  trainNavigationServiceInterface = builder.build();
 		
 		//Generates a test case where the train moves in a diagonal line and accelerates for 1 second,
 		//then moves at a constant speed for 10 seconds
@@ -49,9 +74,7 @@ public class DebugService {
 		PositionTestCase positionTestCase = MduMeasurementGenerator.generateStraightLine(currentOrientation.getRadiansRotationAlongZAxis(), currentPosition, initialSpeedInMetersPerSecond, accelerationInMetersPerSecondSquared, numberOfSeconds, startTime, numSamplesBeforeTagEvent, kineticFrictionOffset);
 
 		//Add samples to report information
-		simulatedMotionDetectionUnit.enqueueSamples(positionTestCase.getSamples());
-		
-		TrainNavigationServiceInterface  trainNavigationServiceInterface = builder.build();
+		//simulatedMotionDetectionUnit.enqueueSamples(positionTestCase.getSamples());
 		
 		//Initialize the service for use
 		TrainNavigationServiceSingleton.initialize(trainNavigationServiceInterface);
