@@ -2,8 +2,10 @@ package com.traintrax.navigation.service;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.traintrax.navigation.database.library.TrackSwitch;
 import com.traintrax.navigation.service.mdu.SerialPortMduCommunicationChannel;
 import com.traintrax.navigation.trackswitch.SwitchState;
 
@@ -31,11 +33,13 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 
 	private final String prefix;
 
+	private TrainNavigationDatabaseInterface trainNavigationDatabase;
+
 	// NOTE: Verified that Test Bed is configured to use the Default Prefix.
 	// Also verified that JMRI works with Windows.
 	// Serial port configured to 9600 8N1 works
 
-	public static final String DefaultSerialPort = "/dev/ttyACM0";
+	public static final String DefaultSerialPort = "COM4";
 
 	public static final String DefaultPrefix = "L";
 	private static final String ApplicationName = "Train Navigation Service";
@@ -48,9 +52,7 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	 *             controller
 	 */
 	public TrackSwitchController() throws Exception {
-		// TODO: Figure out actual default values and assign
-		// elsewhere
-		this(DefaultSerialPort, DefaultPrefix);
+		this(DefaultSerialPort, DefaultPrefix, null);
 	}
 
 	/**
@@ -63,21 +65,53 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	 *            with multiple 'connections' to layout hardware. It determines
 	 *            which LocoNet subnet that should be associated with the Port
 	 *            controller
+	 * @param trainNavigationDatabase
+	 *            Contract to the train Navigation Database
 	 * @throws Exception
 	 *             Reports any type of failure involved with connecting to the
 	 *             controller
 	 */
-	public TrackSwitchController(String serialPort, String prefix) {
+	public TrackSwitchController(String serialPort, String prefix,
+			TrainNavigationDatabaseInterface trainNavigationDatabaseInterface) {
 
 		this.serialPort = serialPort;
 		this.prefix = prefix;
+		this.trainNavigationDatabase = trainNavigationDatabaseInterface;
+
+		// Initialize switches
+		// Note a better check for null may be necessary if the DB is used
+		// outside
+		// of only initialization. In fact, requiring a non-null value may be
+		// necessary.
+		if (trainNavigationDatabase != null) {
+			initializeAllSwitchesToKnownState(trainNavigationDatabase);
+		}
 	}
 
 	/**
-	 * Method creates a LnPort Controller to use to communicate with the PR3. NOTE: Be
-	 * sure to dispose of this interface when done. The reason this method is
-	 * used instead of a field is so that the program can share the serial port
-	 * for controlling a PR3 with other programs such as JMRI.
+	 * Method initializes all of the known switches on the rail system to be in
+	 * a known state.
+	 * 
+	 * @param trainNavigationDatabase
+	 *            Contact for information about the train track and to save
+	 *            measurements
+	 */
+	private void initializeAllSwitchesToKnownState(TrainNavigationDatabaseInterface trainNavigationDatabase) {
+
+		List<TrackSwitch> switches = trainNavigationDatabase.getTrackSwitches();
+
+		// Set all switches into pass.
+		for (TrackSwitch trackSwitch : switches) {
+
+			ChangeSwitchState(trackSwitch.getSwitchName(), SwitchState.Pass);
+		}
+	}
+
+	/**
+	 * Method creates a LnPort Controller to use to communicate with the PR3.
+	 * NOTE: Be sure to dispose of this interface when done. The reason this
+	 * method is used instead of a field is so that the program can share the
+	 * serial port for controlling a PR3 with other programs such as JMRI.
 	 * 
 	 * @return Created LnPort Controller instance
 	 * @throws Exception
@@ -98,14 +132,15 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 
 		return serialPortAdapter;
 	}
-	
+
 	/**
-	 * Method creates a LocoNet interface to use for switch control. 
-	 * NOTE: The reason this method is used instead of a field is so 
-	 * that the program can share the serial port for controlling a 
-	 * PR3 with other programs such as JMRI.
+	 * Method creates a LocoNet interface to use for switch control. NOTE: The
+	 * reason this method is used instead of a field is so that the program can
+	 * share the serial port for controlling a PR3 with other programs such as
+	 * JMRI.
 	 * 
-	 * @param serialPortAdapter Contact to the PR3 Adapter
+	 * @param serialPortAdapter
+	 *            Contact to the PR3 Adapter
 	 * @return Created LocoNet interface instance
 	 * @throws Exception
 	 *             Reports an error when the interface fails to be created
@@ -269,9 +304,9 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 					"Cannot change switch to: " + switchState.toString() + ". Error: " + e.getMessage() + e.toString());
 			e.printStackTrace();
 		}
-		
-		//Cleanup the LocoNetInterface
-		if(lnPortController != null){
+
+		// Cleanup the LocoNetInterface
+		if (lnPortController != null) {
 			lnPortController.dispose();
 		}
 	}
