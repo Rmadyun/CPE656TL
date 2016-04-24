@@ -99,8 +99,6 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 
 		mduReadThread.start();
 		mduDecodeThread.start();
-		// TODO: Setup support to contact MDU
-		// TODO: Setup support to collect measurements
 	}
 
 	/**
@@ -288,6 +286,7 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 		int GxOffset = 13;
 		int GyOffset = 15;
 		int GzOffset = 17;
+		int SrcOffset = 1;
 
 		// Assuming that a MPU-6050 is the gyroscope that is being used by the
 		// MDU. Also assuming that it is in 250 Degrees per second resolution
@@ -312,8 +311,10 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 
 			double timeBetweenMeasurements = (timeOfLastMeasurement == null) ? 0
 					: (timeOfLastMeasurement.getTimeInMillis() - timeMeasured.getTimeInMillis()) / 1000.0;
+			
+			String trainId = String.format("%02X", mduPacket[SrcOffset]);
 
-			decodedMeasurement = new GyroscopeMeasurement(gx * GScale, gy * GScale, gz * GScale,
+			decodedMeasurement = new GyroscopeMeasurement(trainId, gx * GScale, gy * GScale, gz * GScale,
 					timeBetweenMeasurements, timeMeasured);
 		}
 
@@ -332,6 +333,7 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 			Calendar timeOfLastMeasurement) {
 		AccelerometerMeasurement decodedMeasurement = null;
 		byte messageType = readMessageType(mduPacket);
+		int SrcOffset = 1;
 		int TimeStampOffset = 3;
 		int AxOffset = 7;
 		int AyOffset = 9;
@@ -360,8 +362,10 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 
 			double timeBetweenMeasurements = (timeOfLastMeasurement == null) ? 0
 					: (timeOfLastMeasurement.getTimeInMillis() - timeMeasured.getTimeInMillis()) / 1000.0;
+			
+			String trainId = String.format("%02X", mduPacket[SrcOffset]);
 
-			decodedMeasurement = new AccelerometerMeasurement(new Acceleration(ax * AScale, ay * AScale, az * AScale),
+			decodedMeasurement = new AccelerometerMeasurement(trainId, new Acceleration(ax * AScale, ay * AScale, az * AScale),
 					timeBetweenMeasurements, timeMeasured);
 		}
 
@@ -379,6 +383,7 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 	private RfidTagDetectedNotification TryDecodeRfidTagDetectedNotification(byte[] mduPacket) {
 		RfidTagDetectedNotification decodedMeasurement = null;
 		byte messageType = readMessageType(mduPacket);
+		int SrcOffset = 1;
 		int TimeStampOffset = 3;
 		int TagOffset = 7;
 		int RfidTagSize = 5;
@@ -406,8 +411,10 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 
 			timeMeasured.set(year, month, date, 0, 0, 0);
 			timeMeasured.add(Calendar.MILLISECOND, timestamp);
+			
+			String trainId = String.format("%02X", mduPacket[SrcOffset]);
 
-			decodedMeasurement = new RfidTagDetectedNotification(rfidTagValue, timeMeasured);
+			decodedMeasurement = new RfidTagDetectedNotification(trainId, rfidTagValue, timeMeasured);
 		}
 
 		return decodedMeasurement;

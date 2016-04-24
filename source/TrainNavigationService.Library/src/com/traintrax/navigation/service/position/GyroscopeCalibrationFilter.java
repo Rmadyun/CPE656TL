@@ -29,7 +29,7 @@ public class GyroscopeCalibrationFilter {
 	 */
 	public GyroscopeMeasurement filter(GyroscopeMeasurement value){
 		
-		GyroscopeMeasurement gyroscopeMeasurement = new GyroscopeMeasurement(value.getRadiansRotationPerSecondAlongXAxis() - xOffset,
+		GyroscopeMeasurement gyroscopeMeasurement = new GyroscopeMeasurement(value.getTrainId(), value.getRadiansRotationPerSecondAlongXAxis() - xOffset,
 				value.getRadiansRotationPerSecondAlongYAxis() - yOffset,
 				value.getRadiansRotationPerSecondAlongZAxis() - zOffset,
 				value.getNumberOfSecondsSinceLastMeasurement(),

@@ -33,6 +33,8 @@ import com.traintrax.navigation.service.testing.PositionTestSample;
 import junit.framework.Assert;
 
 public class TrainPositionAlgorithmTests {
+	
+	private static final String DefaultTrainId = "2A";
 
 	/**
 	 * Generates Accelerometer measurements
@@ -55,18 +57,18 @@ public class TrainPositionAlgorithmTests {
 		// movement
 		// Measurements
 		System.out.printf("Generated acc time: %d\n", currentTime.getTimeInMillis());
-		accelerometerMeasurements.add(new AccelerometerMeasurement(new Acceleration(0, 0, 0), 0, currentTime));
+		accelerometerMeasurements.add(new AccelerometerMeasurement(DefaultTrainId, new Acceleration(0, 0, 0), 0, currentTime));
 
 		currentTime = (Calendar) currentTime.clone();
 		currentTime.add(Calendar.SECOND, 1);
 		System.out.printf("Generated acc time: %d\n", currentTime.getTimeInMillis());
-		accelerometerMeasurements.add(new AccelerometerMeasurement(new Acceleration(1, 0, 0), 1, currentTime));
+		accelerometerMeasurements.add(new AccelerometerMeasurement(DefaultTrainId, new Acceleration(1, 0, 0), 1, currentTime));
 
 		for (int i = 0; i < numberOfSeconds - 2; i++) {
 			currentTime = (Calendar) currentTime.clone();
 			currentTime.add(Calendar.SECOND, 1);
 			System.out.printf("Generated acc time: %d\n", currentTime.getTimeInMillis());
-			accelerometerMeasurements.add(new AccelerometerMeasurement(new Acceleration(0, 0, 0), 1, currentTime));
+			accelerometerMeasurements.add(new AccelerometerMeasurement(DefaultTrainId, new Acceleration(0, 0, 0), 1, currentTime));
 		}
 
 		return accelerometerMeasurements;
@@ -94,7 +96,7 @@ public class TrainPositionAlgorithmTests {
 
 		for (int i = 0; i < numberOfSeconds; i++) {
 
-			GyroscopeMeasurement measurement = new GyroscopeMeasurement(xAngleChangePerSample, yAngleChangePerSample,
+			GyroscopeMeasurement measurement = new GyroscopeMeasurement(DefaultTrainId, xAngleChangePerSample, yAngleChangePerSample,
 					zAngleChangePerSample, 1, timeMeasured);
 
 			System.out.printf("Generated gyr time: %d\n", timeMeasured.getTimeInMillis());

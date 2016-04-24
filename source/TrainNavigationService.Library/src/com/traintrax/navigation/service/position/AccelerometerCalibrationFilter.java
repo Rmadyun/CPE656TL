@@ -35,7 +35,7 @@ public class AccelerometerCalibrationFilter {
 				value.getAccelerationMeasurement().getMetersPerSecondSquaredAlongYAxis() - yOffset,
 				value.getAccelerationMeasurement().getMetersPerSecondSquaredAlongZAxis() - zOffset);
 				
-		return new AccelerometerMeasurement(acceleration, value.getNumberOfSecondsSinceLastMeasurement(), value.getTimeMeasured());
+		return new AccelerometerMeasurement(value.getTrainId(), acceleration, value.getNumberOfSecondsSinceLastMeasurement(), value.getTimeMeasured());
 	}
 	
 	/**

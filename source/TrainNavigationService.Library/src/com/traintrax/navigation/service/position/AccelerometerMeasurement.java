@@ -9,26 +9,28 @@ import java.util.Calendar;
  */
 public class AccelerometerMeasurement implements Comparable<AccelerometerMeasurement> {
 
+	private String trainId;
 	private Acceleration accelerationMeasurement;
 	private double numberOfSecondsSinceLastMeasurement;
 	private Calendar timeMeasured;
 	
 	/**
 	 * Constructor
+	 * @param trainId Unique ID for train measurement came from
 	 * @param accelerationMeasurement Measurement of acceleration from the accelerometer
 	 * @param numberOfSecondsSinceLastMeasurement Number of seconds that elapsed between this measurement and the previous measurement 
 	 * @param timeMeasured Time that accelerometer measurement was taken.
 	 */
-	public AccelerometerMeasurement(Acceleration accelerationMeasurement,
+	public AccelerometerMeasurement(String trainId, Acceleration accelerationMeasurement,
 			double numberOfSecondsSinceLastMeasurement,
 			Calendar timeMeasured){
 		
+		this.trainId = trainId;
 		this.accelerationMeasurement = accelerationMeasurement;
 		this.numberOfSecondsSinceLastMeasurement = numberOfSecondsSinceLastMeasurement;
 		this.timeMeasured = timeMeasured;
 	}
 		
-
     /**
      * Measurement of acceleration from the accelerometer
      * @return Measurement of acceleration from the accelerometer
@@ -60,5 +62,13 @@ public class AccelerometerMeasurement implements Comparable<AccelerometerMeasure
 		
 	    return Long.compare(this.timeMeasured.getTimeInMillis(), otherMeasurement.timeMeasured.getTimeInMillis());
 	}
+
+	/**
+	 * Retrieves the unique ID for train measurement came from
+	 * @return Unique ID for train measurement came from
+	 */
+	public String getTrainId() {
+		return trainId;
+	}	
 	
 }

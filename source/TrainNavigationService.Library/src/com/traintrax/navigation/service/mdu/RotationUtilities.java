@@ -61,7 +61,7 @@ public class RotationUtilities {
        		rotatedZ = 0;
        	}
        	
-       	correctedMeasurement = new GyroscopeMeasurement(rotatedX, rotatedY, rotatedZ, measurement.getNumberOfSecondsSinceLastMeasurement(), measurement.getTimeMeasured());
+       	correctedMeasurement = new GyroscopeMeasurement(measurement.getTrainId(), rotatedX, rotatedY, rotatedZ, measurement.getNumberOfSecondsSinceLastMeasurement(), measurement.getTimeMeasured());
        	
        	//Convert measurement into a quaternion
        	Quat4d deltaQuaternion = convertToQuaternion(correctedMeasurement);
@@ -589,7 +589,7 @@ public class RotationUtilities {
 		ThreeDimensionalSpaceVector inertialFrameAccelerationVector = changeToInertialFrame(
 				accelerationVector, bodyFrameToInertialFrameRotationMatrix);
 
-		AccelerometerMeasurement accelerationMeasurement = new AccelerometerMeasurement(new Acceleration(inertialFrameAccelerationVector),
+		AccelerometerMeasurement accelerationMeasurement = new AccelerometerMeasurement(measurement.getTrainId(), new Acceleration(inertialFrameAccelerationVector),
 				measurement.getNumberOfSecondsSinceLastMeasurement(), measurement.getTimeMeasured());
 				
 		return accelerationMeasurement;

@@ -20,6 +20,7 @@ public class RotationUtilitiesTests {
 		List<GyroscopeMeasurement> measurements = new ArrayList<GyroscopeMeasurement>();
 		EulerAngleRotation initialBodyFrameOrientation = new EulerAngleRotation(0,0,0);
 		Calendar timeMeasured = Calendar.getInstance();
+		final String DefaultTrainId = "1";
 
 	    double xAngleChangePerSample = rotation.getRadiansRotationAlongXAxis()/numberOfSamples;
 	    double yAngleChangePerSample = rotation.getRadiansRotationAlongYAxis()/numberOfSamples;
@@ -27,7 +28,7 @@ public class RotationUtilitiesTests {
 	    
 	    for(int i = 0; i < numberOfSamples; i++){
 
-	    	GyroscopeMeasurement measurement = new GyroscopeMeasurement(xAngleChangePerSample, yAngleChangePerSample, zAngleChangePerSample, 1, timeMeasured);
+	    	GyroscopeMeasurement measurement = new GyroscopeMeasurement(DefaultTrainId, xAngleChangePerSample, yAngleChangePerSample, zAngleChangePerSample, 1, timeMeasured);
 
 	    	timeMeasured.add(Calendar.SECOND, 1);
 	    	measurements.add(measurement);

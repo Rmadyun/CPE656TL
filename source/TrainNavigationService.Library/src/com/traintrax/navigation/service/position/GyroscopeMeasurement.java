@@ -9,6 +9,7 @@ import java.util.Calendar;
  */
 public class GyroscopeMeasurement implements Comparable<GyroscopeMeasurement> {
 
+	private String trainId;
 	private double radiansRotationPerSecondAlongXAxis;
 	private double radiansRotationPerSecondAlongYAxis;
 	private double radiansRotationPerSecondAlongZAxis;
@@ -17,18 +18,20 @@ public class GyroscopeMeasurement implements Comparable<GyroscopeMeasurement> {
 	
 	/**
 	 * Constructor
+	 * @param trainId Unique ID for train measurement came from
 	 * @param radiansRotationPerSecondAlongXAxis Measurement of angular velocity along the X-Axis in radians per second
 	 * @param radiansRotationPerSecondAlongYAxis Measurement of angular velocity along the Y-Axis in radians per second
 	 * @param radiansRotationPerSecondAlongZAxis Measurement of angular velocity along the Z-Axis in radians per second
 	 * @param numberOfSecondsSinceLastMeasurement Number of seconds that elapsed between this measurement and the previous measurement
 	 * @param timeMeasured Time that the measurement was made
 	 */
-	public GyroscopeMeasurement(double radiansRotationPerSecondAlongXAxis,
+	public GyroscopeMeasurement(String trainId, double radiansRotationPerSecondAlongXAxis,
 			double radiansRotationPerSecondAlongYAxis,
 			double radiansRotationPerSecondAlongZAxis,
 			double numberOfSecondsSinceLastMeasurement,
 			Calendar timeMeasured){
 		
+		this.trainId = trainId;
 		this.radiansRotationPerSecondAlongXAxis = radiansRotationPerSecondAlongXAxis;
 		this.radiansRotationPerSecondAlongYAxis = radiansRotationPerSecondAlongYAxis;
 		this.radiansRotationPerSecondAlongZAxis = radiansRotationPerSecondAlongZAxis;
@@ -88,6 +91,14 @@ public class GyroscopeMeasurement implements Comparable<GyroscopeMeasurement> {
 	 */
 	public double getNumberOfSecondsSinceLastMeasurement(){
 		return numberOfSecondsSinceLastMeasurement;
+	}
+	
+	/**
+	 * Retrieves the unique ID for train measurement came from
+	 * @return Unique ID for train measurement came from
+	 */
+	public String getTrainId() {
+		return trainId;
 	}
 
 	@Override

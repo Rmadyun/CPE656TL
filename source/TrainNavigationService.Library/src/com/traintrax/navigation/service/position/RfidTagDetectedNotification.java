@@ -11,14 +11,17 @@ public class RfidTagDetectedNotification {
 	
 	private String rfidTagValue;
 	private Calendar timeDetected;
+	private String trainId;
 	
 	/**
 	 * Constructor
+	 * @param trainId Unique ID for train measurement came from
 	 * @param rfidTagValue Value of the RFID Tag that crossed the device.
 	 * @param timeDetected The time that the RFID Tag crossing the device was 
 	 * detected.
 	 */
-	public RfidTagDetectedNotification(String rfidTagValue, Calendar timeDetected){
+	public RfidTagDetectedNotification(String trainId, String rfidTagValue, Calendar timeDetected){
+		this.trainId = trainId;
 		this.rfidTagValue = rfidTagValue;
 		this.timeDetected = timeDetected;
 	}
@@ -40,6 +43,14 @@ public class RfidTagDetectedNotification {
 	 */
 	public Calendar getTimeDetected(){
 		return timeDetected;
+	}
+	
+	/**
+	 * Retrieves the unique ID for train measurement came from
+	 * @return Unique ID for train measurement came from
+	 */
+	public String getTrainId() {
+		return trainId;
 	}
 
 }

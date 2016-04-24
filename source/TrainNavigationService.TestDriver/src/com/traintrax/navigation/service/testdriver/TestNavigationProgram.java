@@ -235,13 +235,14 @@ public class TestNavigationProgram {
 		List<GyroscopeMeasurement> measurements = new ArrayList<GyroscopeMeasurement>();
 		EulerAngleRotation initialBodyFrameOrientation = new EulerAngleRotation(0, 0, 0);
 		Calendar timeMeasured = Calendar.getInstance();
+		final String DefaultTrainId = "2A";
 
 		int numberOfSamples = 100;
 		double degreeChange = Math.PI / 2;
 		double degreeChangePerSample = degreeChange / numberOfSamples;
 
 		for (int i = 0; i < numberOfSamples; i++) {
-			GyroscopeMeasurement measurement = new GyroscopeMeasurement(degreeChangePerSample, 0, 0, 1, timeMeasured);
+			GyroscopeMeasurement measurement = new GyroscopeMeasurement(DefaultTrainId, degreeChangePerSample, 0, 0, 1, timeMeasured);
 
 			measurements.add(measurement);
 		}

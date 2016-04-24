@@ -25,6 +25,8 @@ import com.traintrax.navigation.service.rotation.EulerAngleRotation;
  */
 public class MduMeasurementGenerator {
 	
+	private static final String DefaultTrainId = "2A";
+	
 	/**
 	 * Generates Accelerometer measurements
 	 * @param startTime Time of the first sample
@@ -42,18 +44,18 @@ public class MduMeasurementGenerator {
 		// movement
 		// Measurements
 		System.out.printf("Generated acc time: %d\n", currentTime.getTimeInMillis());
-		accelerometerMeasurements.add(new AccelerometerMeasurement(new Acceleration(0, 0, 0), 0, currentTime));
+		accelerometerMeasurements.add(new AccelerometerMeasurement(DefaultTrainId, new Acceleration(0, 0, 0), 0, currentTime));
 
 		currentTime = (Calendar) currentTime.clone();
 		currentTime.add(Calendar.SECOND, 1);
 		System.out.printf("Generated acc time: %d\n", currentTime.getTimeInMillis());
-		accelerometerMeasurements.add(new AccelerometerMeasurement(new Acceleration(1, 0, 0), 1, currentTime));
+		accelerometerMeasurements.add(new AccelerometerMeasurement(DefaultTrainId, new Acceleration(1, 0, 0), 1, currentTime));
 
 		for (int i = 0; i < numberOfSeconds - 2; i++) {
 			currentTime = (Calendar) currentTime.clone();
 			currentTime.add(Calendar.SECOND, 1);
 			System.out.printf("Generated acc time: %d\n", currentTime.getTimeInMillis());
-			accelerometerMeasurements.add(new AccelerometerMeasurement(new Acceleration(0, 0, 0), 1, currentTime));
+			accelerometerMeasurements.add(new AccelerometerMeasurement(DefaultTrainId, new Acceleration(0, 0, 0), 1, currentTime));
 		}
 
 		return accelerometerMeasurements;
@@ -77,7 +79,7 @@ public class MduMeasurementGenerator {
 	    
 	    for(int i = 0; i < numberOfSeconds; i++){
 
-	    	GyroscopeMeasurement measurement = new GyroscopeMeasurement(xAngleChangePerSample, yAngleChangePerSample, zAngleChangePerSample, 1, timeMeasured);
+	    	GyroscopeMeasurement measurement = new GyroscopeMeasurement(DefaultTrainId, xAngleChangePerSample, yAngleChangePerSample, zAngleChangePerSample, 1, timeMeasured);
 
 	    	System.out.printf("Generated gyr time: %d\n", timeMeasured.getTimeInMillis());
 	    	timeMeasured = (Calendar) timeMeasured.clone();
@@ -127,8 +129,8 @@ public class MduMeasurementGenerator {
 		
 	    for(int i = 0; i < numberOfSeconds; i++){
 	    	PositionTestSample positionTestSample = new PositionTestSample();
-	    	GyroscopeMeasurement gyrMeasurement = new GyroscopeMeasurement(0, 0, 0, 1, timeMeasured);
-	    	AccelerometerMeasurement accMeasurement = new AccelerometerMeasurement(new Acceleration(accX+accOffX, accY+accOffY, 0), 1, timeMeasured);
+	    	GyroscopeMeasurement gyrMeasurement = new GyroscopeMeasurement(DefaultTrainId, 0, 0, 0, 1, timeMeasured);
+	    	AccelerometerMeasurement accMeasurement = new AccelerometerMeasurement(DefaultTrainId, new Acceleration(accX+accOffX, accY+accOffY, 0), 1, timeMeasured);
 
 	    	positionTestSample.setAccelerometerMeasurement(accMeasurement);
 	    	positionTestSample.setGyroscopeMeasurement(gyrMeasurement);
@@ -215,8 +217,8 @@ public class MduMeasurementGenerator {
 		
 	    for(int i = 0; i < numberOfSeconds; i++){
 	    	PositionTestSample positionTestSample = new PositionTestSample();
-	    	GyroscopeMeasurement gyrMeasurement = new GyroscopeMeasurement(0, 0, angularSpeedInRadiansPerSecond, 1, timeMeasured);
-	    	AccelerometerMeasurement accMeasurement = new AccelerometerMeasurement(new Acceleration(accX+accOffX, accY+accOffY, 0), 1, timeMeasured);
+	    	GyroscopeMeasurement gyrMeasurement = new GyroscopeMeasurement(DefaultTrainId, 0, 0, angularSpeedInRadiansPerSecond, 1, timeMeasured);
+	    	AccelerometerMeasurement accMeasurement = new AccelerometerMeasurement(DefaultTrainId, new Acceleration(accX+accOffX, accY+accOffY, 0), 1, timeMeasured);
 
 	    	positionTestSample.setAccelerometerMeasurement(accMeasurement);
 	    	positionTestSample.setGyroscopeMeasurement(gyrMeasurement);

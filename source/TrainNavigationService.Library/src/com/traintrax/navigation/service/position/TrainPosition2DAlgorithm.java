@@ -44,7 +44,6 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 	// TODO: Incorporate Last IMU Position Results
 	private ImuPositionResults lastImuPositionResults = null;
 	
-
 	/**
 	 * Constructor NOTE: Assuming that the train is a rest at initialization.
 	 * 
@@ -578,7 +577,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 		double accZ = 0;
 
 		Acceleration acceleration = new Acceleration(accX, accY, accZ);
-		inertialFrameMeasurement = new AccelerometerMeasurement(acceleration,
+		inertialFrameMeasurement = new AccelerometerMeasurement(measurement.getTrainId(), acceleration,
 				measurement.getNumberOfSecondsSinceLastMeasurement(), measurement.getTimeMeasured());
 
 		return inertialFrameMeasurement;

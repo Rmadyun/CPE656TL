@@ -21,6 +21,8 @@ import com.traintrax.navigation.service.math.Tuple;
  * 
  */
 public class ImuMeasurementsReader {
+	
+	private static final String DefaultTrainId = "2A";
 
 	public static List<ValueUpdate<Tuple<GyroscopeMeasurement, AccelerometerMeasurement>>> ReadFile(String filename) {
 		List<ValueUpdate<Tuple<GyroscopeMeasurement, AccelerometerMeasurement>>> measurements = new LinkedList<ValueUpdate<Tuple<GyroscopeMeasurement, AccelerometerMeasurement>>>();
@@ -96,7 +98,7 @@ public class ImuMeasurementsReader {
 								deltaGyroscopeTimeInSeconds = (gyroscopeTime.getTimeInMillis()-lastGyroscopeMeasurement.getTimeMeasured().getTimeInMillis()) / 1000.0; 
 							}
 							
-							GyroscopeMeasurement gyroscopeMeasurement = new GyroscopeMeasurement(gyroscopeX,
+							GyroscopeMeasurement gyroscopeMeasurement = new GyroscopeMeasurement(DefaultTrainId, gyroscopeX,
 									gyroscopeY, gyroscopeZ, deltaGyroscopeTimeInSeconds, gyroscopeTime);
 
 							lastGyroscopeMeasurement = gyroscopeMeasurement;
@@ -112,7 +114,7 @@ public class ImuMeasurementsReader {
 								deltaAccelerometerTimeInSeconds = (accelerometerTime.getTimeInMillis() - lastAccelerometerMeasurement.getTimeMeasured().getTimeInMillis()) / 1000.0; 
 							}
 							
-							AccelerometerMeasurement accelerometerMeasurement = new AccelerometerMeasurement(new Acceleration(accelerometerX, accelerometerY, accelerometerZ), deltaAccelerometerTimeInSeconds, accelerometerTime);
+							AccelerometerMeasurement accelerometerMeasurement = new AccelerometerMeasurement(DefaultTrainId, new Acceleration(accelerometerX, accelerometerY, accelerometerZ), deltaAccelerometerTimeInSeconds, accelerometerTime);
 
 							lastAccelerometerMeasurement = accelerometerMeasurement;
 							

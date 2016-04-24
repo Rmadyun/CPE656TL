@@ -13,6 +13,8 @@ import com.traintrax.navigation.service.position.GyroscopeMeasurement;
 
 public class GyroscopeReader {
 	
+	private static final String DefaultTrainId = "2A";
+	
 	private String filename;
 	
 	private List<GyroscopeMeasurement> gyroscopeMeasurements;
@@ -60,7 +62,7 @@ public class GyroscopeReader {
 						
 						timeMeasured.setTimeInMillis((long)(measurementTimeInSeconds*1000));
 
-						GyroscopeMeasurement gyroscopeMeasurement = new GyroscopeMeasurement(rotationAroundX, rotationAroundY, rotationAroundZ, deltaTimeInSeconds, timeMeasured);
+						GyroscopeMeasurement gyroscopeMeasurement = new GyroscopeMeasurement(DefaultTrainId, rotationAroundX, rotationAroundY, rotationAroundZ, deltaTimeInSeconds, timeMeasured);
 
 						gyroscopeMeasurements.add(gyroscopeMeasurement);
 					}
