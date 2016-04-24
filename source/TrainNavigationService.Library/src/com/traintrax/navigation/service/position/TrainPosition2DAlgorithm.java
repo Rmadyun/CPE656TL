@@ -300,10 +300,10 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 		double yaw = initialOrientation.getRadiansRotationAlongZAxis();
 
 		if (distance != 0) {
-			yaw = Math.acos(dx / distance);
-			if (dy < 0) {
-				yaw = yaw * -1;
-			}
+			//Formula from the following:
+			//https://en.wikipedia.org/wiki/Unit_circle
+			//http://stackoverflow.com/questions/7586063/how-to-calculate-the-angle-between-a-line-and-the-horizontal-axis
+			yaw = Math.atan2(dy, dx) * 180 / Math.PI;
 		}
 
 		ValueUpdate<EulerAngleRotation> orientationUpdate = new ValueUpdate<EulerAngleRotation>(
