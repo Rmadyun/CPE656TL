@@ -43,7 +43,7 @@ public class DiscretePositionCalculator {
 			ValueUpdate<EulerAngleRotation> newOrientationEstimate = calculateOrientation(previousPosition, currentPosition);
 			final double tolerance = 0.05; // 5 % tolerance
 
-			if (previousOrientationEstimate != null) {
+			if (previousOrientationEstimate != null && newOrientationEstimate != null) {
 
 				//Make sure that the orientation is stable enough for us to 
 				//assume that the train is at the calculated orientation
@@ -75,7 +75,10 @@ public class DiscretePositionCalculator {
 			}
 
 			// Update the previous orientation estimate
-			previousOrientationEstimate = newOrientationEstimate.getValue();
+			if(newOrientationEstimate != null)
+			{
+			    previousOrientationEstimate = newOrientationEstimate.getValue();
+			}
 		}
 
 		return additionalTrainStateInfo;
