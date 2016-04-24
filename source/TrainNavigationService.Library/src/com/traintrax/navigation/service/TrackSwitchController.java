@@ -2,10 +2,8 @@ package com.traintrax.navigation.service;
 
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import com.traintrax.navigation.database.library.TrackSwitch;
 import com.traintrax.navigation.service.mdu.SerialPortMduCommunicationChannel;
 import com.traintrax.navigation.trackswitch.SwitchState;
 
@@ -33,12 +31,6 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 
 	private final String prefix;
 
-	private final LocoNetInterface locoNetInterface;
-
-	private final LnPortController serialPortAdapter;
-
-	private TrainNavigationDatabaseInterface trainNavigationDatabase;
-
 	// NOTE: Verified that Test Bed is configured to use the Default Prefix.
 	// Also verified that JMRI works with Windows.
 	// Serial port configured to 9600 8N1 works
@@ -58,7 +50,7 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	public TrackSwitchController() throws Exception {
 		// TODO: Figure out actual default values and assign
 		// elsewhere
-		this(DefaultSerialPort, DefaultPrefix, null);
+		this(DefaultSerialPort, DefaultPrefix);
 	}
 
 	/**
@@ -71,73 +63,65 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	 *            with multiple 'connections' to layout hardware. It determines
 	 *            which LocoNet subnet that should be associated with the Port
 	 *            controller
-	 * @param trainNavigationDatabase Contact for information about the train track and to save measuremnts            
 	 * @throws Exception
 	 *             Reports any type of failure involved with connecting to the
 	 *             controller
 	 */
-	public TrackSwitchController(String serialPort, String prefix, TrainNavigationDatabaseInterface trainNavigationDatabase) throws Exception {
+	public TrackSwitchController(String serialPort, String prefix) {
 
 		this.serialPort = serialPort;
 		this.prefix = prefix;
-		this.trainNavigationDatabase = trainNavigationDatabase;
-		
-		//CommPortIdentifier commPortIdentifier = CommPortIdentifier.getPortIdentifier(serialPort);
-		
+	}
 
+	/**
+	 * Method creates a LnPort Controller to use to communicate with the PR3. NOTE: Be
+	 * sure to dispose of this interface when done. The reason this method is
+	 * used instead of a field is so that the program can share the serial port
+	 * for controlling a PR3 with other programs such as JMRI.
+	 * 
+	 * @return Created LnPort Controller instance
+	 * @throws Exception
+	 *             Reports an error when the port controller fails to be created
+	 */
+	private LnPortController CreateLnPortController() throws Exception {
 		// Assumes we are using a MS100 compatible device, not a
 		// LocoBuffer
 
 		LnPortController serialPortAdapter = new PR3Adapter();
 
-		//JMRI 4.3 Code
-		// serialPortAdapter.setCommandStationType(LnCommandStationType.COMMAND_STATION_STANDALONE);
-		
-		//JMRI 3.8 Code
+		// JMRI 4.3/3.8 Code
 		serialPortAdapter.setCommandStationType("Stand-alone LocoNet");
-				
+
 		serialPortAdapter.openPort(serialPort, ApplicationName);
 		serialPortAdapter.connect();
 		serialPortAdapter.configure();
 
-		this.serialPortAdapter = serialPortAdapter;
-		
-		//JMRI 4.3 Code
-		// this.locoNetInterface =
-		// serialPortAdapter.getSystemConnectionMemo().getLnTrafficController();
-
-		//JMRI 3.8 Code
-		PR3SystemConnectionMemo memo = (PR3SystemConnectionMemo) serialPortAdapter.getSystemConnectionMemo();
-		this.locoNetInterface = memo.getLnTrafficController();
-
-		selectMS100mode();
-		
-		
-		//Note a better check for null may be necessary if the DB is used outside
-		//of only initialization. In fact, requiring a non-null value may be necessary.
-		if(trainNavigationDatabase != null)
-		{
-		    initializeAllSwitchesToKnownState(trainNavigationDatabase);
-		}
+		return serialPortAdapter;
 	}
 	
 	/**
-	 * Method initializes all of the known switches on the rail system to be
-	 * in a known state.
-	 * @param trainNavigationDatabase Contact for information about the train track and to save measuremnts
+	 * Method creates a LocoNet interface to use for switch control. 
+	 * NOTE: The reason this method is used instead of a field is so 
+	 * that the program can share the serial port for controlling a 
+	 * PR3 with other programs such as JMRI.
+	 * 
+	 * @param serialPortAdapter Contact to the PR3 Adapter
+	 * @return Created LocoNet interface instance
+	 * @throws Exception
+	 *             Reports an error when the interface fails to be created
 	 */
-	private void initializeAllSwitchesToKnownState(TrainNavigationDatabaseInterface trainNavigationDatabase){
-		
-		
-		List<TrackSwitch> switches = trainNavigationDatabase.getTrackSwitches();
-		
-		//Set all switches into pass.
-		
-		for(TrackSwitch trackSwitch : switches){
-			
-			ChangeSwitchState(trackSwitch.getSwitchName(), SwitchState.Pass);
-		}
-		
+	private LocoNetInterface CreateLocoNetInterface(LnPortController serialPortAdapter) throws Exception {
+		LocoNetInterface locoNetInterface;
+		// Assumes we are using a MS100 compatible device, not a
+		// LocoBuffer
+
+		// JMRI 3.8 Code
+		PR3SystemConnectionMemo memo = (PR3SystemConnectionMemo) serialPortAdapter.getSystemConnectionMemo();
+		locoNetInterface = memo.getLnTrafficController();
+
+		selectMS100mode(locoNetInterface);
+
+		return locoNetInterface;
 	}
 
 	/**
@@ -145,8 +129,11 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	 * 
 	 * NOTE: This code was taken from the JMRI source branch:
 	 * https://github.com/JMRI/JMRI
+	 * 
+	 * @param locoNetInterface
+	 *            Contact to the PR3 Programming Interface
 	 */
-	void selectPR2mode() {
+	void selectPR2mode(LocoNetInterface locoNetInterface) {
 		// set to PR2 mode
 		LocoNetMessage msg = new LocoNetMessage(6);
 		msg.setOpCode(0xD3);
@@ -162,8 +149,11 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	 * 
 	 * NOTE: This code was taken from the JMRI source branch:
 	 * https://github.com/JMRI/JMRI
+	 * 
+	 * @param locoNetInterface
+	 *            Contact to the PR3 Programming Interface
 	 */
-	void selectMS100mode() {
+	void selectMS100mode(LocoNetInterface locoNetInterface) {
 		// set to MS100 mode
 
 		LocoNetMessage msg = new LocoNetMessage(6);
@@ -240,26 +230,50 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	public void ChangeSwitchState(String switchIdentifier, SwitchState switchState) {
 
 		int switchNumber = getSwitchNumber(switchIdentifier);
-		
-		//CS - Disabled as a part of troubleshooting difficulties controlling switches with
-		//JMRI
-		/*LnTurnout lnTurnout = new LnTurnout(prefix, switchNumber, locoNetInterface);
 
-		int commandedState = (switchState == SwitchState.Pass) ? LnTurnout.CLOSED : LnTurnout.THROWN;
+		// CS - Disabled as a part of troubleshooting difficulties controlling
+		// switches with
+		// JMRI
+		/*
+		 * LnTurnout lnTurnout = new LnTurnout(prefix, switchNumber,
+		 * locoNetInterface);
+		 * 
+		 * int commandedState = (switchState == SwitchState.Pass) ?
+		 * LnTurnout.CLOSED : LnTurnout.THROWN;
+		 * 
+		 * lnTurnout.setCommandedState(commandedState);
+		 */
 
-		lnTurnout.setCommandedState(commandedState); */
-		
 		LocoNetMessage msg = new LocoNetMessage(4);
 		msg.setOpCode(0XB0);
-		msg.setElement(1, (byte)((switchNumber - 1)&0xFF));
+		msg.setElement(1, (byte) ((switchNumber - 1) & 0xFF));
 		msg.setElement(2, (switchState == SwitchState.Pass) ? 0x30 : 0x10);
-		
-		//Calculate the checksum and assign it to the message.
+
+		// Calculate the checksum and assign it to the message.
 		msg.setParity();
 
-		this.locoNetInterface.sendLocoNetMessage(msg);
+		// Created LocoNet Interface to use for the switch control
+		// NOTE: Be sure to dispose.
+		// instance is created instead of shared so that the port may
+		// be shared with other programs, such as JMRI.
+		LocoNetInterface locoNetInterface = null;
+		LnPortController lnPortController = null;
+		try {
+			lnPortController = CreateLnPortController();
+			locoNetInterface = CreateLocoNetInterface(lnPortController);
+			locoNetInterface.sendLocoNetMessage(msg);
 
-		switchStateLut.put(switchIdentifier, switchState);
+			switchStateLut.put(switchIdentifier, switchState);
+		} catch (Exception e) {
+			System.out.println(
+					"Cannot change switch to: " + switchState.toString() + ". Error: " + e.getMessage() + e.toString());
+			e.printStackTrace();
+		}
+		
+		//Cleanup the LocoNetInterface
+		if(lnPortController != null){
+			lnPortController.dispose();
+		}
 	}
 
 	/**
