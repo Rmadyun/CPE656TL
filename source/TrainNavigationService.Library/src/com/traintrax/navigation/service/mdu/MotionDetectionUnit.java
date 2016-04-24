@@ -5,9 +5,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -17,6 +19,7 @@ import com.traintrax.navigation.service.position.Acceleration;
 import com.traintrax.navigation.service.position.AccelerometerMeasurement;
 import com.traintrax.navigation.service.position.GyroscopeMeasurement;
 import com.traintrax.navigation.service.position.RfidTagDetectedNotification;
+import com.traintrax.navigation.service.position.Train;
 
 /**
  * Class facilitates communication with Motion Detection Unit hardware
@@ -26,15 +29,14 @@ import com.traintrax.navigation.service.position.RfidTagDetectedNotification;
  */
 public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 	private final Queue<byte[]> mduPacketBufferQueue;
-	private final Queue<AccelerometerMeasurement> collectedAccelerometerMeasurements;
-	private final Queue<GyroscopeMeasurement> collectedGyroscopeMeasurements;
-	private final Queue<RfidTagDetectedNotification> collectedRfidTagDetectionNotifications;
+	private final ConcurrentHashMap<String, Train> trainIdToTrainLut;
 	private final MduCommunicationChannelInterface mduCommunicationChannel;
 	private final Thread mduReadThread;
 	private final Thread mduDecodeThread;
 	private final Lock lock = new ReentrantLock();
 	private final Condition notEmpty = lock.newCondition();
 	private final MduProtocolParserInterface mduProtocolParser;
+	private final MduCallbackInterface mduCallback;
 
 	// MDU Protocol fields
 	private static final byte ImuReading = 0x03;
@@ -50,20 +52,39 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 	private static final int IdentificationPacketSize = 4;
 
 	/**
+	 * Reports the offset in the MDU Protocol message header to find the byte
+	 * that is the source ID of the originator of the message.
+	 */
+	private static final int MduProtocolSrcIdOffset = 1;
+	
+	/**
 	 * Constructor
 	 * 
-	 * @param mduCommunicationChannel
-	 *            Contact to the MDU
+	 * @param mduCommunicationChannel Contact to the MDU
+	 * @param mduProcotolParser Does the logic for separating MDU Packets from the
+	 * byte stream.
 	 */
 	public MotionDetectionUnit(MduCommunicationChannelInterface mduCommunicationChannel,
 			MduProtocolParserInterface mduProtocolParser) {
+		this(mduCommunicationChannel, mduProtocolParser, null);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param mduCommunicationChannel Contact to the MDU
+	 * @param mduProcotolParser Does the logic for separating MDU Packets from the
+	 * byte stream.
+	 * @param mduCallback Notifies an agent about internal changes in the MDU.
+	 */
+	public MotionDetectionUnit(MduCommunicationChannelInterface mduCommunicationChannel,
+			MduProtocolParserInterface mduProtocolParser, MduCallbackInterface mduCallback) {
 		mduPacketBufferQueue = new ConcurrentLinkedQueue<byte[]>();
-		collectedAccelerometerMeasurements = new ConcurrentLinkedQueue<AccelerometerMeasurement>();
-		collectedGyroscopeMeasurements = new ConcurrentLinkedQueue<GyroscopeMeasurement>();
-		collectedRfidTagDetectionNotifications = new ConcurrentLinkedQueue<RfidTagDetectedNotification>();
+		trainIdToTrainLut = new ConcurrentHashMap<String, Train>();
 
 		this.mduCommunicationChannel = mduCommunicationChannel;
 		this.mduProtocolParser = mduProtocolParser;
+		this.mduCallback = mduCallback;
 
 		mduReadThread = new Thread() {
 
@@ -131,9 +152,43 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 		} while (true);
 	}
 
+	/**
+	 * Method is responsible for retrieving the Train object associated with the
+	 * provided train ID. It checks to see if a train is already being tracked.
+	 * If it is not, then the train is added to the map tracking trains.
+	 * 
+	 * @param trainId
+	 *            Unique ID for train from MDU Protocol message. This is
+	 *            typically the source field of the message header.
+	 */
+	private Train FetchTrain(byte rawTrainId) {
+		String trainId = String.format("%02X", rawTrainId);
+
+		Train train = (Train) this.trainIdToTrainLut.get(trainId);
+
+		// Check if train already exists.
+		if (train == null) {
+
+			// Adds trains train if it doesn't already exist.
+			Train newTrain = new Train(trainId);
+			Train previousTrain = trainIdToTrainLut.putIfAbsent(trainId, newTrain);
+
+			if (previousTrain == null) {
+				train = newTrain;
+				
+				if(mduCallback != null){
+					//Notify that a new train has been added.
+					mduCallback.TrainAdded(newTrain);
+				}
+			} else {
+				train = previousTrain;
+			}
+		}
+
+		return train;
+	}
+
 	private void decodeMduPackets() {
-		Calendar lastGyroscopeMeasurement = null;
-		Calendar lastAccelerometerMeasurement = null;
 
 		do {
 
@@ -155,27 +210,26 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 			byte[] mduPacket = this.mduProtocolParser.getPacketBytesStored(mduPacketBuffer);
 
 			System.out.println("Decoding MDU Packet");
+			Train train = FetchTrain(mduPacket[MduProtocolSrcIdOffset]);
 
 			GyroscopeMeasurement gyroscopeMeasurement = TryDecodeGyroscopeMeasurement(mduPacket,
-					lastGyroscopeMeasurement);
+					train.getLastGyroscopeMeasurement());
 			if (gyroscopeMeasurement != null) {
 				System.out.println("GYR Measurement Received");
-				collectedGyroscopeMeasurements.add(gyroscopeMeasurement);
-				lastGyroscopeMeasurement = gyroscopeMeasurement.getTimeMeasured();
+				train.add(gyroscopeMeasurement);
 			}
 
 			AccelerometerMeasurement accelerometerMeasurement = TryDecodeAccelerometerMeasurement(mduPacket,
-					lastAccelerometerMeasurement);
+					train.getLastAccelerometerMeasurement());
 			if (accelerometerMeasurement != null) {
 				System.out.println("ACC Measurement Received");
-				collectedAccelerometerMeasurements.add(accelerometerMeasurement);
-				lastAccelerometerMeasurement = accelerometerMeasurement.getTimeMeasured();
+				train.add(accelerometerMeasurement);
 			}
 
-			RfidTagDetectedNotification rfidTagDetectedNotifiation = TryDecodeRfidTagDetectedNotification(mduPacket);
-			if (rfidTagDetectedNotifiation != null) {
+			RfidTagDetectedNotification rfidTagDetectedNotification = TryDecodeRfidTagDetectedNotification(mduPacket);
+			if (rfidTagDetectedNotification != null) {
 				System.out.println("RFID Tag Detection Notification Received");
-				collectedRfidTagDetectionNotifications.add(rfidTagDetectedNotifiation);
+				train.add(rfidTagDetectedNotification);
 			}
 
 			TrainIdentificationMessage trainIdentificationMessage = TryDecodeTrainIdentification(mduPacket);
@@ -205,7 +259,7 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 
 			if (roundTripTimeRequestMessage != null) {
 				System.out.println("RTT Request Received");
-				
+
 				// Send train identification reply
 
 				try {
@@ -213,7 +267,8 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 
 					RoundTripTimeResponseMessage responseIdentificationMessage = new RoundTripTimeResponseMessage(
 							roundTripTimeRequestMessage);
-					byte[] responsePacket = RoundTripTimeResponseMessage.EncodeRoundTripTimeReply(responseIdentificationMessage);
+					byte[] responsePacket = RoundTripTimeResponseMessage
+							.EncodeRoundTripTimeReply(responseIdentificationMessage);
 
 					outputStream.write(responsePacket);
 					outputStream.flush();
@@ -223,15 +278,13 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 			}
 
-			
 			TimeSyncRequestMessage timeSyncRequestMessage = TimeSyncRequestMessage.TryDecodeTimeSyncRequest(mduPacket);
 
 			if (timeSyncRequestMessage != null) {
 				System.out.println("Time Sync Request Received");
-				
+
 				// Send train identification reply
 
 				try {
@@ -251,10 +304,6 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 				}
 
 			}
-
-			
-			
-
 		} while (true);
 	}
 
@@ -311,7 +360,7 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 
 			double timeBetweenMeasurements = (timeOfLastMeasurement == null) ? 0
 					: (timeOfLastMeasurement.getTimeInMillis() - timeMeasured.getTimeInMillis()) / 1000.0;
-			
+
 			String trainId = String.format("%02X", mduPacket[SrcOffset]);
 
 			decodedMeasurement = new GyroscopeMeasurement(trainId, gx * GScale, gy * GScale, gz * GScale,
@@ -362,11 +411,11 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 
 			double timeBetweenMeasurements = (timeOfLastMeasurement == null) ? 0
 					: (timeOfLastMeasurement.getTimeInMillis() - timeMeasured.getTimeInMillis()) / 1000.0;
-			
+
 			String trainId = String.format("%02X", mduPacket[SrcOffset]);
 
-			decodedMeasurement = new AccelerometerMeasurement(trainId, new Acceleration(ax * AScale, ay * AScale, az * AScale),
-					timeBetweenMeasurements, timeMeasured);
+			decodedMeasurement = new AccelerometerMeasurement(trainId,
+					new Acceleration(ax * AScale, ay * AScale, az * AScale), timeBetweenMeasurements, timeMeasured);
 		}
 
 		return decodedMeasurement;
@@ -411,7 +460,7 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 
 			timeMeasured.set(year, month, date, 0, 0, 0);
 			timeMeasured.add(Calendar.MILLISECOND, timestamp);
-			
+
 			String trainId = String.format("%02X", mduPacket[SrcOffset]);
 
 			decodedMeasurement = new RfidTagDetectedNotification(trainId, rfidTagValue, timeMeasured);
@@ -504,15 +553,9 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 	public List<AccelerometerMeasurement> readCollectedAccelerometerMeasurements() {
 
 		List<AccelerometerMeasurement> collected = new LinkedList<AccelerometerMeasurement>();
-		AccelerometerMeasurement measurement = null;
 
-		if (!collectedAccelerometerMeasurements.isEmpty()) {
-			do {
-				measurement = collectedAccelerometerMeasurements.poll();
-				if (measurement != null) {
-					collected.add(measurement);
-				}
-			} while (measurement != null);
+		for (Train train : this.trainIdToTrainLut.values()) {
+			collected.addAll(train.readCollectedAccelerometerMeasurements());
 		}
 
 		return collected;
@@ -525,15 +568,9 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 	 */
 	public List<GyroscopeMeasurement> readCollectedGyroscopeMeasurements() {
 		List<GyroscopeMeasurement> collected = new LinkedList<GyroscopeMeasurement>();
-		GyroscopeMeasurement measurement = null;
 
-		if (!collectedGyroscopeMeasurements.isEmpty()) {
-			do {
-				measurement = collectedGyroscopeMeasurements.poll();
-				if (measurement != null) {
-					collected.add(measurement);
-				}
-			} while (measurement != null);
+		for (Train train : this.trainIdToTrainLut.values()) {
+			collected.addAll(train.readCollectedGyroscopeMeasurements());
 		}
 
 		return collected;
@@ -546,18 +583,23 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 	 */
 	public List<RfidTagDetectedNotification> readCollectedRfidTagDetectionNotifications() {
 		List<RfidTagDetectedNotification> collected = new LinkedList<RfidTagDetectedNotification>();
-		RfidTagDetectedNotification measurement = null;
 
-		if (!collectedRfidTagDetectionNotifications.isEmpty()) {
-			do {
-				measurement = collectedRfidTagDetectionNotifications.poll();
-				if (measurement != null) {
-					collected.add(measurement);
-				}
-			} while (measurement != null);
+		for (Train train : this.trainIdToTrainLut.values()) {
+			collected.addAll(train.readCollectedRfidTagDetectionNotifications());
 		}
 
 		return collected;
+	}
+
+	/**
+	 * Retrieves a list of all of the train that have
+	 * been reported on the MDU channel being used.
+	 * @return a list of all of the train that have
+	 * been reported on the MDU channel being used.
+	 */
+	@Override
+	public Collection<Train> getAssociatedTrains() {
+		return this.trainIdToTrainLut.values();
 	}
 
 }

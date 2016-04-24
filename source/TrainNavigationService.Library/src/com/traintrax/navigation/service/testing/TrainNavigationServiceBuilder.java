@@ -36,6 +36,7 @@ import com.traintrax.navigation.service.mdu.MotionDetectionUnitInterface;
 import com.traintrax.navigation.service.mdu.SimulatedMotionDetectionUnit;
 import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.InertialMotionPositionAlgorithmInterface;
+import com.traintrax.navigation.service.position.Train;
 import com.traintrax.navigation.service.position.TrainPosition2DAlgorithm;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 
@@ -44,6 +45,8 @@ import com.traintrax.navigation.service.rotation.EulerAngleRotation;
  * This class is intended to simplify the creation of train navigation service
  * instances since it requires complex setup.
  * @author Corey Sanders
+ * 
+ * TODO: Refactor builder since the organization of the Train Navigation Service has changed.
  */
 public class TrainNavigationServiceBuilder {
 	
@@ -98,8 +101,13 @@ public class TrainNavigationServiceBuilder {
 		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(currentPosition,
 				currentOrientation);
 
-		TrainMonitorInterface trainMonitor = new TrainMonitor(trainId, positionAlgorithm, motionDetectionUnit,
-				trainNavigationDatabase);
+		Train train = null;
+		
+		for(Train t : motionDetectionUnit.getAssociatedTrains()){
+			train = t;
+			break;
+		}
+		TrainMonitorInterface trainMonitor = new TrainMonitor(train, positionAlgorithm, trainNavigationDatabase);
 		TrackSwitchControllerInterface trackSwitchController = null;
 
 		trackSwitchController = new TestTrackSwitchController();
@@ -149,8 +157,17 @@ public class TrainNavigationServiceBuilder {
 	 */
 	public void setMotionDetectionUnitInterface(MotionDetectionUnitInterface motionDetectionUnitInterface) {
 		this.motionDetectionUnitInterface = motionDetectionUnitInterface;
-		trainMonitor = new TrainMonitor(trainId, positionAlgorithm, motionDetectionUnitInterface,
-				trainNavigationDatabase);
+		Train train = null;
+		
+		for(Train t : motionDetectionUnitInterface.getAssociatedTrains()){
+			train = t;
+			break;
+		}
+		
+		if(train != null){
+		    trainMonitor = new TrainMonitor(train, positionAlgorithm,
+			    	trainNavigationDatabase);
+		}
 	}
 	
 	/**
@@ -159,8 +176,17 @@ public class TrainNavigationServiceBuilder {
 	 */
 	public void setPositionAlgorithm(InertialMotionPositionAlgorithmInterface positionAlgorithm) {
 		this.positionAlgorithm = positionAlgorithm;
-		trainMonitor = new TrainMonitor(trainId, positionAlgorithm, motionDetectionUnitInterface,
-				trainNavigationDatabase);
+		Train train = null;
+				
+		for(Train t : motionDetectionUnitInterface.getAssociatedTrains()){
+			train = t;
+			break;
+		}
+		
+		if(train != null){
+		    trainMonitor = new TrainMonitor(train, positionAlgorithm,
+			    	trainNavigationDatabase);
+		}
 	}
 	
 	/**

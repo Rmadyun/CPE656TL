@@ -12,11 +12,12 @@ import com.traintrax.navigation.service.position.TrainPositionEstimate;
 public interface TrainMonitorInterface {
 	
 	/**
-	 * Blocks until there is another update on the target train's
+	 * Tries to retreive another update on the target train's
 	 * position.
-	 * @return Most recent update on the position of the train.
+	 * @return Most recent update on the position of the train if 
+	 * successful; Otherwise returns null.
 	 */
-	TrainPositionEstimate waitForNextPositionUpdate();
+	TrainPositionEstimate tryFetchNextPositionUpdate();
 	
 	/**
 	 * Retrieves the unique identifier for the target train

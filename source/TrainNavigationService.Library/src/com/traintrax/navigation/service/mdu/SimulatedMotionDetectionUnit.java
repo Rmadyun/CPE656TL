@@ -1,5 +1,6 @@
 package com.traintrax.navigation.service.mdu;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -11,6 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.traintrax.navigation.service.position.AccelerometerMeasurement;
 import com.traintrax.navigation.service.position.GyroscopeMeasurement;
 import com.traintrax.navigation.service.position.RfidTagDetectedNotification;
+import com.traintrax.navigation.service.position.Train;
 import com.traintrax.navigation.service.testing.PositionTestSample;
 
 /**
@@ -31,6 +33,8 @@ public class SimulatedMotionDetectionUnit implements MotionDetectionUnitInterfac
 	private Boolean gyrDone = true;
 	private Boolean rfDone = true;
 	private Boolean sampleReady = false;
+	
+    private final Train train = new Train("1");
 
 	/**
 	 * Constructor
@@ -67,16 +71,19 @@ public class SimulatedMotionDetectionUnit implements MotionDetectionUnitInterfac
 				if (positionTestSample.getAccelerometerMeasurement() != null) {
 					// Add Accelerometer Measurement
 					collectedAccelerometerMeasurements.add(positionTestSample.getAccelerometerMeasurement());
+					train.add(positionTestSample.getAccelerometerMeasurement());
 				}
 
 				if (positionTestSample.getGyroscopeMeasurement() != null) {
 					// Add Gyroscope Measurement
 					collectedGyroscopeMeasurements.add(positionTestSample.getGyroscopeMeasurement());
+					train.add(positionTestSample.getGyroscopeMeasurement());
 				}
 
 				if (positionTestSample.getRfidTagDetectedNotification() != null) {
 					// Add RFID Tag Detected Notification
 					collectedRfidTagDetectionNotifications.add(positionTestSample.getRfidTagDetectedNotification());
+					train.add(positionTestSample.getRfidTagDetectedNotification());
 				}
 			}
 
@@ -199,6 +206,15 @@ public class SimulatedMotionDetectionUnit implements MotionDetectionUnitInterfac
 		}
 
 		return collected;
+	}
+
+	@Override
+	public Collection<Train> getAssociatedTrains() {
+		List<Train> trainList = new LinkedList<Train>();
+		
+		trainList.add(train);
+
+		return trainList;
 	}
 
 }

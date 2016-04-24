@@ -50,6 +50,7 @@ import com.traintrax.navigation.service.position.AccelerometerMeasurement;
 import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.GyroscopeMeasurement;
 import com.traintrax.navigation.service.position.InertialMotionPositionAlgorithmInterface;
+import com.traintrax.navigation.service.position.Train;
 import com.traintrax.navigation.service.position.TrainPosition2DAlgorithm;
 import com.traintrax.navigation.service.position.TrainPositionEstimate;
 import com.traintrax.navigation.service.position.UnitConversionUtilities;
@@ -182,14 +183,16 @@ public class TestNavigationProgram {
 
 		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(currentPosition,
 				currentOrientation);
+		
+		Train train = null;
+		
+		for(Train t : motionDetectionUnit.getAssociatedTrains()){
+			train = t;
+			break;
+		}
 
-		TrainMonitorInterface trainMonitor = new TrainMonitor(trainId, positionAlgorithm, motionDetectionUnit,
-				trainNavigationDatabase);
+		TrainMonitorInterface trainMonitor = new TrainMonitor(train, positionAlgorithm, trainNavigationDatabase);
 		TrackSwitchControllerInterface trainController = null;
-		/*
-		 * try { trainController = new TrainController(); } catch (Exception e)
-		 * { // TODO Auto-generated catch block e.printStackTrace(); }
-		 */
 
 		trainController = new TestTrackSwitchController();
 

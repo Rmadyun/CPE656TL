@@ -1,10 +1,12 @@
 package com.traintrax.navigation.service.mdu;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.traintrax.navigation.service.position.AccelerometerMeasurement;
 import com.traintrax.navigation.service.position.GyroscopeMeasurement;
 import com.traintrax.navigation.service.position.RfidTagDetectedNotification;
+import com.traintrax.navigation.service.position.Train;
 
 /**
  * Interface facilitates communication with the Motion 
@@ -13,7 +15,15 @@ import com.traintrax.navigation.service.position.RfidTagDetectedNotification;
  *
  */
 public interface MotionDetectionUnitInterface {
-    
+	
+	/**
+	 * Retrieves a list of all of the train that have
+	 * been reported on the MDU channel being used.
+	 * @return a list of all of the train that have
+	 * been reported on the MDU channel being used.
+	 */
+	Collection<Train> getAssociatedTrains();
+	
 	/**
 	 * Read collected accelerometer measurements
 	 * @return Collected accelerometer measurements

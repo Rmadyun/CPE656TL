@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.traintrax.navigation.database.library.AccelerometerMeasurementRepository;
 import com.traintrax.navigation.database.library.AccelerometerMeasurementSearchCriteria;
@@ -31,6 +32,7 @@ import com.traintrax.navigation.service.events.NotifierInterface;
 import com.traintrax.navigation.service.events.PublisherInterface;
 import com.traintrax.navigation.service.events.TrainNavigationServiceEventNotifier;
 import com.traintrax.navigation.service.math.ThreeDimensionalSpaceVector;
+import com.traintrax.navigation.service.mdu.MduCallbackInterface;
 import com.traintrax.navigation.service.mdu.MduCommunicationChannelInterface;
 import com.traintrax.navigation.service.mdu.MduProtocolParser;
 import com.traintrax.navigation.service.mdu.MduProtocolParserInterface;
@@ -39,6 +41,7 @@ import com.traintrax.navigation.service.mdu.MotionDetectionUnitInterface;
 import com.traintrax.navigation.service.mdu.SerialPortMduCommunicationChannel;
 import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.InertialMotionPositionAlgorithmInterface;
+import com.traintrax.navigation.service.position.Train;
 import com.traintrax.navigation.service.position.TrainPosition2DAlgorithm;
 import com.traintrax.navigation.service.position.TrainPositionEstimate;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
@@ -46,219 +49,276 @@ import com.traintrax.navigation.trackswitch.SwitchState;
 
 /**
  * Representation of the Train Navigation Service.
+ * 
  * @author Corey Sanders
  *
  */
-public class TrainNavigationService implements TrainNavigationServiceInterface {
-	
+public class TrainNavigationService implements TrainNavigationServiceInterface, MduCallbackInterface {
+
 	/**
-	 * Default assumption of the position of the train relative to the origin
-	 * in meters
+	 * Default assumption of the position of the train relative to the origin in
+	 * meters
 	 */
-	private static final Coordinate DefaultTrainPosition = new Coordinate(0,0,0);
-	private final List<String> trainIds = new LinkedList<String>();
+	private static final Coordinate DefaultTrainPosition = new Coordinate(0, 0, 0);
 	private final Timer timer;
-	private final TrainMonitorInterface trainMonitor;
 	private final TrackSwitchControllerInterface trainController;
 	private final PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher;
 	private static final int POLL_RATE_IN_MS = 50;
 	private final Map<String, TrainPositionEstimate> trainPositionLut = new HashMap<>();
-	
+	private final Map<String, TrainMonitorInterface> trainMonitorLut = new ConcurrentHashMap<>();
+	private TrainNavigationDatabaseInterface trainNavigationDatabase;
+	private MotionDetectionUnitInterface motionDetectionUnit;
+
 	/**
 	 * Default train identifier to use if none are specified.
 	 */
 	private static final String DefaultTrainId = "1";
-	
+
 	/**
 	 * Default serial port to contact Motion Detection Units
 	 */
-	private static final String DEFAULT_MDU_SERIAL_PORT="COM5";
-	
+	private static final String DEFAULT_MDU_SERIAL_PORT = "COM5";
+
 	/**
-	 * Default serial port to use to contact DigiTrax PR3 LocoNet Computer Interface
+	 * Default serial port to use to contact DigiTrax PR3 LocoNet Computer
+	 * Interface
 	 */
-	private static final String DEFAULT_PR3_SERIAL_PORT="COM4";
-	
+	private static final String DEFAULT_PR3_SERIAL_PORT = "COM4";
+
 	/**
 	 * Default user name to use to access database information
 	 */
 	private static final String DefaultDbUsername = "root";
-	
+
 	/**
 	 * Default password to use to access database information
 	 */
 	private static final String DefaultDbPassword = "root";
-	
+
 	/**
 	 * Default name of the database to access
 	 */
 	private static final String DefaultDbName = "TrainTrax";
-	
+
 	/**
 	 * Default network hostname or address to use to access the database
 	 */
 	private static final String DefaultHost = "localhost";
-	
+
 	/**
 	 * Default network port to use to access the database
 	 */
 	private static final int DefaultDbPort = 3306;
-	
+
 	/**
 	 * Default Constructor
-	 * @throws Exception Reports failure to configure the service to run.
+	 * 
+	 * @throws Exception
+	 *             Reports failure to configure the service to run.
 	 */
-	public TrainNavigationService() throws Exception{
-	    this(DEFAULT_MDU_SERIAL_PORT, DEFAULT_PR3_SERIAL_PORT);
+	public TrainNavigationService() throws Exception {
+		this(DEFAULT_MDU_SERIAL_PORT, DEFAULT_PR3_SERIAL_PORT);
 	}
-	
-	/**
-	 * Constructor
-	 * @param mduSerialPort the serial port to use to contact Motion Detection Units (MDUs)
-	 * @param pr3SerialPort the serial port to use to contact the PR3 LocoNet Computer Interface 
-	 * @throws Exception Reports failure to configure the service to run.
-	 */
-	public TrainNavigationService(String mduSerialPort, String pr3SerialPort) throws Exception{
 
-		this(mduSerialPort, pr3SerialPort, DefaultHost, DefaultDbPort, DefaultDbName, DefaultDbUsername, DefaultDbPassword);
-	}
-	
 	/**
 	 * Constructor
-	 * @param trainMonitor Provides train position information
-	 * @param trainController Controls the train and track
+	 * 
+	 * @param mduSerialPort
+	 *            the serial port to use to contact Motion Detection Units
+	 *            (MDUs)
+	 * @param pr3SerialPort
+	 *            the serial port to use to contact the PR3 LocoNet Computer
+	 *            Interface
+	 * @throws Exception
+	 *             Reports failure to configure the service to run.
 	 */
-	public TrainNavigationService(TrainMonitorInterface trainMonitor, TrackSwitchControllerInterface trainController, PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher){
-		this.trainMonitor = trainMonitor;
+	public TrainNavigationService(String mduSerialPort, String pr3SerialPort) throws Exception {
+
+		this(mduSerialPort, pr3SerialPort, DefaultHost, DefaultDbPort, DefaultDbName, DefaultDbUsername,
+				DefaultDbPassword);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param trainMonitor
+	 *            Provides train position information
+	 * @param trainController
+	 *            Controls the train and track
+	 */
+	public TrainNavigationService(TrainMonitorInterface trainMonitor, TrackSwitchControllerInterface trainController,
+			PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher) {
+
+		
 		this.trainController = trainController;
 		this.eventPublisher = eventPublisher;
 		timer = new Timer();
-	
-		initialize("1", DefaultTrainPosition, trainMonitor, trainController, eventPublisher);
+		
+		//Add the train monitor to the LUT
+		trainMonitorLut.put(trainMonitor.getTrainId(), trainMonitor);
+		
+		// Assuming train is at rest upon initialization
+		trainPositionLut.put(trainMonitor.getTrainId(), trainMonitor.getLastKnownPosition());
+
+		setupTimer();
 	}
-	
+
 	/**
-	 * Constructor 
-	 * @param mduSerialPort the serial port to use to contact Motion Detection Units (MDUs)
-	 * @param pr3SerialPort the serial port to use to contact the PR3 LocoNet Computer Interface
-	 * @param dbUsername Username to use to contact the database
-	 * @param dbPassword Password to use to access the database
-	 * @param dbName Name of the database to access
-	 * @param dbHost Network hostname or address to use to access the database
-	 * @param dbPort Network port to use to access the database
-	 * @throws Exception Fires exception if external dependencies cannot be configured
+	 * Constructor
+	 * 
+	 * @param mduSerialPort
+	 *            the serial port to use to contact Motion Detection Units
+	 *            (MDUs)
+	 * @param pr3SerialPort
+	 *            the serial port to use to contact the PR3 LocoNet Computer
+	 *            Interface
+	 * @param dbUsername
+	 *            Username to use to contact the database
+	 * @param dbPassword
+	 *            Password to use to access the database
+	 * @param dbName
+	 *            Name of the database to access
+	 * @param dbHost
+	 *            Network hostname or address to use to access the database
+	 * @param dbPort
+	 *            Network port to use to access the database
+	 * @throws Exception
+	 *             Fires exception if external dependencies cannot be configured
 	 */
 	public TrainNavigationService(String mduSerialPort, String pr3SerialPort, String dbHost, int dbPort, String dbName,
 			String dbUsername, String dbPassword) throws Exception {
-		String trainId = DefaultTrainId;
-		Coordinate currentPosition = DefaultTrainPosition;
-		EulerAngleRotation currentOrientation = new EulerAngleRotation(0,0,0);
-
 		MduCommunicationChannelInterface mduCommChannel = new SerialPortMduCommunicationChannel(mduSerialPort);
 		MduProtocolParserInterface mduProtocolParser = new MduProtocolParser();
-		MotionDetectionUnitInterface motionDetectionUnit = new MotionDetectionUnit(mduCommChannel, mduProtocolParser);
-		
+		MotionDetectionUnitInterface motionDetectionUnit = new MotionDetectionUnit(mduCommChannel, mduProtocolParser, this);
+
 		TrainNavigationDatabaseInterface trainNavigationDatabase;
 		GenericDatabaseInterface gdi = new MySqlDatabaseAdapter(dbUsername, dbPassword, dbName, dbHost, dbPort);
-		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> trackPointRepository = new TrackPointRepository(gdi);
-		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.AccelerometerMeasurement, AccelerometerMeasurementSearchCriteria> accelerometerMeasurementRepository = new AccelerometerMeasurementRepository(gdi);
-		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.RfidTagDetectedNotification, RfidTagDetectedNotificationSearchCriteria> rfidTagNotificationRepository = new RfidTagDetectedNotificationRepository(gdi);
-		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.GyroscopeMeasurement, GyroscopeMeasurementSearchCriteria> gyroscopeMeasurementRepository = new GyroscopeMeasurementRepository(gdi);
-		FilteredSearchRepositoryInterface<TrainPosition, TrainPositionSearchCriteria> trainPositionRepository = new TrainPositionRepository(gdi);
-		FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> trackSwitchRepository = new TrackSwitchRepository(gdi);
-		
+		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> trackPointRepository = new TrackPointRepository(
+				gdi);
+		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.AccelerometerMeasurement, AccelerometerMeasurementSearchCriteria> accelerometerMeasurementRepository = new AccelerometerMeasurementRepository(
+				gdi);
+		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.RfidTagDetectedNotification, RfidTagDetectedNotificationSearchCriteria> rfidTagNotificationRepository = new RfidTagDetectedNotificationRepository(
+				gdi);
+		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.GyroscopeMeasurement, GyroscopeMeasurementSearchCriteria> gyroscopeMeasurementRepository = new GyroscopeMeasurementRepository(
+				gdi);
+		FilteredSearchRepositoryInterface<TrainPosition, TrainPositionSearchCriteria> trainPositionRepository = new TrainPositionRepository(
+				gdi);
+		FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> trackSwitchRepository = new TrackSwitchRepository(
+				gdi);
+
 		trainNavigationDatabase = new TrainNavigationDatabase(trackPointRepository, accelerometerMeasurementRepository,
-				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository, trackSwitchRepository);
-		
-		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(currentPosition, currentOrientation);
-		
-		TrainMonitorInterface trainMonitor = new TrainMonitor(trainId, positionAlgorithm, motionDetectionUnit, trainNavigationDatabase);
+				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository,
+				trackSwitchRepository);
+
 		TrackSwitchControllerInterface trainController = null;
 		try {
-			trainController = new TrackSwitchController(pr3SerialPort, TrackSwitchController.DefaultPrefix, trainNavigationDatabase);
+			trainController = new TrackSwitchController(pr3SerialPort, TrackSwitchController.DefaultPrefix,
+					trainNavigationDatabase);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		NotifierInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventNotifier = new TrainNavigationServiceEventNotifier();
-		
-		PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher = new GenericPublisher<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> (eventNotifier);
-		
-		this.trainMonitor = trainMonitor;
+
+		PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher = new GenericPublisher<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent>(
+				eventNotifier);
+
 		this.trainController = trainController;
 		this.eventPublisher = eventPublisher;
+		this.motionDetectionUnit = motionDetectionUnit;
+		this.trainNavigationDatabase = trainNavigationDatabase;
 		timer = new Timer();
-		
-		initialize(trainId, currentPosition, trainMonitor, trainController, eventPublisher);
-	}
 
-	/**
-	 * Completes initialization of the class.
-	 * @param trainMonitor Determines train position
-	 * @param trainController Controls switches
-	 * @param eventPublisher Notifiers subscribers of changes within the service or monitored trains 
-	 */
-	private void initialize(String trainId, Coordinate currentPosition, TrainMonitorInterface trainMonitor, TrackSwitchControllerInterface trainController, PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher){
-
-		//Assuming train is at rest upon initialization
-		trainPositionLut.put(trainId, new TrainPositionEstimate(currentPosition, new ThreeDimensionalSpaceVector(0,0,0), Calendar.getInstance(), trainId));
-				
 		setupTimer();
 	}
 	
+	/**
+	 * Method is responsible for creating a new train monitor to track
+	 * position updates for a train.
+	 * @param Object keeping track of train state
+	 * @param 
+	 * @return
+	 */
+	private TrainMonitorInterface CreateTrainMonitor(Train train, TrainNavigationDatabaseInterface trainNavigationDatabase){
+		
+		Coordinate currentPosition = DefaultTrainPosition;
+		EulerAngleRotation currentOrientation = new EulerAngleRotation(0, 0, 0);
+		
+		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(currentPosition,
+				currentOrientation);
 
-	
+		TrainMonitorInterface trainMonitor = new TrainMonitor(train, positionAlgorithm, trainNavigationDatabase);
+		
+		return trainMonitor;
+	}
+
 	/**
 	 * Configures the timer to run for listening to train events
 	 */
-	private void setupTimer(){
+	private void setupTimer() {
 		timer.scheduleAtFixedRate(new TimerTask() {
-			  @Override
-			  public void run() {
-			    
-				  TrainPositionEstimate positionUpdate = trainMonitor.waitForNextPositionUpdate();
-				  TrainPositionUpdatedEvent updatedEvent = new TrainPositionUpdatedEvent(trainMonitor.getTrainId(), positionUpdate);
-				  
-				  trainPositionLut.put(updatedEvent.getTrainIdentifier(), updatedEvent.getPosition());
-				  eventPublisher.PublishEvent(updatedEvent);
-			  }
-			}, 0, POLL_RATE_IN_MS);
+			@Override
+			public void run() {
+
+				for (TrainMonitorInterface trainMonitor : trainMonitorLut.values()) {
+					
+					//Try to read new position updates for each train being monitored
+					TrainPositionEstimate positionUpdate = trainMonitor.tryFetchNextPositionUpdate();
+					if (positionUpdate != null) {
+						TrainPositionUpdatedEvent updatedEvent = new TrainPositionUpdatedEvent(
+								trainMonitor.getTrainId(), positionUpdate);
+
+						trainPositionLut.put(updatedEvent.getTrainIdentifier(), updatedEvent.getPosition());
+						eventPublisher.PublishEvent(updatedEvent);
+					}
+				}
+			}
+		}, 0, POLL_RATE_IN_MS);
 	}
-	
-    /**
-     * Gets the current state of a given switch
-     * @param switchIdentifier Unique identifier for the switch of interest
-     * @return Current state of the switch requested
-     */
-	public SwitchState GetSwitchState(String switchIdentifier){
-		
+
+	/**
+	 * Gets the current state of a given switch
+	 * 
+	 * @param switchIdentifier
+	 *            Unique identifier for the switch of interest
+	 * @return Current state of the switch requested
+	 */
+	public SwitchState GetSwitchState(String switchIdentifier) {
+
 		return trainController.getSwitchState(switchIdentifier);
 	}
-	
+
 	/**
 	 * Changes the state of a given switch
-     * @param switchIdentifier Unique identifier for the switch of interest 
-	 * @param switchState State requested for the switch to change
+	 * 
+	 * @param switchIdentifier
+	 *            Unique identifier for the switch of interest
+	 * @param switchState
+	 *            State requested for the switch to change
 	 */
-	public void SetSwitchState(String switchIdentifier, SwitchState switchState){
-		
-		trainController.ChangeSwitchState(switchIdentifier, switchState); 
+	public void SetSwitchState(String switchIdentifier, SwitchState switchState) {
+
+		trainController.ChangeSwitchState(switchIdentifier, switchState);
 	}
-	
+
 	/**
 	 * Subscribe a client to listen to events from the Train Navigation service.
-	 * @param subscriber Client requested to listen to service events.
+	 * 
+	 * @param subscriber
+	 *            Client requested to listen to service events.
 	 */
-	public void Subscribe(TrainNavigationServiceEventSubscriber subscriber){
+	public void Subscribe(TrainNavigationServiceEventSubscriber subscriber) {
 		eventPublisher.Subscribe(subscriber);
 	}
-	
+
 	/**
 	 * Unsubscribe a client from listening to events
-	 * @param subscriber Client requesting to stop receiving events from the service.
+	 * 
+	 * @param subscriber
+	 *            Client requesting to stop receiving events from the service.
 	 */
-	public void Unsubscribe(TrainNavigationServiceEventSubscriber subscriber){
+	public void Unsubscribe(TrainNavigationServiceEventSubscriber subscriber) {
 		eventPublisher.Unsubscribe(subscriber);
 	}
 
@@ -270,9 +330,19 @@ public class TrainNavigationService implements TrainNavigationServiceInterface {
 	@Override
 	public List<String> GetKnownTrainIdentifiers() {
 		List<String> knownTrainIdentifers = new LinkedList<String>(trainPositionLut.keySet());
-		
+
 		return knownTrainIdentifers;
 	}
 
+	@Override
+	public void TrainAdded(Train train) {
+		//Handles a new train being detected from a MDU channel
+		
+		//Create a new train monitor for track position changes
+		TrainMonitorInterface trainMonitor = CreateTrainMonitor(train, trainNavigationDatabase);
+		
+		//Add train monitor to LUT
+		trainMonitorLut.put(trainMonitor.getTrainId(), trainMonitor);
+	}
 
 }
