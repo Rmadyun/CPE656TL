@@ -1,6 +1,7 @@
 package com.traintrax.navigation.service.position;
 
 import com.traintrax.navigation.service.ValueUpdate;
+import com.traintrax.navigation.service.math.ThreeDimensionalSpaceVector;
 import com.traintrax.navigation.service.math.Triplet;
 import com.traintrax.navigation.service.math.Tuple;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
@@ -105,7 +106,7 @@ public class DiscretePositionCalculator {
 	 * @return Calculated orientation of the train. If it cannot be determined,
 	 *         then null is returned.
 	 */
-	private ValueUpdate<EulerAngleRotation> calculateOrientation(ValueUpdate<Coordinate> initialPosition,
+	public static ValueUpdate<EulerAngleRotation> calculateOrientation(ValueUpdate<Coordinate> initialPosition,
 			ValueUpdate<Coordinate> finalPosition) {
 
 		double dx = finalPosition.getValue().getX() - initialPosition.getValue().getX();
@@ -142,7 +143,7 @@ public class DiscretePositionCalculator {
 	 *            Final orientation of the train when at the final position
 	 * @return An estimate on the velocity of the train.
 	 */
-	private ValueUpdate<Velocity> calculateVelocity(ValueUpdate<Coordinate> initialPosition,
+	public static ValueUpdate<Velocity> calculateVelocity(ValueUpdate<Coordinate> initialPosition,
 			ValueUpdate<Coordinate> finalPosition, EulerAngleRotation finalOrientation) {
 
 		double dx = finalPosition.getValue().getX() - initialPosition.getValue().getX();
@@ -167,6 +168,33 @@ public class DiscretePositionCalculator {
 	 */
 	public ValueUpdate<Triplet<Coordinate, EulerAngleRotation, Velocity>> getLastReliableTrainPositionEstimate() {
 		return lastReliableTrainPositionEstimate;
+	}
+	
+	public static ValueUpdate<Triplet<Coordinate, EulerAngleRotation, Velocity>> analyzePosition(ValueUpdate<Coordinate> initialPosition,
+			ValueUpdate<Coordinate> finalPosition, EulerAngleRotation originalOrientation, ThreeDimensionalSpaceVector lastKnownAngularVelocity) {
+
+		double dx = finalPosition.getValue().getX() - initialPosition.getValue().getX();
+		double dy = finalPosition.getValue().getY() - initialPosition.getValue().getY();
+		double distance = Math.sqrt(dx * dx + dy * dy);
+		double dt = (finalPosition.getTimeObserved().getTimeInMillis()
+				- initialPosition.getTimeObserved().getTimeInMillis()) / 1000.0;
+		
+		//NOTE: This works only because we are assuming (and requiring) that the 
+		//Z-axis is the only thing that's changing otherwise, you would need to do a transform because
+		//your axes are changing as you are rotating.
+		//
+		double angX = lastKnownAngularVelocity.getX()*dt + originalOrientation.getRadiansRotationAlongXAxis();
+		double angY = lastKnownAngularVelocity.getY()*dt + originalOrientation.getRadiansRotationAlongYAxis();
+		double angZ = lastKnownAngularVelocity.getZ()*dt + originalOrientation.getRadiansRotationAlongZAxis();
+		EulerAngleRotation finalOrientation = new EulerAngleRotation(angX, angY, angZ);
+
+		double dVx = (distance / dt) * Math.cos(finalOrientation.getRadiansRotationAlongZAxis());
+		double dVy = (distance / dt) * Math.sin(finalOrientation.getRadiansRotationAlongZAxis());
+
+		ValueUpdate<Velocity> velocityUpdate = new ValueUpdate<Velocity>(new Velocity(dVx, dVy, 0),
+				finalPosition.getTimeObserved());
+
+		return new ValueUpdate<Triplet<Coordinate, EulerAngleRotation, Velocity>>(new Triplet<Coordinate, EulerAngleRotation, Velocity>(finalPosition.getValue(), finalOrientation, velocityUpdate.getValue()), finalPosition.getTimeObserved());
 	}
 	
 }

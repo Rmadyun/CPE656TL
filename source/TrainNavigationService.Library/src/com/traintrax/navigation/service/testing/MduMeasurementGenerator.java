@@ -190,8 +190,8 @@ public class MduMeasurementGenerator {
 	 * @return New test case to use for verifying position estimation when traveling in a straight line.
 	 */
 	public static PositionTestCase generateCircle(double orientation, Coordinate initialPosition, double initialSpeedInMetersPerSecond, double accelerationInMetersPerSecondSquared, int numberOfSeconds, Calendar startTime, int numberOfMeasurementsBetweenRfidTagNotifications, double accKineticFrictionOffset, double angularSpeedInRadiansPerSecond){
-		PositionTestCase straightLineTestCase = new PositionTestCase("Straight Line Test Case", initialPosition, new EulerAngleRotation(0,0,orientation));
-		List<PositionTestSample> samples = straightLineTestCase.getSamples();
+		PositionTestCase circleTestCase = new PositionTestCase("Circle Test Case", initialPosition, new EulerAngleRotation(0,0,orientation));
+		List<PositionTestSample> samples = circleTestCase.getSamples();
 		
 		Calendar timeMeasured = (Calendar) startTime.clone();
 		
@@ -236,13 +236,17 @@ public class MduMeasurementGenerator {
 			
 			//Calculate the expected position at the end of this period
 	    	speedX = accX*dt + speedX;
-	    	currentX = (speedX*1)*UnitConversionUtilities.MetersToInches + currentX;
+	    	currentX = (speedX*dt) + currentX;
 	    	speedY = accY*dt + speedY;
-	    	currentY = (speedY*1)*UnitConversionUtilities.MetersToInches + currentY;
+	    	currentY = (speedY*dt) + currentY;
 	    	
 	    	//Calculated the expected orientation at the end of this period
-	    	orientation = angularSpeedInRadiansPerSecond*dt;
+	    	orientation = angularSpeedInRadiansPerSecond*dt + orientation;
 	    	speed = accelerationInMetersPerSecondSquared*dt + speed;
+	    	
+	    	if(orientation > Math.PI){
+	    		orientation -= (2*Math.PI);
+	    	}
 	    	
 			ValueUpdate<Coordinate> rfidTagPosition = null;
 			ValueUpdate<Coordinate> expectedPosition = new ValueUpdate<Coordinate>(new Coordinate(currentX, currentY, 0), timeMeasured);
@@ -275,7 +279,7 @@ public class MduMeasurementGenerator {
 	    }
 	    
 		
-		return straightLineTestCase;
+		return circleTestCase;
 	}
 
 }

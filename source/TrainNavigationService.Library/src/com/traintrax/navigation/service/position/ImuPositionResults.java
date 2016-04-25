@@ -1,6 +1,7 @@
 package com.traintrax.navigation.service.position;
 
 import com.traintrax.navigation.service.ValueUpdate;
+import com.traintrax.navigation.service.math.ThreeDimensionalSpaceVector;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 
 /**
@@ -15,6 +16,7 @@ public class ImuPositionResults {
 	private ValueUpdate<Velocity> lastKnownTrainVelocity;
 	private ValueUpdate<EulerAngleRotation> lastKnownTrainOrientation;
 	private ValueUpdate<Acceleration> lastKnownTrainAcceleration;
+	private ValueUpdate<ThreeDimensionalSpaceVector> lastAngularVelocity;
 
 	/**
 	 * @return the lastKnownTrainPosition
@@ -79,5 +81,23 @@ public class ImuPositionResults {
 	public void setLastKnownTrainAcceleration(ValueUpdate<Acceleration> lastKnownTrainAcceleration) {
 		this.lastKnownTrainAcceleration = lastKnownTrainAcceleration;
 	}
+
+	/**
+	 * Retrieves the last angular velocity reported
+	 * @return the last angular velocity reported 
+	 */
+	public ValueUpdate<ThreeDimensionalSpaceVector> getLastAngularVelocity() {
+		return lastAngularVelocity;
+	}
+
+	/**
+	 * Assigns the last angular velocity reported
+	 * @param lastAngularVelocity the last angular velocity reported
+	 */
+	public void setLastAngularVelocity(ValueUpdate<ThreeDimensionalSpaceVector> lastAngularVelocity) {
+		this.lastAngularVelocity = lastAngularVelocity;
+	}
+	
+	
 }
 
