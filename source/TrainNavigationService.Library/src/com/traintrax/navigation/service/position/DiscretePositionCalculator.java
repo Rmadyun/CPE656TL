@@ -197,4 +197,14 @@ public class DiscretePositionCalculator {
 		return new ValueUpdate<Triplet<Coordinate, EulerAngleRotation, Velocity>>(new Triplet<Coordinate, EulerAngleRotation, Velocity>(finalPosition.getValue(), finalOrientation, velocityUpdate.getValue()), finalPosition.getTimeObserved());
 	}
 	
+	public static double calculateSpeed(ValueUpdate<Velocity> velocity) {
+
+		double x = velocity.getValue().getMetersPerSecondAlongXAxis();
+		double y = velocity.getValue().getMetersPerSecondAlongYAxis();
+		double z = velocity.getValue().getMetersPerSecondAlongZAxis();
+		double speed = Math.sqrt(x * x + y * y + z*z);
+		
+		return speed;
+	}
+	
 }
