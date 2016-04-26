@@ -36,27 +36,35 @@ int _tmain(int argc, _TCHAR* argv[])
 					switch (incomingData[2])
 					{
 					case 3:								//IMU message recived
-						break;
+						{
+							printf("IMU Message\n");
+							printf("%i\n", readResult);
+							break;
+						}
 					case 4:								//RFID message recived
 						break;
 					case 5:								//RTT_REQ message recived
 						{
+							//printf("RTT_REQ message");
 							char idResp[] = {source, BASE_ID, 6, '\n'};
 							SP->WriteData(idResp, 4);
 							break;
 						}
 					case 7:								//ID message recived
 						{
+							//printf("ID message");
 							char idResp[] = {source, BASE_ID, 10, '\n'};
 							SP->WriteData(idResp, 4);
 							break;
 						}
 					case 8:								//TIME message recived
 						{
+							//printf("time message");
 							time_t timer;
 
 							
-							printf("time message");
+							char timeResp[8] = {source, BASE_ID, 9, 3,4,5,6, '\n'};
+							SP->WriteData(timeResp, 8);
 							break;
 						}
 					default:
@@ -74,7 +82,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				
 				
 
-		Sleep(100);
+		Sleep(10);
 	}
 	return 0;
 }

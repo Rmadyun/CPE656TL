@@ -2,7 +2,6 @@
 #define MEASUREMENTRELAY_H
 
 
-#include "imuDriver.h"
 #include "config.h"
 
 
@@ -10,13 +9,10 @@ class measurementRelay
 {
   unsigned long timeOfDay;
   unsigned long millisOffset;
-  imuDriver MDU;
 
   public:
     void init();
-    void forwardIMU();
     void listenForMeasurements();
-    void linkIMU(imuDriver * imu);
   private:
     void baseLink();
     unsigned long measureRTT();
@@ -37,14 +33,6 @@ void measurementRelay::init()
   unsigned long cRTT = measureRTT();  //Callculate RTT to base computer
 
   timeLink(cRTT);                     //Query time of day from base computer
-}
-
-
-
-
-void measurementRelay::forwardIMU()
-{
-  
 }
 
 
@@ -150,7 +138,7 @@ void measurementRelay::listenForMeasurements()
   msg[1] = TRAIN_ID;
   msg[2] = IMU;
 
-  /*tme = timeOfDay + (millis() - millisOffset);
+  tme = timeOfDay + (millis() - millisOffset);
   msg[3] = 0x03; //(int)((tme >> 24) & 0xFF) ;
   msg[4] = 0x04; //(int)((tme >> 16) & 0xFF) ;
   msg[5] = 0x05; //(int)((tme >> 8) & 0XFF);
@@ -172,16 +160,8 @@ void measurementRelay::listenForMeasurements()
   msg[17] = Wire.read(); msg[18] = Wire.read();   //GyZ
   msg[19] = '\n';
 
-  Serial.write(msg, 20);*/
-}
-
-
-
-
-
-void measurementRelay::linkIMU(imuDriver * imu)
-{
-  
+  Serial.print(Serial.write(msg, 20));
+  //Serial.write(msg, 20);
 }
 
 
