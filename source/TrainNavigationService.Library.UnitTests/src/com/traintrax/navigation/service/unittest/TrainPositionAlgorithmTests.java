@@ -28,12 +28,13 @@ import com.traintrax.navigation.service.position.Velocity;
 import com.traintrax.navigation.service.rotation.*;
 import com.traintrax.navigation.service.testing.MduMeasurementGenerator;
 import com.traintrax.navigation.service.testing.PositionTestCase;
+import com.traintrax.navigation.service.testing.PositionTestCaseFileReader;
 import com.traintrax.navigation.service.testing.PositionTestSample;
 
 import junit.framework.Assert;
 
 public class TrainPositionAlgorithmTests {
-	
+
 	private static final String DefaultTrainId = "2A";
 
 	/**
@@ -57,18 +58,21 @@ public class TrainPositionAlgorithmTests {
 		// movement
 		// Measurements
 		System.out.printf("Generated acc time: %d\n", currentTime.getTimeInMillis());
-		accelerometerMeasurements.add(new AccelerometerMeasurement(DefaultTrainId, new Acceleration(0, 0, 0), 0, currentTime));
+		accelerometerMeasurements
+				.add(new AccelerometerMeasurement(DefaultTrainId, new Acceleration(0, 0, 0), 0, currentTime));
 
 		currentTime = (Calendar) currentTime.clone();
 		currentTime.add(Calendar.SECOND, 1);
 		System.out.printf("Generated acc time: %d\n", currentTime.getTimeInMillis());
-		accelerometerMeasurements.add(new AccelerometerMeasurement(DefaultTrainId, new Acceleration(1, 0, 0), 1, currentTime));
+		accelerometerMeasurements
+				.add(new AccelerometerMeasurement(DefaultTrainId, new Acceleration(1, 0, 0), 1, currentTime));
 
 		for (int i = 0; i < numberOfSeconds - 2; i++) {
 			currentTime = (Calendar) currentTime.clone();
 			currentTime.add(Calendar.SECOND, 1);
 			System.out.printf("Generated acc time: %d\n", currentTime.getTimeInMillis());
-			accelerometerMeasurements.add(new AccelerometerMeasurement(DefaultTrainId, new Acceleration(0, 0, 0), 1, currentTime));
+			accelerometerMeasurements
+					.add(new AccelerometerMeasurement(DefaultTrainId, new Acceleration(0, 0, 0), 1, currentTime));
 		}
 
 		return accelerometerMeasurements;
@@ -96,8 +100,8 @@ public class TrainPositionAlgorithmTests {
 
 		for (int i = 0; i < numberOfSeconds; i++) {
 
-			GyroscopeMeasurement measurement = new GyroscopeMeasurement(DefaultTrainId, xAngleChangePerSample, yAngleChangePerSample,
-					zAngleChangePerSample, 1, timeMeasured);
+			GyroscopeMeasurement measurement = new GyroscopeMeasurement(DefaultTrainId, xAngleChangePerSample,
+					yAngleChangePerSample, zAngleChangePerSample, 1, timeMeasured);
 
 			System.out.printf("Generated gyr time: %d\n", timeMeasured.getTimeInMillis());
 			timeMeasured = (Calendar) timeMeasured.clone();
@@ -108,40 +112,41 @@ public class TrainPositionAlgorithmTests {
 		return measurements;
 	}
 
-	/*@Test
-	public void testCalculatePositionWithStraightLineAlongTestBedCoordinateFrameX() {
-		
-		 * double tolerance = 0.05; EulerAngleRotation initialOrientation = new
-		 * EulerAngleRotation(0, 0, 0); Coordinate initialPosition = new
-		 * Coordinate(0, 0, 0); // Assuming starting from origin.
-		 * InertialMotionPositionAlgorithmInterface uut = new
-		 * TrainPosition2DAlgorithm(initialPosition, initialOrientation);
-		 * Calendar startTime = Calendar.getInstance(); int numberOfSeconds =
-		 * 10; List<AccelerometerMeasurement> accelerometerMeasurements =
-		 * generateAccelerometerMeasurements(startTime, numberOfSeconds);
-		 * List<GyroscopeMeasurement> gyroscopeMeasurements =
-		 * generateGyroscopeMeasurements(new EulerAngleRotation(0,0,0),
-		 * numberOfSeconds, startTime);
-		 * 
-		 * ValueUpdate<Coordinate> currentPosition =
-		 * uut.calculatePosition(gyroscopeMeasurements,
-		 * accelerometerMeasurements, null); Calendar finalTime = (Calendar)
-		 * startTime.clone(); finalTime.add(Calendar.SECOND, numberOfSeconds-1);
-		 * 
-		 * //TODO: The list after adjusting the orientation of the acceleration
-		 * vectors needs to be sorted in order //for this to be correct.
-		 * //http://stackoverflow.com/questions/16252269/how-to-sort-a-list-
-		 * arraylist-in-java
-		 * 
-		 * 
-		 * assertEquals(currentPosition.getTimeObserved().getTimeInMillis(),
-		 * finalTime.getTimeInMillis(), tolerance);
-		 * assertEquals(currentPosition.getValue().getX(), 9, tolerance);
-		 * assertEquals(currentPosition.getValue().getY(), 0, tolerance);
-		 * assertEquals(currentPosition.getValue().getZ(), 0, tolerance);
-		 
-	}
-*/
+	/*
+	 * @Test public void
+	 * testCalculatePositionWithStraightLineAlongTestBedCoordinateFrameX() {
+	 * 
+	 * double tolerance = 0.05; EulerAngleRotation initialOrientation = new
+	 * EulerAngleRotation(0, 0, 0); Coordinate initialPosition = new
+	 * Coordinate(0, 0, 0); // Assuming starting from origin.
+	 * InertialMotionPositionAlgorithmInterface uut = new
+	 * TrainPosition2DAlgorithm(initialPosition, initialOrientation); Calendar
+	 * startTime = Calendar.getInstance(); int numberOfSeconds = 10;
+	 * List<AccelerometerMeasurement> accelerometerMeasurements =
+	 * generateAccelerometerMeasurements(startTime, numberOfSeconds);
+	 * List<GyroscopeMeasurement> gyroscopeMeasurements =
+	 * generateGyroscopeMeasurements(new EulerAngleRotation(0,0,0),
+	 * numberOfSeconds, startTime);
+	 * 
+	 * ValueUpdate<Coordinate> currentPosition =
+	 * uut.calculatePosition(gyroscopeMeasurements, accelerometerMeasurements,
+	 * null); Calendar finalTime = (Calendar) startTime.clone();
+	 * finalTime.add(Calendar.SECOND, numberOfSeconds-1);
+	 * 
+	 * //TODO: The list after adjusting the orientation of the acceleration
+	 * vectors needs to be sorted in order //for this to be correct.
+	 * //http://stackoverflow.com/questions/16252269/how-to-sort-a-list-
+	 * arraylist-in-java
+	 * 
+	 * 
+	 * assertEquals(currentPosition.getTimeObserved().getTimeInMillis(),
+	 * finalTime.getTimeInMillis(), tolerance);
+	 * assertEquals(currentPosition.getValue().getX(), 9, tolerance);
+	 * assertEquals(currentPosition.getValue().getY(), 0, tolerance);
+	 * assertEquals(currentPosition.getValue().getZ(), 0, tolerance);
+	 * 
+	 * }
+	 */
 	private PositionTestCase generateTestCaseForStraightLineAt45DegreeAngle() {
 		Coordinate currentPosition = new Coordinate(0, 0, 0);
 		EulerAngleRotation currentOrientation = new EulerAngleRotation(0, 0, Math.PI / 4);
@@ -233,17 +238,23 @@ public class TrainPositionAlgorithmTests {
 		return straightLineWithInitialAccTestCase;
 	}
 
-	
 	@Test
 	public void testCalculatePositionWithStraightLineAt45DegreeAngle() {
 		PositionTestCase testCase = generateTestCaseForStraightLineAt45DegreeAngle();
 
 		TestPositionAlgorithm(testCase);
 	}
-	
+
 	@Test
 	public void testCalculatePositionWithCircle() {
 		PositionTestCase testCase = generateTestCaseForCircleAtOneRadianPerSecond();
+
+		TestPositionAlgorithm(testCase);
+	}
+
+	@Test
+	public void testCalculatePositionWithActualData() {
+		PositionTestCase testCase = PositionTestCaseFileReader.Read("C:\\TrainTrax\\CPE656TL-master\\test\\TrainSample.csv");
 
 		TestPositionAlgorithm(testCase);
 	}
@@ -259,6 +270,19 @@ public class TrainPositionAlgorithmTests {
 		List<ValueUpdate<Tuple<GyroscopeMeasurement, AccelerometerMeasurement>>> imuReadings;
 		List<ValueUpdate<Coordinate>> positionReadings;
 		List<ValueUpdate<Coordinate>> finalPositions = new LinkedList<ValueUpdate<Coordinate>>();
+
+		String positionFile = "C:\\TrainTrax\\CPE656TL-master\\test\\position.csv";
+		
+		FileWriter fileWriter = null;
+		BufferedWriter bw = null;
+		try {
+			fileWriter = new FileWriter(positionFile);
+			bw = new BufferedWriter(fileWriter);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		 
 
 		// Calculate Position
 		// NOTE: Ball Parked an initial position based on the 02-17-16 data.
@@ -290,38 +314,71 @@ public class TrainPositionAlgorithmTests {
 				positionUpdates.add(positionUpdate);
 			}
 
-			ValueUpdate<Tuple<Coordinate,Velocity>> actualPositionUpdate = positionAlgorithm.calculatePosition(gyroscopeMeasurements,
-					accelerometerMeasurements, positionUpdates);
+			ValueUpdate<Tuple<Coordinate, Velocity>> actualPositionUpdate = positionAlgorithm
+					.calculatePosition(gyroscopeMeasurements, accelerometerMeasurements, positionUpdates);
 
-			if (actualPositionUpdate.getValue().getItem1().getX() > 0 || actualPositionUpdate.getValue().getItem1().getY() > 0) {
+			if (expectedPositionUpdate != null) {
 
-				System.out.println(String.format("Expected position of train %s: (%f, %f) at %s", "1",
-						expectedPositionUpdate.getValue().getX(), expectedPositionUpdate.getValue().getY(),
-						expectedPositionUpdate.getTimeObserved().getTime()));
+				if (actualPositionUpdate.getValue().getItem1().getX() > 0
+						|| actualPositionUpdate.getValue().getItem1().getY() > 0) {
 
-				System.out.println(String.format("Actual position of train %s: (%f, %f) at %s", "1",
-						actualPositionUpdate.getValue().getItem1().getX(), actualPositionUpdate.getValue().getItem1().getY(),
-						actualPositionUpdate.getTimeObserved().getTime()));
+					System.out.println(String.format("Expected position of train %s: (%f, %f) at %s", "1",
+							expectedPositionUpdate.getValue().getX(), expectedPositionUpdate.getValue().getY(),
+							expectedPositionUpdate.getTimeObserved().getTime()));
+
+					System.out.println(String.format("Actual position of train %s: (%f, %f) at %s", "1",
+							actualPositionUpdate.getValue().getItem1().getX(),
+							actualPositionUpdate.getValue().getItem1().getY(),
+							actualPositionUpdate.getTimeObserved().getTime()));
+
+				}
+
+				// TODO: Figure why position estimates fail after first RFID tag
+				// encountered.
+
+				assertEquals(actualPositionUpdate.getTimeObserved().getTimeInMillis(),
+						expectedPositionUpdate.getTimeObserved().getTimeInMillis(), tolerance);
+
+				// Assert.assertTrue(Math.abs(actualPositionUpdate.getTimeObserved().getTimeInMillis()
+				// - expectedPositionUpdate.getTimeObserved().getTimeInMillis())
+				// < 1000);
+				assertEquals(actualPositionUpdate.getValue().getItem1().getX(),
+						expectedPositionUpdate.getValue().getX(), tolerance);
+
+				assertEquals(actualPositionUpdate.getValue().getItem1().getY(),
+						expectedPositionUpdate.getValue().getY(), tolerance);
+
+				assertEquals(actualPositionUpdate.getValue().getItem1().getZ(),
+						expectedPositionUpdate.getValue().getZ(), tolerance);
 
 			}
-			
-			//TODO: Figure why position estimates fail after first RFID tag encountered.
-			
-			 assertEquals(actualPositionUpdate.getTimeObserved().
-			 getTimeInMillis(),
-			 expectedPositionUpdate.getTimeObserved().getTimeInMillis(),
-			 tolerance);
-			 
-			 //Assert.assertTrue(Math.abs(actualPositionUpdate.getTimeObserved().getTimeInMillis() - expectedPositionUpdate.getTimeObserved().getTimeInMillis()) < 1000);
-			 assertEquals(actualPositionUpdate.getValue().getItem1().getX(),
-			 expectedPositionUpdate.getValue().getX(), tolerance);
-			 
-			 assertEquals(actualPositionUpdate.getValue().getItem1().getY(),
-			 expectedPositionUpdate.getValue().getY(), tolerance);
-			 
-			 assertEquals(actualPositionUpdate.getValue().getItem1().getZ(),
-			 expectedPositionUpdate.getValue().getZ(), tolerance);
-			 
+
+			try {
+
+				// Write position to CSV
+
+				Coordinate positionInInches = UnitConversionUtilities
+						.convertFromMetersToInches(actualPositionUpdate.getValue().getItem1());
+				String row = String.format("%f, %f, %f, %f\n",
+						actualPositionUpdate.getTimeObserved().getTimeInMillis() / 1000.0, positionInInches.getX(),
+						positionInInches.getY(), positionInInches.getZ());
+				bw.write(row);
+
+				bw.flush();
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} // end for
+
+		try {
+			bw.close();
+			fileWriter.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

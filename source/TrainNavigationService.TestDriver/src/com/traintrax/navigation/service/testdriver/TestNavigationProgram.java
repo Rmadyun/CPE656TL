@@ -58,6 +58,7 @@ import com.traintrax.navigation.service.position.Velocity;
 import com.traintrax.navigation.service.rotation.*;
 import com.traintrax.navigation.service.testing.MduMeasurementGenerator;
 import com.traintrax.navigation.service.testing.PositionTestCase;
+import com.traintrax.navigation.service.testing.PositionTestCaseFileReader;
 import com.traintrax.navigation.service.testing.PositionTestSample;
 import com.traintrax.navigation.trackswitch.SwitchState;
 

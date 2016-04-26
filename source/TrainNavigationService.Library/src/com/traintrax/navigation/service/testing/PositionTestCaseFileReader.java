@@ -1,4 +1,4 @@
-package com.traintrax.navigation.service.testdriver;
+package com.traintrax.navigation.service.testing;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,8 +18,6 @@ import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.GyroscopeMeasurement;
 import com.traintrax.navigation.service.position.RfidTagDetectedNotification;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
-import com.traintrax.navigation.service.testing.PositionTestCase;
-import com.traintrax.navigation.service.testing.PositionTestSample;
 
 /**
  * Class is responsible for importing test cases from
