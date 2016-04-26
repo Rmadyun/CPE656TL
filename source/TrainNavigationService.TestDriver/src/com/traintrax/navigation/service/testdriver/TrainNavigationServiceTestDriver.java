@@ -1,6 +1,5 @@
 package com.traintrax.navigation.service.testdriver;
 
-import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
