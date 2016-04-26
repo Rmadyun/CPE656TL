@@ -1,0 +1,4 @@
+Description,Initial Position X (inches from origin),Initial Position Y (inches from origin),Initial Position Z (inches from origin),Initial Orientation X(roll: rad from pointing along positive X axis/rotating along X),Initial Orientation Y(pitch: rad from pointing along positive X axis/rotating along Y),Initial Orientation Z(yaw: rad from pointing along positive X axis/rotating along Z),Initial Speed (m/s),,,,
+Template Sample,0,0,0,0,0,0,0,,,,
+Acc X (m/s^2),Acc Y (m/s^2),Acc Z (m/s^2),Gyr X (rad/s),Gyr Y (m/s^2),Gyr Z (m/s^2),Detected RFID Tag ID,Timestamp - From Start (s),Delta Time (s),Expected Position X (inches),Expected Position Y (inches),Expected Position Z (inches)
+0,0,0,0,0,0,,0,0,0,0,0

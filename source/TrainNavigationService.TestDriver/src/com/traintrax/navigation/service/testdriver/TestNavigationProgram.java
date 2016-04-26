@@ -655,7 +655,11 @@ public class TestNavigationProgram {
 		// TestJmri();
 		// TestPositionAlgorithm();
 
-		TestMduMeasurementRead();
+		//TestMduMeasurementRead();
+		
+		PositionTestCase testCase = PositionTestCaseFileReader.Read("C:\\TrainTrax\\CPE656TL-master\\prototypes\\TestNavigation\\PositionTestCaseTemplate.csv");
+		
+		System.out.println(testCase.getDescription());
 
 	}
 
