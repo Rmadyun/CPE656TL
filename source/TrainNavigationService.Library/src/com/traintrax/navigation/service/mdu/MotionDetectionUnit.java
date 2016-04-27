@@ -36,7 +36,7 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 	private final Lock lock = new ReentrantLock();
 	private final Condition notEmpty = lock.newCondition();
 	private final MduProtocolParserInterface mduProtocolParser;
-	private final MduCallbackInterface mduCallback;
+	private MduCallbackInterface mduCallback;
 
 	// MDU Protocol fields
 	private static final byte ImuReading = 0x03;
@@ -601,5 +601,16 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 	public Collection<Train> getAssociatedTrains() {
 		return this.trainIdToTrainLut.values();
 	}
+
+	/**
+	 * Assigns the callback used to notify the rest of the navigation service
+	 * about internal changes in the MDU
+	 * @param mduCallback Interface to use to send notifications about MDU internal changes
+	 */
+	public void setMduCallback(MduCallbackInterface mduCallback) {
+		this.mduCallback = mduCallback;
+	}
+	
+	
 
 }

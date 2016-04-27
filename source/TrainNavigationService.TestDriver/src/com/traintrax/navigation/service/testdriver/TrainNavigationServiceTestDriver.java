@@ -4,6 +4,7 @@ package com.traintrax.navigation.service.testdriver;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,12 +21,39 @@ import com.traintrax.navigation.service.testing.PositionTestCase;
 import com.traintrax.navigation.service.testing.PositionTestCaseFileReader;
 import com.traintrax.navigation.service.testing.PositionTestSample;
 
+import gnu.io.CommPortIdentifier;
+
 /**
  * Class responsible for invoking tests that require human interaction
  * @author Death
  *
  */
 public class TrainNavigationServiceTestDriver {
+	
+	
+	/**
+	 * Entry point for the Test Driver Program
+	 * @param args Command line arguments
+	 */
+	public static void main(String[] args) {
+
+		MainMenu();
+
+		try {
+			System.in.read();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private static void MainMenu(){
+		System.out.println("Main Menu");
+		System.out.println("1. Controls Switches");
+		System.out.println("2. Verify Shape of Train Path");
+		
+	}
+	
 	
 	private static void VerifyShape(String filename){
 		
@@ -58,7 +86,7 @@ public class TrainNavigationServiceTestDriver {
 		// Calculate Position
 		// NOTE: Ball Parked an initial position based on the 02-17-16 data.
 		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(
-				positionTestCase.getInitialPosition(), positionTestCase.getInitialOrientation());
+				positionTestCase.getInitialPosition(), positionTestCase.getInitialOrientation(), positionTestCase.getInitialVelocity());
 
 		for (PositionTestSample sample : positionTestCase.getSamples()) {
 

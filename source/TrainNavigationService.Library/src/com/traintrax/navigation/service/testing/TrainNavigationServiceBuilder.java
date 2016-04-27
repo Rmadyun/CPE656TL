@@ -38,6 +38,7 @@ import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.InertialMotionPositionAlgorithmInterface;
 import com.traintrax.navigation.service.position.Train;
 import com.traintrax.navigation.service.position.TrainPosition2DAlgorithm;
+import com.traintrax.navigation.service.position.Velocity;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 
 /**
@@ -64,7 +65,6 @@ public class TrainNavigationServiceBuilder {
 
 	private PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher;
 	private TrackSwitchControllerInterface trackSwitchController;
-	private TrainMonitorInterface trainMonitor;
 	private MotionDetectionUnitInterface motionDetectionUnitInterface;
 	private String trainId;
 	private InertialMotionPositionAlgorithmInterface positionAlgorithm;
@@ -77,6 +77,7 @@ public class TrainNavigationServiceBuilder {
 		String trainId = "1";
 		Coordinate currentPosition = new Coordinate(0, 0, 0);
 		EulerAngleRotation currentOrientation = new EulerAngleRotation(0, 0, Math.PI / 4);
+		Velocity currentVelocity = new Velocity(0, 0, 0);
 		
 		SimulatedMotionDetectionUnit motionDetectionUnit = new SimulatedMotionDetectionUnit();
 
@@ -99,7 +100,7 @@ public class TrainNavigationServiceBuilder {
 				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository, trackSwitchRepository);
 
 		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(currentPosition,
-				currentOrientation);
+				currentOrientation, currentVelocity);
 
 		Train train = null;
 		
@@ -123,7 +124,6 @@ public class TrainNavigationServiceBuilder {
 		this.motionDetectionUnitInterface = motionDetectionUnit;
 		this.eventPublisher = eventPublisher;
 		this.trackSwitchController = trackSwitchController;
-		this.trainMonitor = trainMonitor;
 	}
 	
 	/**
@@ -144,30 +144,11 @@ public class TrainNavigationServiceBuilder {
 	}
 
 	/**
-	 * Assigns the train monitor to use for creating the service
-	 * @param trainMonitor Tracks trains on the test bed
-	 */
-	public void setTrainMonitor(TrainMonitorInterface trainMonitor) {
-		this.trainMonitor = trainMonitor;
-	}
-
-	/**
 	 * Assigns the motion detection unit to use for configuring the service
 	 * @param motionDetectionUnitInterface Contact to remote equipment mounted on trains in the test bed.
 	 */
 	public void setMotionDetectionUnitInterface(MotionDetectionUnitInterface motionDetectionUnitInterface) {
 		this.motionDetectionUnitInterface = motionDetectionUnitInterface;
-		Train train = null;
-		
-		for(Train t : motionDetectionUnitInterface.getAssociatedTrains()){
-			train = t;
-			break;
-		}
-		
-		if(train != null){
-		    trainMonitor = new TrainMonitor(train, positionAlgorithm,
-			    	trainNavigationDatabase);
-		}
 	}
 	
 	/**
@@ -176,17 +157,6 @@ public class TrainNavigationServiceBuilder {
 	 */
 	public void setPositionAlgorithm(InertialMotionPositionAlgorithmInterface positionAlgorithm) {
 		this.positionAlgorithm = positionAlgorithm;
-		Train train = null;
-				
-		for(Train t : motionDetectionUnitInterface.getAssociatedTrains()){
-			train = t;
-			break;
-		}
-		
-		if(train != null){
-		    trainMonitor = new TrainMonitor(train, positionAlgorithm,
-			    	trainNavigationDatabase);
-		}
 	}
 	
 	/**
@@ -194,8 +164,8 @@ public class TrainNavigationServiceBuilder {
 	 * @return a new Train Navigation Service instance
 	 */
 	public TrainNavigationServiceInterface build(){
-		TrainNavigationServiceInterface trainNavigationService = new TrainNavigationService(trainMonitor,
-				trackSwitchController, eventPublisher);
+		TrainNavigationServiceInterface trainNavigationService = new TrainNavigationService(motionDetectionUnitInterface,
+				trackSwitchController, trainNavigationDatabase, eventPublisher, positionAlgorithm);
 		
 		return trainNavigationService;
 	}

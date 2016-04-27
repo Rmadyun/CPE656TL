@@ -12,11 +12,15 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 import com.traintrax.navigation.service.ValueUpdate;
+import com.traintrax.navigation.service.math.Matrix;
+import com.traintrax.navigation.service.math.ThreeDimensionalSpaceVector;
+import com.traintrax.navigation.service.mdu.RotationUtilities;
 import com.traintrax.navigation.service.position.Acceleration;
 import com.traintrax.navigation.service.position.AccelerometerMeasurement;
 import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.GyroscopeMeasurement;
 import com.traintrax.navigation.service.position.RfidTagDetectedNotification;
+import com.traintrax.navigation.service.position.Velocity;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 
 /**
@@ -110,7 +114,13 @@ public class PositionTestCaseFileReader {
 				}
 			}
 			
-			testCase = new PositionTestCase(description, initialPosition, initialOrientation, samples);
+			//NOTE: This should work for 3-D Transforms. If this fails, default to 2D logic: x=speed*cos(initialOrientation.getRadiansRotationAlongZAxis()); y=speed*sin(initialOrientation.getRadiansRotationAlongZAxis());
+			Matrix rotationMatrix = RotationUtilities.createRotationMatrix(initialOrientation);
+			Velocity vectorRepresentationOfSpeed = new Velocity(speed,0,0);
+			ThreeDimensionalSpaceVector velocity3DVector = RotationUtilities.changeToInertialFrame(Velocity.ToThreeDimensionalSpaceVector(vectorRepresentationOfSpeed), rotationMatrix);
+			Velocity initialVelocity = new Velocity(velocity3DVector);
+			
+			testCase = new PositionTestCase(description, initialPosition, initialOrientation, initialVelocity, samples);
 			
 	
 		} catch (Exception e) {

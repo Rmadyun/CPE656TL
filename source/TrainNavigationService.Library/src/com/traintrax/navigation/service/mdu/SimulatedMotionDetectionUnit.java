@@ -217,4 +217,14 @@ public class SimulatedMotionDetectionUnit implements MotionDetectionUnitInterfac
 		return trainList;
 	}
 
+	@Override
+	public void setMduCallback(MduCallbackInterface mduCallback) {
+	    
+		//TODO: Improve support to use the MDU callback
+		
+		//Go ahead and make the callback call to make sure  that it gets triggered.
+		mduCallback.TrainAdded(train);
+		
+	}
+
 }

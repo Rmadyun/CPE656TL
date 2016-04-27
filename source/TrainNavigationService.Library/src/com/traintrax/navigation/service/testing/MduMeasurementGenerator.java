@@ -103,8 +103,6 @@ public class MduMeasurementGenerator {
 	 * @return New test case to use for verifying position estimation when traveling in a straight line.
 	 */
 	public static PositionTestCase generateStraightLine(double orientation, Coordinate initialPosition, double initialSpeedInMetersPerSecond, double accelerationInMetersPerSecondSquared, int numberOfSeconds, Calendar startTime, int numberOfMeasurementsBetweenRfidTagNotifications, double accKineticFrictionOffset){
-		PositionTestCase straightLineTestCase = new PositionTestCase("Straight Line Test Case", initialPosition, new EulerAngleRotation(0,0,orientation));
-		List<PositionTestSample> samples = straightLineTestCase.getSamples();
 		
 		Calendar timeMeasured = (Calendar) startTime.clone();
 		
@@ -127,6 +125,8 @@ public class MduMeasurementGenerator {
 		double accX = accelerationInMetersPerSecondSquared*Math.cos(orientation);
 		double accY = accelerationInMetersPerSecondSquared*Math.sin(orientation);
 		double dt = 1;
+		PositionTestCase straightLineTestCase = new PositionTestCase("Straight Line Test Case", initialPosition, new EulerAngleRotation(0,0,orientation), new Velocity(speedX, speedY, 0));
+		List<PositionTestSample> samples = straightLineTestCase.getSamples();
 		
 	    for(int i = 0; i < numberOfSeconds; i++){
 	    	PositionTestSample positionTestSample = new PositionTestSample();
@@ -189,10 +189,7 @@ public class MduMeasurementGenerator {
 	 * @param angularSpeedInRadiansPerSecond The rate of rotation of the object along the z-axis in radians per second. 
 	 * @return New test case to use for verifying position estimation when traveling in a straight line.
 	 */
-	public static PositionTestCase generateCircle(double orientation, Coordinate initialPosition, double initialSpeedInMetersPerSecond, double accelerationInMetersPerSecondSquared, int numberOfSeconds, Calendar startTime, int numberOfMeasurementsBetweenRfidTagNotifications, double accKineticFrictionOffset, double angularSpeedInRadiansPerSecond){
-		PositionTestCase circleTestCase = new PositionTestCase("Circle Test Case", initialPosition, new EulerAngleRotation(0,0,orientation));
-		List<PositionTestSample> samples = circleTestCase.getSamples();
-		
+	public static PositionTestCase generateCircle(double orientation, Coordinate initialPosition, double initialSpeedInMetersPerSecond, double accelerationInMetersPerSecondSquared, int numberOfSeconds, Calendar startTime, int numberOfMeasurementsBetweenRfidTagNotifications, double accKineticFrictionOffset, double angularSpeedInRadiansPerSecond){		
 		Calendar timeMeasured = (Calendar) startTime.clone();
 		
 		EulerAngleRotation eulerAngleRotation = new EulerAngleRotation(0,0,orientation);
@@ -215,6 +212,8 @@ public class MduMeasurementGenerator {
 		double accX = accelerationInMetersPerSecondSquared*Math.cos(orientation);
 		double accY = accelerationInMetersPerSecondSquared*Math.sin(orientation);
 		double dt = 1;
+		PositionTestCase circleTestCase = new PositionTestCase("Circle Test Case", initialPosition, new EulerAngleRotation(0,0,orientation), new Velocity(speedX, speedY, 0));
+		List<PositionTestSample> samples = circleTestCase.getSamples();
 		
 	    for(int i = 0; i < numberOfSeconds; i++){
 	    	PositionTestSample positionTestSample = new PositionTestSample();

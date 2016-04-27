@@ -60,18 +60,19 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 	 * Constructor NOTE: Assuming that the train is a rest at initialization.
 	 * 
 	 * @param initialTrainPosition
-	 *            Initial location of the train
+	 *            Initial location of the train (distance of each axes from the origin; measured in meters)
 	 * @param initialTrainOrientation
 	 *            Degree of rotation necessary to align the current Motion
 	 *            Detection Unit body coordinate frame axes with the test bed
-	 *            coordinate frame axes.
+	 *            coordinate frame axes. (measured in radians)
+	 * @param initialTrainVelocity Initial rate of movement of the train along each axes (measured in meters per second)
 	 */
-	public TrainPosition2DAlgorithm(Coordinate initialTrainPosition, EulerAngleRotation initialTrainOrientation) {
+	public TrainPosition2DAlgorithm(Coordinate initialTrainPosition, EulerAngleRotation initialTrainOrientation, Velocity initialVelocity) {
 
 		Calendar currentTime = Calendar.getInstance();
 		lastKnownTrainPosition = new ValueUpdate<Coordinate>(initialTrainPosition, currentTime);
 		lastKnownTrainOrientation = new ValueUpdate<EulerAngleRotation>(initialTrainOrientation, currentTime);
-		lastKnownTrainVelocity = new ValueUpdate<Velocity>(new Velocity(0, 0, 0), currentTime);
+		lastKnownTrainVelocity = new ValueUpdate<Velocity>(initialVelocity, currentTime);
 		lastKnownTrainAcceleration = new ValueUpdate<Acceleration>(new Acceleration(0, 0, 0), currentTime);
 		lastKnownAngularVelocity = new ValueUpdate<ThreeDimensionalSpaceVector>(
 				new ThreeDimensionalSpaceVector(0, 0, 0), currentTime);

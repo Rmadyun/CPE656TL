@@ -150,6 +150,7 @@ public class TrainPositionAlgorithmTests {
 	private PositionTestCase generateTestCaseForStraightLineAt45DegreeAngle() {
 		Coordinate currentPosition = new Coordinate(0, 0, 0);
 		EulerAngleRotation currentOrientation = new EulerAngleRotation(0, 0, Math.PI / 4);
+		Velocity currentVelocity = new Velocity(0, 0, 0);
 
 		// Generates a test case where the train moves in a diagonal line and
 		// accelerates for 1 second,
@@ -183,7 +184,7 @@ public class TrainPositionAlgorithmTests {
 				numSamplesBeforeTagEvent, kineticFrictionOffset);
 
 		PositionTestCase straightLineWithInitialAccTestCase = new PositionTestCase(
-				"Train straightline with initial acceleration", currentPosition, currentOrientation);
+				"Train straightline with initial acceleration", currentPosition, currentOrientation, currentVelocity);
 
 		straightLineWithInitialAccTestCase.appendTestCase(calibrationTestCase);
 		straightLineWithInitialAccTestCase.appendTestCase(startupTestCase);
@@ -195,6 +196,7 @@ public class TrainPositionAlgorithmTests {
 	private PositionTestCase generateTestCaseForCircleAtOneRadianPerSecond() {
 		Coordinate currentPosition = new Coordinate(0, 0, 0);
 		EulerAngleRotation currentOrientation = new EulerAngleRotation(0, 0, Math.PI / 4);
+		Velocity currentVelocity = new Velocity(0, 0, 0);
 
 		// Generates a test case where the train moves in a diagonal line and
 		// accelerates for 1 second,
@@ -228,14 +230,14 @@ public class TrainPositionAlgorithmTests {
 				initialSpeedInMetersPerSecond, accelerationInMetersPerSecondSquared, numberOfSeconds, startTime,
 				numSamplesBeforeTagEvent, kineticFrictionOffset, angularSpeedInRadiansPerSecond);
 
-		PositionTestCase straightLineWithInitialAccTestCase = new PositionTestCase(
-				"Train straightline with initial acceleration", currentPosition, currentOrientation);
+		PositionTestCase circleAtOneRadianPerSecondTestCase = new PositionTestCase(
+				"Train straightline with initial acceleration", currentPosition, currentOrientation, currentVelocity);
 
-		straightLineWithInitialAccTestCase.appendTestCase(calibrationTestCase);
-		straightLineWithInitialAccTestCase.appendTestCase(startupTestCase);
-		straightLineWithInitialAccTestCase.appendTestCase(testCase);
+		circleAtOneRadianPerSecondTestCase.appendTestCase(calibrationTestCase);
+		circleAtOneRadianPerSecondTestCase.appendTestCase(startupTestCase);
+		circleAtOneRadianPerSecondTestCase.appendTestCase(testCase);
 
-		return straightLineWithInitialAccTestCase;
+		return circleAtOneRadianPerSecondTestCase;
 	}
 
 	@Test
@@ -287,7 +289,7 @@ public class TrainPositionAlgorithmTests {
 		// Calculate Position
 		// NOTE: Ball Parked an initial position based on the 02-17-16 data.
 		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(
-				positionTestCase.getInitialPosition(), positionTestCase.getInitialOrientation());
+				positionTestCase.getInitialPosition(), positionTestCase.getInitialOrientation(), positionTestCase.getInitialVelocity());
 
 		for (PositionTestSample sample : positionTestCase.getSamples()) {
 

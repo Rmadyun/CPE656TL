@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.traintrax.navigation.service.position.Coordinate;
+import com.traintrax.navigation.service.position.Velocity;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 
 /**
@@ -18,6 +19,7 @@ public class PositionTestCase {
 	private List<PositionTestSample> samples;
 	private Coordinate initialPosition;
 	private EulerAngleRotation initialOrientation;
+	private Velocity initialVelocity;
 	
 	
 	/**
@@ -26,9 +28,10 @@ public class PositionTestCase {
 	 * the samples were collected
 	 * @param initialPosition initial position of the object of interest
 	 * @param initialOrientation initial orientation of the object of interest
+	 * @param initialVelocity the initial rate of movement of the object of interest
 	 */
-	public PositionTestCase(String description, Coordinate initialPosition, EulerAngleRotation initialOrientation) {
-		this(description, initialPosition, initialOrientation, new LinkedList<PositionTestSample>());
+	public PositionTestCase(String description, Coordinate initialPosition, EulerAngleRotation initialOrientation, Velocity initialVelocity) {
+		this(description, initialPosition, initialOrientation, initialVelocity, new LinkedList<PositionTestSample>());
 	}
 	
 	
@@ -36,16 +39,18 @@ public class PositionTestCase {
 	 * Constructor
 	 * @param description Human readable description of the test scenario where
 	 * the samples were collected
-	 * @param samples Collection of points sampled during the test case scenario
 	 * @param initialPosition initial position of the object of interest
 	 * @param initialOrientation initial orientation of the object of interest
+	 * @param initialVelocity the initial rate of movement of the object of interest
+	 * @param samples Collection of points sampled during the test case scenario 
 	 */
-	public PositionTestCase(String description, Coordinate initialPosition, EulerAngleRotation initialOrientation, List<PositionTestSample> samples) {
+	public PositionTestCase(String description, Coordinate initialPosition, EulerAngleRotation initialOrientation, Velocity initialVelocity, List<PositionTestSample> samples) {
 		super();
 		this.description = description;
-		this.samples = samples;
-		this.initialOrientation = initialOrientation;
 		this.initialPosition = initialPosition;
+		this.initialOrientation = initialOrientation;
+		this.initialVelocity = initialVelocity;
+		this.samples = samples;
 	}
 
 	/**
@@ -111,7 +116,25 @@ public class PositionTestCase {
 	{
 		samples.addAll(samples.size(), testCase.samples);
 	}
-	
+
+
+	/**
+	 * Retrieves the initial rate of movement of the object of interest
+	 * @return the initial rate of movement of the object of interest
+	 */
+	public Velocity getInitialVelocity() {
+
+		return initialVelocity;
+	}
+
+
+	/**
+	 * Assigns the initial rate of movement of the object of interest
+	 * @param initialVelocity the initial rate of movement of the object of interest
+	 */
+	public void setInitialVelocity(Velocity initialVelocity) {
+		this.initialVelocity = initialVelocity;
+	}
 	
 	
 }

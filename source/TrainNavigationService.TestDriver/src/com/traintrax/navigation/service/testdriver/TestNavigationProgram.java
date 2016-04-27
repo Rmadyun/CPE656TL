@@ -120,6 +120,7 @@ public class TestNavigationProgram {
 		String trainId = "1";
 		Coordinate currentPosition = new Coordinate(0, 0, 0);
 		EulerAngleRotation currentOrientation = new EulerAngleRotation(0, 0, Math.PI / 4);
+		Velocity currentVelocity = new Velocity(0, 0, 0);
 
 		/*
 		 * MduCommunicationChannelInterface mduCommunicationChannel = new
@@ -156,7 +157,7 @@ public class TestNavigationProgram {
 				.generateStraightLine(currentOrientation.getRadiansRotationAlongZAxis(), lastStartupSample.getExpectedPosition().getValue(), initialSpeedInMetersPerSecond,
 						accelerationInMetersPerSecondSquared, numberOfSeconds, startTime, numSamplesBeforeTagEvent, kineticFrictionOffset);
 		
-		PositionTestCase straightLineWithInitialAccTestCase = new PositionTestCase("Train straightline with initial acceleration", currentPosition, currentOrientation);
+		PositionTestCase straightLineWithInitialAccTestCase = new PositionTestCase("Train straightline with initial acceleration", currentPosition, currentOrientation, currentVelocity);
 		
 		//straightLineWithInitialAccTestCase.appendTestCase(calibrationTestCase);
 		straightLineWithInitialAccTestCase.appendTestCase(startupTestCase);
@@ -183,16 +184,8 @@ public class TestNavigationProgram {
 				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository, trackSwitchRepository);
 
 		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(currentPosition,
-				currentOrientation);
+				currentOrientation, currentVelocity);
 		
-		Train train = null;
-		
-		for(Train t : motionDetectionUnit.getAssociatedTrains()){
-			train = t;
-			break;
-		}
-
-		TrainMonitorInterface trainMonitor = new TrainMonitor(train, positionAlgorithm, trainNavigationDatabase);
 		TrackSwitchControllerInterface trainController = null;
 
 		trainController = new TestTrackSwitchController();
@@ -202,8 +195,8 @@ public class TestNavigationProgram {
 		PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher = new GenericPublisher<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent>(
 				eventNotifier);
 
-		TrainNavigationServiceInterface trainNavigationService = new TrainNavigationService(trainMonitor,
-				trainController, eventPublisher);
+		TrainNavigationServiceInterface trainNavigationService = new TrainNavigationService(motionDetectionUnit,
+				trainController, trainNavigationDatabase, eventPublisher, positionAlgorithm);
 
 		// ReadTrainPositionsFromTrainNavigationService(trainNavigationService);
 
@@ -553,7 +546,7 @@ public class TestNavigationProgram {
 		// NOTE: Ball Parked an initial position based on the 02-17-16 data.
 		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(
 				new Coordinate(42.5 * inchesToMeters, 61.1875 * inchesToMeters, 0),
-				new EulerAngleRotation(0, 0, -Math.PI));
+				new EulerAngleRotation(0, 0, -Math.PI), new Velocity(0,0,0));
 
 		try {
 			FileWriter fileWriter = new FileWriter("/home/death/debug_log.txt");

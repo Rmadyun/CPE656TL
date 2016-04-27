@@ -41,4 +41,11 @@ public interface MotionDetectionUnitInterface {
 	 * @return Collected RFID tag detection notifications
 	 */
 	List<RfidTagDetectedNotification> readCollectedRfidTagDetectionNotifications();
+	
+	/**
+	 * Assigns the callback used to notify the rest of the navigation service
+	 * about internal changes in the MDU
+	 * @param mduCallback Interface to use to send notifications about MDU internal changes
+	 */
+	void setMduCallback(MduCallbackInterface mduCallback);
 }

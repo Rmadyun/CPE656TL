@@ -44,6 +44,7 @@ import com.traintrax.navigation.service.position.InertialMotionPositionAlgorithm
 import com.traintrax.navigation.service.position.Train;
 import com.traintrax.navigation.service.position.TrainPosition2DAlgorithm;
 import com.traintrax.navigation.service.position.TrainPositionEstimate;
+import com.traintrax.navigation.service.position.Velocity;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 import com.traintrax.navigation.trackswitch.SwitchState;
 
@@ -60,14 +61,15 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	 * meters
 	 */
 	private static final Coordinate DefaultTrainPosition = new Coordinate(0, 0, 0);
-	private final Timer timer;
-	private final TrackSwitchControllerInterface trainController;
-	private final PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher;
+	private Timer timer;
+	private TrackSwitchControllerInterface trackSwitchController;
+	private PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher;
 	private static final int POLL_RATE_IN_MS = 50;
 	private final Map<String, TrainPositionEstimate> trainPositionLut = new HashMap<>();
 	private final Map<String, TrainMonitorInterface> trainMonitorLut = new ConcurrentHashMap<>();
 	private TrainNavigationDatabaseInterface trainNavigationDatabase;
 	private MotionDetectionUnitInterface motionDetectionUnit;
+	private InertialMotionPositionAlgorithmInterface positionAlgorithm;
 
 	/**
 	 * Default train identifier to use if none are specified.
@@ -141,31 +143,6 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	/**
 	 * Constructor
 	 * 
-	 * @param trainMonitor
-	 *            Provides train position information
-	 * @param trainController
-	 *            Controls the train and track
-	 */
-	public TrainNavigationService(TrainMonitorInterface trainMonitor, TrackSwitchControllerInterface trainController,
-			PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher) {
-
-		
-		this.trainController = trainController;
-		this.eventPublisher = eventPublisher;
-		timer = new Timer();
-		
-		//Add the train monitor to the LUT
-		trainMonitorLut.put(trainMonitor.getTrainId(), trainMonitor);
-		
-		// Assuming train is at rest upon initialization
-		trainPositionLut.put(trainMonitor.getTrainId(), trainMonitor.getLastKnownPosition());
-
-		setupTimer();
-	}
-
-	/**
-	 * Constructor
-	 * 
 	 * @param mduSerialPort
 	 *            the serial port to use to contact Motion Detection Units
 	 *            (MDUs)
@@ -210,9 +187,9 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository,
 				trackSwitchRepository);
 
-		TrackSwitchControllerInterface trainController = null;
+		TrackSwitchControllerInterface trackSwitchController = null;
 		try {
-			trainController = new TrackSwitchController(pr3SerialPort, TrackSwitchController.DefaultPrefix,
+			trackSwitchController = new TrackSwitchController(pr3SerialPort, TrackSwitchController.DefaultPrefix,
 					trainNavigationDatabase);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -223,13 +200,59 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 
 		PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher = new GenericPublisher<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent>(
 				eventNotifier);
+		
+		
+		//Default position estimation algorithm
+		Coordinate currentPosition = DefaultTrainPosition;
+		EulerAngleRotation currentOrientation = new EulerAngleRotation(0, 0, 0);
+		Velocity currentVelocity = new Velocity(0,0,0);
 
-		this.trainController = trainController;
-		this.eventPublisher = eventPublisher;
+		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(currentPosition,
+				currentOrientation, currentVelocity);
+
+
+		Initialize(motionDetectionUnit, trackSwitchController, trainNavigationDatabase, eventPublisher, positionAlgorithm );
+	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param motionDetectionUnit Contacts MDU. Provides train position information
+	 * @param trackSwitchController
+	 *            Controls the train and track
+	 * @param trainNavigationDatabase Contacts the Train Navigation Database. Provides Track Geometry information. Saves measurements and estimates.
+	 * @param eventPublisher Notifies clients about Train Navigation Service changes
+	 * @param trainPositionAlgorithm Estimates train movement
+	 */
+	public TrainNavigationService(MotionDetectionUnitInterface motionDetectionUnit, TrackSwitchControllerInterface trackSwitchController, TrainNavigationDatabaseInterface trainNavigationDatabase,
+			PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher, InertialMotionPositionAlgorithmInterface trainPositionAlgorithm) {
+
+		Initialize(motionDetectionUnit, trackSwitchController, trainNavigationDatabase, eventPublisher, trainPositionAlgorithm );
+	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param motionDetectionUnit Contacts MDU. Provides train position information
+	 * @param trackSwitchController
+	 *            Controls the train and track
+	 * @param trainNavigationDatabase Contacts the Train Navigation Database. Provides Track Geometry information. Saves measurements and estimates.
+	 * @param eventPublisher Notifies clients about Train Navigation Service changes
+     * @param trainPositionAlgorithm Estimates train movement 
+	 */
+	public void Initialize(MotionDetectionUnitInterface motionDetectionUnit, TrackSwitchControllerInterface trackSwitchController, TrainNavigationDatabaseInterface trainNavigationDatabase,
+			PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher, InertialMotionPositionAlgorithmInterface trainPositionAlgorithm) {
+
+		
 		this.motionDetectionUnit = motionDetectionUnit;
+		this.trackSwitchController = trackSwitchController;
+		this.eventPublisher = eventPublisher;
 		this.trainNavigationDatabase = trainNavigationDatabase;
-		timer = new Timer();
-
+		this.positionAlgorithm = trainPositionAlgorithm;
+		this.timer = new Timer();
+		
+		//Assign the callback to here to know about detected trains
+		this.motionDetectionUnit.setMduCallback(this);
 		setupTimer();
 	}
 	
@@ -242,12 +265,6 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	 */
 	private TrainMonitorInterface CreateTrainMonitor(Train train, TrainNavigationDatabaseInterface trainNavigationDatabase){
 		
-		Coordinate currentPosition = DefaultTrainPosition;
-		EulerAngleRotation currentOrientation = new EulerAngleRotation(0, 0, 0);
-		
-		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(currentPosition,
-				currentOrientation);
-
 		TrainMonitorInterface trainMonitor = new TrainMonitor(train, positionAlgorithm, trainNavigationDatabase);
 		
 		return trainMonitor;
@@ -286,7 +303,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	 */
 	public SwitchState GetSwitchState(String switchIdentifier) {
 
-		return trainController.getSwitchState(switchIdentifier);
+		return trackSwitchController.getSwitchState(switchIdentifier);
 	}
 
 	/**
@@ -299,7 +316,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	 */
 	public void SetSwitchState(String switchIdentifier, SwitchState switchState) {
 
-		trainController.ChangeSwitchState(switchIdentifier, switchState);
+		trackSwitchController.ChangeSwitchState(switchIdentifier, switchState);
 	}
 
 	/**
