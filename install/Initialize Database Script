@@ -1,7 +1,7 @@
 #Script to initialize the TrainTrax Database
 #11/27/15
 
-CREATE DATABASE TrainTrax;
+CREATE DATABASE IF NOT EXISTS TrainTrax;
 USE TrainTrax;
 
 CREATE TABLE IF NOT EXISTS Raw_Accelerometer (
