@@ -66,7 +66,6 @@ public class TrainNavigationServiceBuilder {
 	private PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher;
 	private TrackSwitchControllerInterface trackSwitchController;
 	private MotionDetectionUnitInterface motionDetectionUnitInterface;
-	private String trainId;
 	private InertialMotionPositionAlgorithmInterface positionAlgorithm;
 	private TrainNavigationDatabaseInterface trainNavigationDatabase;
 
@@ -83,6 +82,7 @@ public class TrainNavigationServiceBuilder {
 
 		TrainNavigationDatabaseInterface trainNavigationDatabase;
 		GenericDatabaseInterface gdi = new MySqlDatabaseAdapter();
+		gdi.connect();
 		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> trackPointRepository = new TrackPointRepository(
 				gdi);
 		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.AccelerometerMeasurement, AccelerometerMeasurementSearchCriteria> accelerometerMeasurementRepository = new AccelerometerMeasurementRepository(
@@ -102,13 +102,6 @@ public class TrainNavigationServiceBuilder {
 		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(currentPosition,
 				currentOrientation, currentVelocity);
 
-		Train train = null;
-		
-		for(Train t : motionDetectionUnit.getAssociatedTrains()){
-			train = t;
-			break;
-		}
-		TrainMonitorInterface trainMonitor = new TrainMonitor(train, positionAlgorithm, trainNavigationDatabase);
 		TrackSwitchControllerInterface trackSwitchController = null;
 
 		trackSwitchController = new TestTrackSwitchController();
@@ -118,7 +111,6 @@ public class TrainNavigationServiceBuilder {
 		PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher = new GenericPublisher<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent>(
 				eventNotifier);
 
-		this.trainId = trainId;
 		this.positionAlgorithm = positionAlgorithm;
 		this.trainNavigationDatabase = trainNavigationDatabase;
 		this.motionDetectionUnitInterface = motionDetectionUnit;
@@ -159,6 +151,24 @@ public class TrainNavigationServiceBuilder {
 		this.positionAlgorithm = positionAlgorithm;
 	}
 	
+	
+	/**
+	 * Retrieves the current Train Navigation Database assigned to the service.
+	 * @return Contact to save measurements and retrieve track geometry information
+	 */
+	public TrainNavigationDatabaseInterface getTrainNavigationDatabase() {
+		return trainNavigationDatabase;
+	}
+	
+	
+    /**
+     * Assigns the Train Navigation Database to use with the service.
+     * @param trainNavigationDatabase Contact to save measurements and retrieve track geometry information
+     */
+	public void setTrainNavigationDatabase(TrainNavigationDatabaseInterface trainNavigationDatabase) {
+		this.trainNavigationDatabase = trainNavigationDatabase;
+	}
+
 	/**
 	 * Creates a new Train Navigation Service instance
 	 * @return a new Train Navigation Service instance
