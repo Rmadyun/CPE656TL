@@ -66,7 +66,7 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	 *            which LocoNet subnet that should be associated with the Port
 	 *            controller
 	 * @param trainNavigationDatabase
-	 *            Contract to the train Navigation Database
+	 *            Contract to the train Navigation Database. Specify null if not used.
 	 * @throws Exception
 	 *             Reports any type of failure involved with connecting to the
 	 *             controller
@@ -103,7 +103,10 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 		// Set all switches into pass.
 		for (TrackSwitch trackSwitch : switches) {
 
-			ChangeSwitchState(trackSwitch.getSwitchName(), SwitchState.Pass);
+			if(trackSwitch != null)
+			{
+			    ChangeSwitchState(trackSwitch.getSwitchName(), SwitchState.Pass);
+			}
 		}
 	}
 
