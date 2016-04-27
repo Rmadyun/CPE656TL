@@ -76,15 +76,14 @@ public class TrainNavigationServiceTestDriver {
 				}
 				choice = Integer.parseInt(inputString);
 			} while ((choice < 1) || (choice > 2)); // input check
-			
-			if(choice == 1)
-			{
+
+			if (choice == 1) {
 				ControlSwitchMenu(systemConsoleReader);
-			}
-			else if(choice == 2)
-			{
+			} else if (choice == 2) {
 				VerifyShapeMenu(systemConsoleReader);
 			}
+			
+			System.out.println("Existing Test Driver...");
 		}
 	}
 
@@ -101,17 +100,15 @@ public class TrainNavigationServiceTestDriver {
 			filename = systemConsoleReader.readLine();
 		} catch (IOException e) {
 
-			System.out.println("Unable to listen for input: "+e.getMessage());
+			System.out.println("Unable to listen for input: " + e.getMessage());
 		}
-		
-		if(filename.isEmpty())
-		{
+
+		if (filename.isEmpty()) {
 			System.out.println("File name is empty cannot verify shape.");
+		} else {
+			VerifyShape(filename);
 		}
-		else {
-		    VerifyShape(filename);
-		}
-		
+
 	}
 
 	/**
@@ -128,46 +125,54 @@ public class TrainNavigationServiceTestDriver {
 			pr3Port = systemConsoleReader.readLine();
 		} catch (IOException e) {
 
-			System.out.println("Unable to listen for input: "+e.getMessage());
+			System.out.println("Unable to listen for input: " + e.getMessage());
 		}
-		
-		if(pr3Port.isEmpty())
-		{
+
+		if (pr3Port.isEmpty()) {
 			System.out.println("COM Port entered is empty cannot verify switch control.");
 			return;
 		}
-		
+
 		System.out.print("Please the Switch Address that you want to control: ");
-		
+
 		try {
 			switchNumber = systemConsoleReader.readLine();
 		} catch (IOException e) {
 
-			System.out.println("Unable to listen for input: "+e.getMessage());
+			System.out.println("Unable to listen for input: " + e.getMessage());
 		}
-		
-		if(switchNumber.isEmpty())
-		{
+
+		if (switchNumber.isEmpty()) {
 			System.out.println("COM Port entered is empty cannot verify switch control.");
 			return;
 		}
 
-	    ControlSwitch(systemConsoleReader, pr3Port, switchNumber);
+		ControlSwitch(systemConsoleReader, pr3Port, switchNumber);
 	}
-	
-	private static void ControlSwitch(BufferedReader systemConsoleReader, String pr3Port, String switchNumber)
-	{
-		TrackSwitchController trackSwitchController = new TrackSwitchController(pr3Port, TrackSwitchController.DefaultPrefix, null);
-		
+
+	private static void ControlSwitch(BufferedReader systemConsoleReader, String pr3Port, String switchNumber) {
+		TrackSwitchController trackSwitchController = null;
+
+		try {
+			trackSwitchController = new TrackSwitchController(pr3Port, TrackSwitchController.DefaultPrefix, null);
+		} catch (Exception exception) {
+			System.out.println("Unable to create track switch controller for " + pr3Port);
+		}
+
 		trackSwitchController.ChangeSwitchState(switchNumber, SwitchState.Pass);
+		System.out.println("Changed Switch "+switchNumber+" into Pass state");
+		System.out.println("Press ENTER to continue");
 		try {
 			systemConsoleReader.readLine();
 		} catch (IOException e) {
 
-			System.out.println("Unable to listen for input: "+e.getMessage());
+			System.out.println("Unable to listen for input: " + e.getMessage());
 		}
-		
+
 		trackSwitchController.ChangeSwitchState(switchNumber, SwitchState.ByPass);
+		System.out.println("Changed Switch "+switchNumber+" into Bypass state");
+		
+		trackSwitchController.dispose();
 	}
 
 	private static void VerifyShape(String filename) {
@@ -243,8 +248,8 @@ public class TrainNavigationServiceTestDriver {
 				bw.write(row);
 
 				bw.flush();
-				
-				System.out.println("Path of train movement has been processed and output to:"+positionFile);
+
+				System.out.println("Path of train movement has been processed and output to:" + positionFile);
 
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

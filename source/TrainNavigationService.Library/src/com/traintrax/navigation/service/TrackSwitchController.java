@@ -1,19 +1,14 @@
 package com.traintrax.navigation.service;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.traintrax.navigation.database.library.TrackSwitch;
-import com.traintrax.navigation.service.mdu.SerialPortMduCommunicationChannel;
 import com.traintrax.navigation.trackswitch.SwitchState;
 
-import gnu.io.CommPortIdentifier;
 import jmri.jmrix.loconet.LnConstants;
-import jmri.jmrix.loconet.LnPacketizer;
 import jmri.jmrix.loconet.LnPortController;
-import jmri.jmrix.loconet.LnTurnout;
 import jmri.jmrix.loconet.LocoNetInterface;
 import jmri.jmrix.loconet.LocoNetMessage;
 import jmri.jmrix.loconet.pr3.PR3Adapter;
@@ -34,6 +29,9 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	private final String prefix;
 
 	private TrainNavigationDatabaseInterface trainNavigationDatabase;
+
+	private final LnPortController serialPortAdapter;
+	private final LocoNetInterface locoNetInterface;
 
 	// NOTE: Verified that Test Bed is configured to use the Default Prefix.
 	// Also verified that JMRI works with Windows.
@@ -72,11 +70,13 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	 *             controller
 	 */
 	public TrackSwitchController(String serialPort, String prefix,
-			TrainNavigationDatabaseInterface trainNavigationDatabaseInterface) {
+			TrainNavigationDatabaseInterface trainNavigationDatabaseInterface) throws Exception {
 
 		this.serialPort = serialPort;
 		this.prefix = prefix;
 		this.trainNavigationDatabase = trainNavigationDatabaseInterface;
+		this.serialPortAdapter = CreateLnPortController();
+		this.locoNetInterface = CreateLocoNetInterface(serialPortAdapter);
 
 		// Initialize switches
 		// Note a better check for null may be necessary if the DB is used
@@ -290,15 +290,7 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 		// Calculate the checksum and assign it to the message.
 		msg.setParity();
 
-		// Created LocoNet Interface to use for the switch control
-		// NOTE: Be sure to dispose.
-		// instance is created instead of shared so that the port may
-		// be shared with other programs, such as JMRI.
-		LocoNetInterface locoNetInterface = null;
-		LnPortController lnPortController = null;
 		try {
-			lnPortController = CreateLnPortController();
-			locoNetInterface = CreateLocoNetInterface(lnPortController);
 			locoNetInterface.sendLocoNetMessage(msg);
 
 			switchStateLut.put(switchIdentifier, switchState);
@@ -306,11 +298,6 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 			System.out.println(
 					"Cannot change switch to: " + switchState.toString() + ". Error: " + e.getMessage() + e.toString());
 			e.printStackTrace();
-		}
-
-		// Cleanup the LocoNetInterface
-		if (lnPortController != null) {
-			lnPortController.dispose();
 		}
 	}
 
@@ -324,6 +311,13 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 	public SwitchState getSwitchState(String switchIdentifier) {
 
 		return switchStateLut.get(switchIdentifier);
+	}
+	
+	/**
+	 * Terminate class so that it can no longer be used and resources can be cleanedup.
+	 */
+	public void dispose(){
+		this.serialPortAdapter.dispose();
 	}
 
 }
