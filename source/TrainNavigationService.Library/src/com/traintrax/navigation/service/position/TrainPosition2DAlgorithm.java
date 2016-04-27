@@ -354,7 +354,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 
 				lastImuPositionResults = imuPositionResults;
 
-				if (lastKnownTrainOrientation.getValue().getRadiansRotationAlongZAxis() == 5) {
+				if (lastKnownTrainOrientation.getValue().getRadiansRotationAlongZAxis() == 1) {
 
 					System.out.println("Weird Value Found!");
 				}
@@ -370,7 +370,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 					lastKnownTrainOrientation = rfidTagPositionResults.getLastKnownTrainOrientation();
 					lastKnownTrainVelocity = rfidTagPositionResults.getLastKnownTrainVelocity();
 
-					if (lastKnownTrainOrientation.getValue().getRadiansRotationAlongZAxis() == 5) {
+					if (lastKnownTrainOrientation.getValue().getRadiansRotationAlongZAxis() == 1) {
 
 						System.out.println("Weird Value Found!");
 					}
@@ -409,7 +409,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 				System.out.println("IMU Measurements available");
 			}
 
-			if (lastKnownTrainOrientation.getValue().getRadiansRotationAlongZAxis() == 4) {
+			if (lastKnownTrainOrientation.getValue().getRadiansRotationAlongZAxis() == 1) {
 
 				System.out.println("Weird Value Found!");
 			}

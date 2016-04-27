@@ -195,7 +195,7 @@ public class TrainPositionAlgorithmTests {
 
 	private PositionTestCase generateTestCaseForCircleAtOneRadianPerSecond() {
 		Coordinate currentPosition = new Coordinate(0, 0, 0);
-		EulerAngleRotation currentOrientation = new EulerAngleRotation(0, 0, Math.PI / 4);
+		EulerAngleRotation currentOrientation = new EulerAngleRotation(0, 0, 0);
 		Velocity currentVelocity = new Velocity(0, 0, 0);
 
 		// Generates a test case where the train moves in a diagonal line and
@@ -335,15 +335,9 @@ public class TrainPositionAlgorithmTests {
 
 				}
 
-				// TODO: Figure why position estimates fail after first RFID tag
-				// encountered.
-
 				assertEquals(actualPositionUpdate.getTimeObserved().getTimeInMillis(),
 						expectedPositionUpdate.getTimeObserved().getTimeInMillis(), tolerance);
 
-				// Assert.assertTrue(Math.abs(actualPositionUpdate.getTimeObserved().getTimeInMillis()
-				// - expectedPositionUpdate.getTimeObserved().getTimeInMillis())
-				// < 1000);
 				assertEquals(actualPositionUpdate.getValue().getItem1().getX(),
 						expectedPositionUpdate.getValue().getX(), tolerance);
 
