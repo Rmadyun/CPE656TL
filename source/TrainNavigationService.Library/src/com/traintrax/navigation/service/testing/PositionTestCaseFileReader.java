@@ -20,6 +20,7 @@ import com.traintrax.navigation.service.position.AccelerometerMeasurement;
 import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.GyroscopeMeasurement;
 import com.traintrax.navigation.service.position.RfidTagDetectedNotification;
+import com.traintrax.navigation.service.position.UnitConversionUtilities;
 import com.traintrax.navigation.service.position.Velocity;
 import com.traintrax.navigation.service.rotation.EulerAngleRotation;
 
@@ -65,6 +66,9 @@ public class PositionTestCaseFileReader {
 	 */
 	public static PositionTestCase Read(String filename){
 		PositionTestCase testCase = null;
+		
+		boolean setImu = true;
+		boolean setRfid = true;
 
 		//Describes how many rows at the beginning of the file
 		//consisst of the test case header
@@ -94,6 +98,8 @@ public class PositionTestCaseFileReader {
 			
 			initialPosition = new Coordinate(initialPositionX, initialPositionY, initialPositionZ);
 			
+			initialPosition = UnitConversionUtilities.convertFromInchesToMeters(initialPosition);
+			
 			double initialOrientationX = Double.parseDouble(headerContent.get(InitialOrientationXColumnIndex));
 			double initialOrientationY = Double.parseDouble(headerContent.get(InitialOrientationYColumnIndex));
 			double initialOrientationZ = Double.parseDouble(headerContent.get(InitialOrientationZColumnIndex));
@@ -107,7 +113,7 @@ public class PositionTestCaseFileReader {
 			for(int i = TestSampleRowOffset; i < records.size(); i++){
 				CSVRecord record = records.get(i);
 				
-				PositionTestSample testSample = ReadSample(record);
+				PositionTestSample testSample = ReadSample(record, setImu, setRfid);
 				if(testSample != null)
 				{
 					samples.add(testSample);
@@ -135,19 +141,15 @@ public class PositionTestCaseFileReader {
 	/**
 	 * Method does the work of decoding a single test sample
 	 * @param record Record to decode
+	 * @setImu Assign true for IMU measurements to be included as samples; otherwise they will not be used
+	 * @setRfid Assign true for RFID position updates to be included as samples; otherwise they will not be used 
 	 * @return Decoded test sample.
 	 */
-	private static PositionTestSample ReadSample(CSVRecord record){
+	private static PositionTestSample ReadSample(CSVRecord record, boolean setImu, boolean setRfid){
 		
 		final String DefaultTrainId = "1";
+		PositionTestSample sample = new PositionTestSample();
 		
-		double accX = Double.parseDouble(record.get(AccXColumnIndex));
-		double accY = Double.parseDouble(record.get(AccYColumnIndex));
-		double accZ = Double.parseDouble(record.get(AccZColumnIndex));
-		double gyrX = Double.parseDouble(record.get(GyrXColumnIndex));
-		double gyrY = Double.parseDouble(record.get(GyrYColumnIndex));
-		double gyrZ = Double.parseDouble(record.get(GyrZColumnIndex));
-		String rfIdTagPosition = record.get(RfidTagColumnIndex).trim();
 		double timestampInSeconds = Double.parseDouble(record.get(TimestampColumnIndex));
 		double deltaTimeInSeconds = Double.parseDouble(record.get(DeltaTimeColumnIndex));
 		
@@ -155,34 +157,68 @@ public class PositionTestCaseFileReader {
 		Calendar measurementTime = Calendar.getInstance();
 		measurementTime.setTimeInMillis((long) (timestampInSeconds*1000));
 		
-		PositionTestSample sample = new PositionTestSample();
+		String accXString = record.get(AccXColumnIndex).trim();
+		String accYString = record.get(AccYColumnIndex).trim();
+		String accZString = record.get(AccZColumnIndex).trim();
 		
+		if(!IsNullOrEmpty(accXString)&&!IsNullOrEmpty(accYString)&&!IsNullOrEmpty(accZString)){
+			
+			double accX = Double.parseDouble(accXString);
+			double accY = Double.parseDouble(accYString);
+			double accZ = Double.parseDouble(accZString);
+			
+			if(setImu)
+			{
+		        sample.setAccelerometerMeasurement(new AccelerometerMeasurement(DefaultTrainId, new Acceleration(accX, accY, accZ), deltaTimeInSeconds, measurementTime));
+			}
+		}
+		
+		String gyrXString = record.get(GyrXColumnIndex);
+		String gyrYString = record.get(GyrYColumnIndex);
+		String gyrZString = record.get(GyrZColumnIndex);
+		
+		if(!IsNullOrEmpty(gyrXString)&&!IsNullOrEmpty(gyrYString)&&!IsNullOrEmpty(gyrZString)){
+			
+			double gyrX = Double.parseDouble(gyrXString);
+			double gyrY = Double.parseDouble(gyrYString);
+			double gyrZ = Double.parseDouble(gyrZString);
+			
+			if(setImu)
+			{
+			    sample.setGyroscopeMeasurement(new GyroscopeMeasurement(DefaultTrainId, gyrX, gyrY, gyrZ, deltaTimeInSeconds, measurementTime));
+			}
+		}
+		
+		String rfIdTagValue = record.get(RfidTagColumnIndex).trim();
+	
 		if(IsNullOrEmpty(record.get(ExpectedPositionXColumnIndex)) || IsNullOrEmpty(record.get(ExpectedPositionYColumnIndex)) || IsNullOrEmpty(record.get(ExpectedPositionZColumnIndex)))
 		{
 			sample.setExpectedPosition(null);
 		}
 		else
 		{
-			double expectedPositionX = Double.parseDouble(record.get(ExpectedPositionXColumnIndex));
-			double expectedPositionY = Double.parseDouble(record.get(ExpectedPositionYColumnIndex));
-			double expectedPositionZ = Double.parseDouble(record.get(ExpectedPositionZColumnIndex));
-			sample.setExpectedPosition(new ValueUpdate<Coordinate>(new Coordinate(expectedPositionX, expectedPositionY, expectedPositionZ), measurementTime));
+			String expectedPositionXString = record.get(ExpectedPositionXColumnIndex);
+			double expectedPositionX = Double.parseDouble(expectedPositionXString);
 			
-			if(!IsNullOrEmpty(rfIdTagPosition))
+			String expectedPositionYString = record.get(ExpectedPositionYColumnIndex);
+			double expectedPositionY = Double.parseDouble(expectedPositionYString);
+					
+		    String expectedPositionZString = record.get(ExpectedPositionZColumnIndex);
+			double expectedPositionZ = Double.parseDouble(expectedPositionZString);
+			sample.setExpectedPosition(new ValueUpdate<Coordinate>(UnitConversionUtilities.convertFromInchesToMeters(new Coordinate(expectedPositionX, expectedPositionY, expectedPositionZ)), measurementTime));
+			
+			if(!IsNullOrEmpty(rfIdTagValue)&&setRfid)
 			{
-			    sample.setRfidTagPosition(new ValueUpdate<Coordinate>(new Coordinate(expectedPositionX, expectedPositionY, expectedPositionZ), measurementTime));
+			    sample.setRfidTagPosition(new ValueUpdate<Coordinate>(UnitConversionUtilities.convertFromInchesToMeters(new Coordinate(expectedPositionX, expectedPositionY, expectedPositionZ)), measurementTime));
 			}
 		}
 
-		sample.setAccelerometerMeasurement(new AccelerometerMeasurement(DefaultTrainId, new Acceleration(accX, accY, accZ), deltaTimeInSeconds, measurementTime));
-		sample.setGyroscopeMeasurement(new GyroscopeMeasurement(DefaultTrainId, gyrX, gyrY, gyrZ, deltaTimeInSeconds, measurementTime));
-
-		if(IsNullOrEmpty(rfIdTagPosition))
+		if(IsNullOrEmpty(rfIdTagValue)||!setRfid)
 		{
 			sample.setRfidTagDetectedNotification(null);
 		}
 		else{
-			sample.setRfidTagDetectedNotification(new RfidTagDetectedNotification(DefaultTrainId, rfIdTagPosition, measurementTime));
+			sample.setRfidTagDetectedNotification(new RfidTagDetectedNotification(DefaultTrainId, rfIdTagValue, measurementTime));
 		}
 		
 		return sample;

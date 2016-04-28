@@ -37,10 +37,15 @@ public class DiscretePositionCalculator {
 	 * @return Detailed information about the current position of the object.
 	 *         This is null if it cannot be determined.
 	 */
-	public Tuple<EulerAngleRotation, Velocity> updatePosition(ValueUpdate<Coordinate> currentPosition) {
+	public Tuple<EulerAngleRotation, Velocity> updatePosition(ValueUpdate<Coordinate> currentPosition, ValueUpdate<EulerAngleRotation> lastKnownOrientation, ValueUpdate<ThreeDimensionalSpaceVector> lastKnownAngularVelocity, ValueUpdate<Velocity> lastKnownVelocity) {
 		Tuple<EulerAngleRotation, Velocity> additionalTrainStateInfo = null;
 
 		if(previousPosition == null) {
+			
+			//We have to assume that all of the previous info is true since we have nothing to compare against
+			additionalTrainStateInfo = new Tuple<EulerAngleRotation, Velocity>(lastKnownOrientation.getValue(),
+					lastKnownVelocity.getValue());
+
 			previousPosition = currentPosition;
 		}
 		else if (previousPosition != null) {
@@ -76,6 +81,23 @@ public class DiscretePositionCalculator {
 					
 					lastReliableTrainPositionEstimate = new ValueUpdate<Triplet<Coordinate, EulerAngleRotation, Velocity>> (new Triplet<Coordinate, EulerAngleRotation, Velocity>(currentPosition.getValue(), newOrientationEstimate.getValue(), velocity.getValue()), currentPosition.getTimeObserved());
 				}
+				else{
+					//estimate orientation
+					ValueUpdate<EulerAngleRotation> fallbackOrientationEstimate = estimateOrientation(currentPosition, lastKnownOrientation, lastKnownAngularVelocity);
+					ValueUpdate<Velocity> velocity = calculateVelocity(previousPosition, currentPosition,
+							fallbackOrientationEstimate.getValue());
+					additionalTrainStateInfo = new Tuple<EulerAngleRotation, Velocity>(fallbackOrientationEstimate.getValue(),
+							velocity.getValue());
+				}
+			}
+			else{
+				
+				//estimate orientation
+				ValueUpdate<EulerAngleRotation> fallbackOrientationEstimate = estimateOrientation(currentPosition, lastKnownOrientation, lastKnownAngularVelocity);
+				ValueUpdate<Velocity> velocity = calculateVelocity(previousPosition, currentPosition,
+						fallbackOrientationEstimate.getValue());
+				additionalTrainStateInfo = new Tuple<EulerAngleRotation, Velocity>(fallbackOrientationEstimate.getValue(),
+						velocity.getValue());
 			}
 
 			// Update the previous orientation estimate
@@ -91,6 +113,41 @@ public class DiscretePositionCalculator {
 
 		return additionalTrainStateInfo;
 	}
+	
+	/**
+	 * Determines the current orientation of the train from RFID tag
+	 * measurements This implementation is assuming a 2-dimensional train track
+	 * where the NED frame is used, but there are not any elevation changes on
+	 * the track (i.e. the track is flat) and on a level-table so that gravity
+	 * is only acting on the Z-axis.
+	 * 
+	 * @param initialPosition
+	 *            Initial position of the train
+	 * @param finalPosition
+	 *            Final position of the train
+	 * @return Calculated orientation of the train. If it cannot be determined,
+	 *         then null is returned.
+	 */
+	public static ValueUpdate<EulerAngleRotation> estimateOrientation(ValueUpdate<Coordinate> endPosition, ValueUpdate<EulerAngleRotation> lastKnownOrientation, ValueUpdate<ThreeDimensionalSpaceVector> lastKnownAngularVelocity) {
+
+		double dt = (endPosition.getTimeObserved().getTimeInMillis()
+				- lastKnownAngularVelocity.getTimeObserved().getTimeInMillis()) / 1000.0;
+
+		double roll = (lastKnownAngularVelocity.getValue().getX() * dt)
+				+ lastKnownOrientation.getValue().getRadiansRotationAlongXAxis();
+		
+		double pitch = (lastKnownAngularVelocity.getValue().getY() * dt)
+				+ lastKnownOrientation.getValue().getRadiansRotationAlongYAxis();
+		
+		double yaw = (lastKnownAngularVelocity.getValue().getZ() * dt)
+				+ lastKnownOrientation.getValue().getRadiansRotationAlongZAxis();
+
+		ValueUpdate<EulerAngleRotation> estimatedOrientation = new ValueUpdate<EulerAngleRotation>(
+				new EulerAngleRotation(roll, pitch, yaw), endPosition.getTimeObserved());
+
+		return estimatedOrientation;
+	}
+
 
 	/**
 	 * Determines the current orientation of the train from RFID tag

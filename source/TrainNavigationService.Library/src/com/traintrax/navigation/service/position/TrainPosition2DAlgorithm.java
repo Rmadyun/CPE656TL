@@ -182,12 +182,15 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 				endPosition = rfidTagDetectedLocations.get(lastIndex);
 			}
 
+			RfidTagPositionResults rfidTagPositionResults = new RfidTagPositionResults();
 			for (ValueUpdate<Coordinate> rfidTagDetectedLocation : rfidTagDetectedLocations) {
 				Tuple<EulerAngleRotation, Velocity> trainStateInfo = discretePositionCalculator
-						.updatePosition(rfidTagDetectedLocation);
+						.updatePosition(rfidTagDetectedLocation, lastKnownTrainOrientation, lastKnownAngularVelocity, lastKnownTrainVelocity);
 				if (trainStateInfo != null) {
 
-					if (!initialPositionFound) {
+					//if (!initialPositionFound) always refresh params if the calculator
+					//returns a value.
+					{
 						// Initial Position Found
 
 						// Reset known orientation, position, velocity
@@ -197,6 +200,10 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 								rfidTagDetectedLocation.getTimeObserved());
 						this.lastKnownTrainVelocity = new ValueUpdate<Velocity>(trainStateInfo.getItem2(),
 								rfidTagDetectedLocation.getTimeObserved());
+						
+						rfidTagPositionResults.setLastKnownTrainOrientation(lastKnownTrainOrientation);
+						rfidTagPositionResults.setLastKnownTrainPosition(lastKnownTrainPosition);
+						rfidTagPositionResults.setLastKnownTrainVelocity(lastKnownTrainVelocity);
 					}
 
 					initialPositionFound = true;
@@ -204,91 +211,6 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 			}
 
 			// Use RFID Tag Plus IMU
-
-			// Create RFID Tag Position Results from the last info in the
-			// Discrete position calculator
-			// If null, use the last known position information.
-
-			// RfidTagPositionResults rfidTagPositionResults =
-			// calculationPositionFromRfidTagUpdates(startPosition,
-			// endPosition, this.lastKnownTrainOrientation.getValue());
-			ValueUpdate<Triplet<Coordinate, EulerAngleRotation, Velocity>> lastEstimatedPosition = this.discretePositionCalculator
-					.getLastReliableTrainPositionEstimate();
-			RfidTagPositionResults rfidTagPositionResults = new RfidTagPositionResults();
-
-			if (lastEstimatedPosition == null) {
-				double dt = (endPosition.getTimeObserved().getTimeInMillis()
-						- lastKnownAngularVelocity.getTimeObserved().getTimeInMillis()) / 1000.0;
-
-				double yaw = (lastKnownAngularVelocity.getValue().getZ() * dt)
-						+ lastKnownTrainOrientation.getValue().getRadiansRotationAlongZAxis();
-
-				ValueUpdate<EulerAngleRotation> finalOrientation = new ValueUpdate<EulerAngleRotation>(
-						new EulerAngleRotation(0, 0, yaw), endPosition.getTimeObserved());
-
-				if (finalOrientation.getValue().getRadiansRotationAlongZAxis() == 4) {
-
-					System.out.println("Weird Value Found!");
-				}
-				ValueUpdate<Velocity> velocity = DiscretePositionCalculator.calculateVelocity(startPosition,
-						endPosition, finalOrientation.getValue());
-
-				// rfidTagPositionResults.setLastKnownTrainOrientation(lastKnownTrainOrientation);
-				// rfidTagPositionResults.setLastKnownTrainPosition(endPosition);
-				// rfidTagPositionResults.setLastKnownTrainVelocity(lastKnownTrainVelocity);
-
-				// rfidTagPositionResults.setLastKnownTrainVelocity(DiscretePositionCalculator.calculateVelocity(startPosition,
-				// endPosition, lastKnownTrainOrientation.getValue()));
-				// rfidTagPositionResults =
-				// calculationPositionFromRfidTagUpdates(startPosition,
-				// endPosition, lastKnownTrainOrientation.getValue());
-
-				rfidTagPositionResults.setLastKnownTrainOrientation(finalOrientation);
-				rfidTagPositionResults.setLastKnownTrainPosition(endPosition);
-
-				// Disabling and using the last known train velocity instead.
-				// Reason: Though the RFID positioning at this point can give us
-				// some
-				// Truth for speed, it will not be correct if the train is
-				// moving in
-				// an arc or circle.
-				// It'll be a chord of the distance. This is fine if we have
-				// confirmed position truth between the two points, but not
-				// otherwise.
-				// (i.e. use RFID Tag velocity calculation iff orientation is
-				// stable)
-				// rfidTagPositionResults.setLastKnownTrainVelocity(velocity);
-
-				// Recalculate velocity according the lastKnown velocity and the
-				// final orientation.
-				double speed = DiscretePositionCalculator.calculateSpeed(lastKnownTrainVelocity);
-
-				double vX = speed * Math.cos(finalOrientation.getValue().getRadiansRotationAlongZAxis());
-				double vY = speed * Math.sin(finalOrientation.getValue().getRadiansRotationAlongZAxis());
-
-				if (speed > 0.05) // Minimum that the train needs to be moving
-									// is 2 inches / second before we can
-									// believe this.
-				{
-
-					velocity = new ValueUpdate<Velocity>(new Velocity(vX, vY, 0), endPosition.getTimeObserved());
-				}
-
-				rfidTagPositionResults.setLastKnownTrainVelocity(velocity);
-
-				// Go ahead and assign the last known orientation so that the
-				// IMU can use this guess.
-
-				lastKnownTrainOrientation = rfidTagPositionResults.getLastKnownTrainOrientation();
-
-			} else {
-				rfidTagPositionResults.setLastKnownTrainPosition(new ValueUpdate<Coordinate>(
-						lastEstimatedPosition.getValue().getItem1(), lastEstimatedPosition.getTimeObserved()));
-				rfidTagPositionResults.setLastKnownTrainOrientation(new ValueUpdate<EulerAngleRotation>(
-						lastEstimatedPosition.getValue().getItem2(), lastEstimatedPosition.getTimeObserved()));
-				rfidTagPositionResults.setLastKnownTrainVelocity(new ValueUpdate<Velocity>(
-						lastEstimatedPosition.getValue().getItem3(), lastEstimatedPosition.getTimeObserved()));
-			}
 
 			ImuPositionResults imuPositionResults = null;
 
