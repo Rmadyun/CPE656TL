@@ -256,8 +256,7 @@ public class TrainPositionAlgorithmTests {
 
 	@Test
 	public void testCalculatePositionWithActualData() {
-		PositionTestCase testCase = PositionTestCaseFileReader.Read("C:\\TrainTrax\\CPE656TL-master\\test\\TrainSample.csv");
-
+		PositionTestCase testCase = PositionTestCaseFileReader.Read("C:\\TrainTrax\\CPE656TL-master\\test\\Train Demo_Test Track_On 02-17-2016_Actual Data Sample Test Casev2.csv");
 		TestPositionAlgorithm(testCase);
 	}
 

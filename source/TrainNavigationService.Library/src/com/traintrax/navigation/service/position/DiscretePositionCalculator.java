@@ -62,6 +62,9 @@ public class DiscretePositionCalculator {
 				error /= previousOrientationEstimate.getRadiansRotationAlongZAxis();
 
 				error = Math.abs(error);
+				
+				double deltaYaw = Math.abs(newOrientationEstimate.getValue().getRadiansRotationAlongZAxis()
+						- previousOrientationEstimate.getRadiansRotationAlongZAxis());
 
 				if (error < tolerance) {
 					
@@ -76,6 +79,7 @@ public class DiscretePositionCalculator {
 
 					ValueUpdate<Velocity> velocity = calculateVelocity(previousPosition, currentPosition,
 							newOrientationEstimate.getValue());
+					
 					additionalTrainStateInfo = new Tuple<EulerAngleRotation, Velocity>(newOrientationEstimate.getValue(),
 							velocity.getValue());
 					
@@ -86,6 +90,16 @@ public class DiscretePositionCalculator {
 					ValueUpdate<EulerAngleRotation> fallbackOrientationEstimate = estimateOrientation(currentPosition, lastKnownOrientation, lastKnownAngularVelocity);
 					ValueUpdate<Velocity> velocity = calculateVelocity(previousPosition, currentPosition,
 							fallbackOrientationEstimate.getValue());
+					
+					if(deltaYaw > (Math.PI/2))
+					{
+						//If the change in orientation detected is greater than 90 degrees then the estimate of
+						//velocity from point-to-point is too great to use the linear approximation of speed.
+						
+						//Default to the last known velocity
+						velocity = new ValueUpdate<Velocity>(lastKnownVelocity.getValue(), currentPosition.getTimeObserved());
+					}
+					
 					additionalTrainStateInfo = new Tuple<EulerAngleRotation, Velocity>(fallbackOrientationEstimate.getValue(),
 							velocity.getValue());
 				}
