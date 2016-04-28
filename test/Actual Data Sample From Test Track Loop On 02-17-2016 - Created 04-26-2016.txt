@@ -1,0 +1,39 @@
+This data collected from the Train Moving along the test track loop
+on 2/17/2016 in the Positive Train Control Test Bed
+In the UAH ECE Department Building.
+
+Below is a Cross-Section of the Train Moving along the left
+Figure 8 portion of the track.
+The train is already in motion during this snapshot.
+RFID Tags are spaced approximately 6 inches apart.
+
+Interpolation for positions between RFID Tags is Linear.
+
+Train was found to be moving at the initial position of 41.25, 22.5 
+at about 8 inches per second.
+This was calculated by calculating the distance between points and dividing it over the change in time. The average speed from E6->E7 and E7-> E8 was used to determine the speed.
+A similar process was done for orientation. It is known that 
+this section of track is where the train is arcing from E6->E7->E8->E9.
+
+The angle between E6 and E7 was used to determine the average orientation of the train as it moves from E6->E7.
+The average orientation of the train as it moves from E7->E8 was then calculated.
+Since this is an arc, the truth of the orientation of the train as it moves
+tangent to E7 is approximately the average to the pre and post orientations determined.
+
+The angle is calculated using the following: atan2( (delta y) / (delta x))
+This is consistent with the orientation calculations mentioned in the Train Trax SDD. See there for more details.
+
+IMU Measurements from the start of the sampling where the train is at rest (50 samples worth) was prepended in front of the test case so that the
+IMU calibration algorithm can complete prior to analyzing the test case.
+
+Path of Train Movement (By Label)
+E7->E8->E9
+
+[Label] [RFID Tag Value] [Timestamp (s)] [Position from Origin (inches) (X,Y)]
+---------------------------------------------------------------------------------
+E7: [03:00:02:14:46] 49.416 (41.25, 22.5)
+(interpolated)       49.806 (42.625, 25.1875)
+E8: [03:00:00:97:DA] 50.196 (44, 27.875)
+(interpolated)       50.587 (44.09375, 30.6875)
+E9: [03:00:01:6A:C4] 50.978 (44.1875, 33.5)
+
