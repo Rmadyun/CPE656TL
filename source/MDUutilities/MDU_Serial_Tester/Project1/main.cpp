@@ -11,8 +11,8 @@ char BASE_ID = 99;
 // application reads from the specified serial port and reports the collected data
 int _tmain(int argc, _TCHAR* argv[])
 {
-	printf("Welcome to the serial test app!\n\n");
 
+	printf("Welcome to the serial test app!\n\n");
 	Serial* SP = new Serial("\\\\.\\COM9");    // adjust as needed
 
 	if (SP->IsConnected())
@@ -38,12 +38,18 @@ int _tmain(int argc, _TCHAR* argv[])
 					{
 					case 3:								//IMU message recived
 						{
-							printf("IMU Message\n");
-							printf("%i\n", readResult);
+							//printf("IMU Message\n");
+							//read in time of measure
+							//read in 12 bytes of accel and gyro measures
 							break;
 						}
 					case 4:								//RFID message recived
-						break;
+						{
+							//printf("RFID message");
+							//read in time of measure
+							//read in 5 bytes of RFID tag ID
+							break;
+						}
 					case 5:								//RTT_REQ message recived
 						{
 							//printf("RTT_REQ message");
