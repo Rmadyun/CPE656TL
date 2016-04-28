@@ -3,6 +3,7 @@
 #include "SerialClass.h"	// Library described above
 #include <string>
 #include <time.h>
+#include <cstdint>
 
 
 char BASE_ID = 99;
@@ -61,9 +62,20 @@ int _tmain(int argc, _TCHAR* argv[])
 						{
 							//printf("time message");
 							time_t timer;
+							struct tm * tstruct = new tm;
 
-							
+							time(&timer);
+							localtime_s(tstruct, &timer);
+							//printf("time: %i, %i, %i\n", tstruct->tm_hour, tstruct->tm_min, tstruct->tm_sec);
+							uint32_t seconds = ((tstruct->tm_hour * 60) + tstruct->tm_min) * 60 + tstruct->tm_sec;
+
 							char timeResp[8] = {source, BASE_ID, 9, 3,4,5,6, '\n'};
+							
+							for(int i = 3; i < 7; i++)
+							{
+								timeResp[i] = seconds >> 8*(i-3);
+							}
+
 							SP->WriteData(timeResp, 8);
 							break;
 						}

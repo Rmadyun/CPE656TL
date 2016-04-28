@@ -93,12 +93,13 @@ void measurementRelay::listenForMeasurements()
             Rmsg[1] = TRAIN_ID;
             Rmsg[2] = RFID;
 
-            //test block till time implementation**********************************************************
-            Rmsg[3] = 0x3;
-            Rmsg[4] = 0x4;
-            Rmsg[5] = 0x5;
-            Rmsg[6] = 0x6;
-            //test block till time implementation*********************************************************
+            unsigned long measureTime = millis() - millisOffset;
+            measureTime = timeOfDay + measureTime * 1000;
+
+            Rmsg[6] = (byte) measureTime;
+            Rmsg[5] = (byte) measureTime >> 8;
+            Rmsg[4] = (byte) measureTime >> 16;
+            Rmsg[3] = (byte) measureTime >> 24;
 
             for (i=0; i<5; i++) {
               Rmsg[7+i] = code[i];
@@ -123,26 +124,20 @@ void measurementRelay::listenForMeasurements()
  
   int16_t Tmp;
   unsigned long tme;
-  
    
   byte msg [20];
-  
-  //debug loop
-  for(int i = 0; i < 20; i++)
-  {
-    msg[i] = i;
-  }
-  //*********
 
   msg[0] = BASE_ID;
   msg[1] = TRAIN_ID;
   msg[2] = IMU;
 
-  tme = timeOfDay + (millis() - millisOffset);
-  msg[3] = 0x03; //(int)((tme >> 24) & 0xFF) ;
-  msg[4] = 0x04; //(int)((tme >> 16) & 0xFF) ;
-  msg[5] = 0x05; //(int)((tme >> 8) & 0XFF);
-  msg[6] = 0x06; //(int)((tme & 0XFF));
+  unsigned long measureTime = millis() - millisOffset;
+  measureTime = timeOfDay + measureTime * 1000;
+
+  msg[6] = (byte) measureTime;
+  msg[5] = (byte) measureTime >> 8;
+  msg[4] = (byte) measureTime >> 16;
+  msg[3] = (byte) measureTime >> 24;
   
   Wire.beginTransmission(MPU_addr);
   Wire.write(0x3B);  // starting with register 0x3B (ACCEL_XOUT_H)
@@ -274,7 +269,10 @@ void measurementRelay::timeLink(unsigned long RTT)
               endTime = millis();
               byte timeBuff[4];
               Serial.readBytes(timeBuff, 4);
-              //regTime = timeBuff[0]<<24|timeBuff[1]<<16|timeBuff[2]<<8|timeBuff[3];
+              regTime = (unsigned long) timeBuff[0]<<24
+                      | (unsigned long) timeBuff[1]<<16
+                      | (unsigned long) timeBuff[2]<<8
+                      | (unsigned long) timeBuff[3];
               ttest = true;
             }
           }
