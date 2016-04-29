@@ -41,13 +41,6 @@ public class TrainNavigationServiceTestDriver {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
 		MainMenu(br);
-
-		try {
-			br.readLine();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -66,6 +59,9 @@ public class TrainNavigationServiceTestDriver {
 				System.out.println("Main Menu");
 				System.out.println("1. Controls Switches");
 				System.out.println("2. Verify Shape of Train Path");
+				System.out.println("3. Exit");
+				System.out.println("");
+				System.out.print("Type in the number for the operation you want to perform and press ENTER: ");
 
 				String inputString = "";
 				try {
@@ -75,7 +71,7 @@ public class TrainNavigationServiceTestDriver {
 
 				}
 				choice = Integer.parseInt(inputString);
-			} while ((choice < 1) || (choice > 2)); // input check
+			} while ((choice < 1) || (choice > 3)); // input check
 
 			if (choice == 1) {
 				ControlSwitchMenu(systemConsoleReader);

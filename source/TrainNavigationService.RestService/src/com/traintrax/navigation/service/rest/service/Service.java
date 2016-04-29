@@ -83,8 +83,8 @@ public class Service {
 			dbName = parsedCommandLine.getOptionValue(dbNameOption.getOpt(), serviceConfiguration.getDbName());
 			dbHost = parsedCommandLine.getOptionValue(dbHostnameOption.getOpt(), serviceConfiguration.getDbHost());
 			dbPortValue = parsedCommandLine.getOptionValue(dbPortOption.getOpt(), Integer.toString(serviceConfiguration.getDbPort()));
-			mduPort = parsedCommandLine.getOptionValue(dbHostnameOption.getOpt(), serviceConfiguration.getMduSerialPort());
-			pr3Port = parsedCommandLine.getOptionValue(dbHostnameOption.getOpt(), serviceConfiguration.getPr3SerialPort());
+			mduPort = parsedCommandLine.getOptionValue(mduPortOption.getOpt(), serviceConfiguration.getMduSerialPort());
+			pr3Port = parsedCommandLine.getOptionValue(locoNetPortOption.getOpt(), serviceConfiguration.getPr3SerialPort());
 
 		} catch (MissingOptionException exception) {
 			System.out.println(exception.getMessage());
