@@ -1,5 +1,6 @@
 package edu.uah.cpe.traintrax;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewParent;
 import android.view.WindowManager;
+
+import com.traintrax.navigation.trackswitch.SwitchState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +53,30 @@ public class MonitorView extends View {
     public MonitorView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
+
+    //Object responsible for changing the state of switches in a background thread
+    private ChangeSwitchStateTask changeSwitchStateTask = new ChangeSwitchStateTask() {
+        @Override
+        protected void onPostExecute(ChangeSwitchStateTaskResult changeSwitchStateTaskResult) {
+            super.onPostExecute(changeSwitchStateTaskResult);
+
+            if(changeSwitchStateTaskResult.isSwitchStateChanged()) {
+                //Update the switch state if successful
+
+                TrackSwitchInfo Switch = SharedObjectSingleton.getInstance().getTrackSwitchInfo();
+
+                Switch.setSwitchState(changeSwitchStateTaskResult.getSwitchNumber(), changeSwitchStateTaskResult.getAssignedSwitchState());
+
+                //Request a redraw now that we know that the switch has successfully changed
+                invalidate();
+            }
+            else{
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage(changeSwitchStateTaskResult.getFailureMessage());
+                builder.show();
+            }
+        }
+    };
 
 
     @Override
@@ -279,21 +306,16 @@ public class MonitorView extends View {
 
                     //if it's within 30 pixels then process the click (may adjust this)
                     if (xthreshold < 30 && ythreshold < 30) {
-                        Boolean switchState = Switch.getPassState(i);
+                        Boolean isInPassState = Switch.getPassState(i);
                         String switchName = Switch.getswitchName(i);
 
-                        // change state of switch
-                        if (switchState == true)
-                            Switch.setPassState(i, false);
+                        //toogle pass state
+                        isInPassState = !isInPassState;
+                        SwitchState switchState = (isInPassState) ? SwitchState.Pass : SwitchState.ByPass;
 
-                        else
-                            Switch.setPassState(i, true);
+                        //Create a new task to change the switch
+                        changeSwitchStateTask.execute(switchName, switchState.toString());
 
-                        //send the switch state to the train navigation service
-                        Switch.sendSwitchState(switchName, switchState);
-
-
-                        invalidate();
                         break;
                     }
 

@@ -4,6 +4,8 @@ import com.traintrax.navigation.database.library.RepositoryEntry;
 import com.traintrax.navigation.database.library.TrackBlock;
 import com.traintrax.navigation.database.library.TrackPoint;
 import com.traintrax.navigation.database.library.TrackSwitch;
+import com.traintrax.navigation.trackswitch.SwitchState;
+
 import android.util.DisplayMetrics;
 import android.widget.Switch;
 
@@ -167,18 +169,23 @@ public class TrackSwitchInfo {
         num_switches = num;
     }
 
-    void sendSwitchState(String switchName, Boolean state){
-        //sends switch state to the Train Navigation Service needs to be integrated
-        // with the actual Navigation Service code
+    /**
+     * Change the value of a particular switch based on the switch value assigned to it.
+     * @param switchName Unique identifier for the switch
+     * @param switchState State to change the switch
+     */
+    void setSwitchState(String switchName, SwitchState switchState){
 
-        //if (state == true)
-        //TrainNavigationServiceInterface.SetSwitchState(switchName, SwitchState.Pass);
+        //Find the switch and update its state
 
-        //else
-          //  TrainNavigationServiceInterface.SetSwitchState(switchName, SwitchState.ByPass);
-
+        for(int i = 0; i < this.switchName.size(); i++){
+            String selectedSwitchName = this.switchName.get(i);
+            if(selectedSwitchName.equalsIgnoreCase(switchName)){
+                passState.set(i, (switchState == SwitchState.Pass));
+                break;
+            }
+        }
     }
-
 
     /**
      * Constructor
@@ -187,11 +194,7 @@ public class TrackSwitchInfo {
      TrackSwitchInfo(TrackGeometry trackGeometry) {
         this.num_switches = 0;
          SetAllSwitchData(trackGeometry);
-
     }
-
-
-
 
     private static TrackPoint findPoint(List<RepositoryEntry<TrackPoint>> trackPoints, String id){
         TrackPoint trackPoint = null;

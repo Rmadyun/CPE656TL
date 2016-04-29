@@ -25,7 +25,7 @@ public class TrainPosInfo {
     public TrainPosInfo(){
         trainList = new LinkedList<TrainInfo>();
 
-        CreateTestData();
+        //CreateTestData();
     }
 
     /**
