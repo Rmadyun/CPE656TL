@@ -100,9 +100,9 @@ public class DebugService {
 
 		builder.setMotionDetectionUnitInterface(simulatedMotionDetectionUnit);
 
-		// TrainNavigationServiceInterface trainNavigationServiceInterface =
-		// builder.build();
-		TrainNavigationServiceInterface trainNavigationServiceInterface = createTrainNavigationServiceWithSwitchController();
+		 TrainNavigationServiceInterface trainNavigationServiceInterface =
+		 builder.build();
+		//TrainNavigationServiceInterface trainNavigationServiceInterface = createTrainNavigationServiceWithSwitchController();
 
 		// Generates a test case where the train moves in a diagonal line and
 		// accelerates for 1 second,

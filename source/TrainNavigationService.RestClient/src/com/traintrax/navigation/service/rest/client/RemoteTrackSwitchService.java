@@ -53,10 +53,10 @@ import com.traintrax.navigation.trackswitch.SwitchState;
 	 *            IP port of the target server
 	 * @return URL used for Restful web requests
 	 */
-	private static String createTrackSwitchStateRequestUrl(String host, int port, int trainId) {
+	private static String createTrackSwitchStateRequestUrl(String host, int port, String switchNumber) {
 		String baseUrl = createTrackSwitchStateRequestUrl(host, port);
 
-		String finalUrl = baseUrl + "?id=" + Integer.toString(trainId);
+		String finalUrl = baseUrl + "?id=" + switchNumber;
 
 		return finalUrl;
 	}
@@ -94,8 +94,8 @@ import com.traintrax.navigation.trackswitch.SwitchState;
 	 */
 	public RemoteTrackSwitchService(String hostName, int port, RestfulWebServiceClientInterface webServiceClient, MessageDeserializerInterface<TrackSwitchStateMessage> messageDeserializer) {
 
-		hostName = "localhost";
-		port = 8182;
+		this.hostName = hostName;
+		this.port = port;
 		this.webServiceClient = webServiceClient;
 		this.messageDeserializer = messageDeserializer;
 	}
@@ -107,7 +107,7 @@ import com.traintrax.navigation.trackswitch.SwitchState;
 	 */
 	public SwitchState getTrackSwitchState(String id) {
 
-		String requestUrl = createTrackSwitchStateRequestUrl(hostName, port, Integer.parseInt(id));
+		String requestUrl = createTrackSwitchStateRequestUrl(hostName, port, id);
 		
 		String response = webServiceClient.sendRequest(requestUrl);
 		TrackSwitchStateMessage results = messageDeserializer.deserialize(response);
@@ -123,7 +123,7 @@ import com.traintrax.navigation.trackswitch.SwitchState;
 	 */
 	public void setSwitchState(String id, SwitchState switchState) throws IOException {
 
-		String requestUrl = createTrackSwitchStateRequestUrl(hostName, port, Integer.parseInt(id));
+		String requestUrl = createTrackSwitchStateRequestUrl(hostName, port, id);
 		
 		TrackSwitchStateMessage  trackSwitchStateMessage = new TrackSwitchStateMessage(id, switchState.toString());
 

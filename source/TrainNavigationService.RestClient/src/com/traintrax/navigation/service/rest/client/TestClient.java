@@ -19,8 +19,9 @@ public class TestClient {
 		}
 		
 		try {
-			service.SetSwitchState("1", SwitchState.ByPass);
+			service.SetSwitchState("SW43", SwitchState.ByPass);
 		} catch (IOException e) {
+			System.out.println("Setting Switch State Failed");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
