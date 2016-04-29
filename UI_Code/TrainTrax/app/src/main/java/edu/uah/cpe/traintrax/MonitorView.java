@@ -313,8 +313,17 @@ public class MonitorView extends View {
                         isInPassState = !isInPassState;
                         SwitchState switchState = (isInPassState) ? SwitchState.Pass : SwitchState.ByPass;
 
-                        //Create a new task to change the switch
-                        changeSwitchStateTask.execute(switchName, switchState.toString());
+                        try {
+                            //Create a new task to change the switch
+                            changeSwitchStateTask.execute(switchName, switchState.toString());
+                        }
+                        catch(Exception exception){
+                            //Suppresses any error from attempting to control the switch
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+                            String errorMessage = exception.getMessage();
+                            builder.setMessage("Unable to set Switch: " + errorMessage);
+                        }
 
                         break;
                     }
