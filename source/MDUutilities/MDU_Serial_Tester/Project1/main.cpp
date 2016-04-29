@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <tchar.h>
-#include "SerialClass.h"	// Library described above
+#include "SerialClass.h"
 #include <string>
 #include <time.h>
 #include <cstdint>
+#include <iostream>
 
+
+using namespace std;
 
 char BASE_ID = 99;
 
@@ -12,13 +15,19 @@ char BASE_ID = 99;
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-	printf("Welcome to the serial test app!\n\n");
-	Serial* SP = new Serial("\\\\.\\COM9");    // adjust as needed
+	printf("MDU Unit Test Utility\n\n");
+	printf("Enter Port Number: ");
+	char pnum = 0;
+	cin >> pnum;
+	char comID[11] = { '\\', '\\', '.', '\\', 'C', 'O', 'M', pnum};
+	char tst[] = {"\\\\.\\COM9"};
+
+	Serial* SP = new Serial(comID);    // adjust as needed
 
 	if (SP->IsConnected())
-		printf("We're connected\n");
+		printf("Serial connected\n");
 
-	char incomingData[256] = "";			// don't forget to pre-allocate memory
+	char incomingData[256] = "";			//pre-allocate memory
 	//printf("%s\n",incomingData);
 	int dataLength = 255;
 	int readResult = 0;
