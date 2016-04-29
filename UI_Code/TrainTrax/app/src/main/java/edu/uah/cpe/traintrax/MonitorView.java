@@ -263,6 +263,8 @@ public class MonitorView extends View {
 
             float xcord = trainInfo.getXposition();
             float ycord = trainInfo.getYposition();
+            Double xvelocity = trainInfo.getXvelocity().doubleValue();
+            Double yvelocity = trainInfo.getYvelocity().doubleValue();
             String trainID = trainInfo.getTrainID();
 
             //x = (x/xmax) * screen resolution;
@@ -279,6 +281,17 @@ public class MonitorView extends View {
 
             Bitmap resizedBitmap = Bitmap.createScaledBitmap(train, 30, 30, false);
             canvas.drawBitmap(resizedBitmap, xcord, ycord, paint);
+
+            paint.setTextSize(20);
+
+            //calculate speed and orientation
+            Double Speed = (Math.sqrt(xvelocity*xvelocity + yvelocity*yvelocity));
+            Double orientation = Math.asin((xvelocity/(Math.sqrt(xvelocity*xvelocity + yvelocity*yvelocity))));
+
+            paint.setColor(Color.WHITE);
+            paint.setStyle(Paint.Style.FILL);
+            canvas.drawText("Speed: "+ Speed, xcord, ycord + 50, paint);
+            canvas.drawText("Orientation: "+ orientation, xcord, ycord + 75, paint);
         }
     }
 

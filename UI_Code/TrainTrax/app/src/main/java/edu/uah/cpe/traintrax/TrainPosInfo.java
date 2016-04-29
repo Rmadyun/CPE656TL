@@ -10,7 +10,7 @@ import java.util.List;
  * position of trains on the track.
  * This class exists so that drawing the trains on the view can be decoupled from
  * the models used to report the train position.
- * It also allows the work to retreive the train position updates to be in a separate
+ * It also allows the work to retrieve the train position updates to be in a separate
  * thread.
  */
 public class TrainPosInfo {
@@ -61,6 +61,15 @@ public class TrainPosInfo {
             trainList.add(trainInfo);
         }
         else{
+
+            // take the difference of the last position and current position
+            Float Xvelocity =  xposition - trainInfo.getXposition();
+            Float Yvelocity =  yposition - trainInfo.getYposition();
+
+            //Update the existing velocity entry
+            trainInfo.setXvelocity(Xvelocity);
+            trainInfo.setYvelocity(Yvelocity);
+
             //Update the existing entry
             trainInfo.setXposition(xposition);
             trainInfo.setYposition(yposition);
