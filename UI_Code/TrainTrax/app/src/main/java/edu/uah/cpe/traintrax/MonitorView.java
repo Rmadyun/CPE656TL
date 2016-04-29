@@ -16,12 +16,18 @@ import android.view.View;
 import android.view.ViewParent;
 import android.view.WindowManager;
 
+import com.traintrax.navigation.service.TrainNavigationServiceInterface;
 import com.traintrax.navigation.trackswitch.SwitchState;
 
+import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Handler;
 
 /**
@@ -55,7 +61,7 @@ public class MonitorView extends View {
     }
 
     //Object responsible for changing the state of switches in a background thread
-    private ChangeSwitchStateTask changeSwitchStateTask = new ChangeSwitchStateTask() {
+    /*private ChangeSwitchStateTask changeSwitchStateTask = new ChangeSwitchStateTask() {
         @Override
         protected void onPostExecute(ChangeSwitchStateTaskResult changeSwitchStateTaskResult) {
             super.onPostExecute(changeSwitchStateTaskResult);
@@ -76,7 +82,36 @@ public class MonitorView extends View {
                 builder.show();
             }
         }
-    };
+    }; */
+
+    private ChangeSwitchStateTask CreateSwitchStateTask(){
+        ChangeSwitchStateTask changeSwitchStateTask = new ChangeSwitchStateTask() {
+            @Override
+            protected void onPostExecute(ChangeSwitchStateTaskResult changeSwitchStateTaskResult) {
+                super.onPostExecute(changeSwitchStateTaskResult);
+
+                if(changeSwitchStateTaskResult.isSwitchStateChanged()) {
+                    //Update the switch state if successful
+
+                    TrackSwitchInfo Switch = SharedObjectSingleton.getInstance().getTrackSwitchInfo();
+
+                    Switch.setSwitchState(changeSwitchStateTaskResult.getSwitchNumber(), changeSwitchStateTaskResult.getAssignedSwitchState());
+
+                    //Request a redraw now that we know that the switch has successfully changed
+                    invalidate();
+                }
+                else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setMessage(changeSwitchStateTaskResult.getFailureMessage());
+                    builder.show();
+                }
+            }
+        };
+
+        return changeSwitchStateTask;
+    }
+
+    private final Semaphore binarySwitchSemaphore = new Semaphore(1, true);
 
 
     @Override
@@ -291,7 +326,7 @@ public class MonitorView extends View {
             paint.setColor(Color.WHITE);
             paint.setStyle(Paint.Style.FILL);
             canvas.drawText("Speed: "+ Speed, xcord, ycord + 50, paint);
-            canvas.drawText("Orientation: "+ orientation, xcord, ycord + 75, paint);
+            canvas.drawText("Orientation: " + orientation, xcord, ycord + 75, paint);
         }
     }
 
@@ -320,14 +355,50 @@ public class MonitorView extends View {
                     //if it's within 30 pixels then process the click (may adjust this)
                     if (xthreshold < 30 && ythreshold < 30) {
                         Boolean isInPassState = Switch.getPassState(i);
-                        String switchName = Switch.getswitchName(i);
+                        final String switchName = Switch.getswitchName(i);
 
                         //toogle pass state
                         isInPassState = !isInPassState;
-                        SwitchState switchState = (isInPassState) ? SwitchState.Pass : SwitchState.ByPass;
+                        final SwitchState switchState = (isInPassState) ? SwitchState.Pass : SwitchState.ByPass;
+
+                        Runnable controlSwitchRunnable = new Runnable() {
+                            @Override
+                            public void run() {
+
+                                TrainNavigationServiceInterface trainNavigationServiceInterface = SharedObjectSingleton.getInstance().getTrainNavigationServiceInterface();
+
+                                if(trainNavigationServiceInterface != null){
+                                    try {
+
+                                        TrackSwitchInfo Switch = SharedObjectSingleton.getInstance().getTrackSwitchInfo();
+
+                                        Switch.setSwitchState(switchName, switchState);
+
+                                        trainNavigationServiceInterface.SetSwitchState(switchName, switchState);
+                                        invalidate();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        };
 
                         try {
+                            controlSwitchRunnable.run();
+                        }
+                        catch (Exception exception){
+
+                        }
+
+                        /*try {
+                            binarySwitchSemaphore.acquire();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        try {
                             //Create a new task to change the switch
+                            ChangeSwitchStateTask changeSwitchStateTask = CreateSwitchStateTask();
+
                             changeSwitchStateTask.execute(switchName, switchState.toString());
                         }
                         catch(Exception exception){
@@ -337,6 +408,7 @@ public class MonitorView extends View {
                             String errorMessage = exception.getMessage();
                             builder.setMessage("Unable to set Switch: " + errorMessage);
                         }
+                        binarySwitchSemaphore.release(); */
 
                         break;
                     }
