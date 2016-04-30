@@ -361,7 +361,7 @@ public class MonitorView extends View {
                         isInPassState = !isInPassState;
                         final SwitchState switchState = (isInPassState) ? SwitchState.Pass : SwitchState.ByPass;
 
-                        Runnable controlSwitchRunnable = new Runnable() {
+                        /*Runnable controlSwitchRunnable = new Runnable() {
                             @Override
                             public void run() {
 
@@ -388,9 +388,9 @@ public class MonitorView extends View {
                         }
                         catch (Exception exception){
 
-                        }
+                        } */
 
-                        /*try {
+                        try {
                             binarySwitchSemaphore.acquire();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -403,12 +403,12 @@ public class MonitorView extends View {
                         }
                         catch(Exception exception){
                             //Suppresses any error from attempting to control the switch
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                           /* AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
                             String errorMessage = exception.getMessage();
-                            builder.setMessage("Unable to set Switch: " + errorMessage);
+                            builder.setMessage("Unable to set Switch: " + errorMessage); */
                         }
-                        binarySwitchSemaphore.release(); */
+                        binarySwitchSemaphore.release();
 
                         break;
                     }

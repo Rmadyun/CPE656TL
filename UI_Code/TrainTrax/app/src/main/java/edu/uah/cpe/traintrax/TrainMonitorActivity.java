@@ -21,6 +21,7 @@ import com.traintrax.navigation.service.TrainNavigationServiceEventSubscriber;
 import com.traintrax.navigation.service.TrainNavigationServiceInterface;
 import com.traintrax.navigation.service.TrainPositionUpdatedEvent;
 import com.traintrax.navigation.service.ValueUpdate;
+import com.traintrax.navigation.service.math.ThreeDimensionalSpaceVector;
 import com.traintrax.navigation.service.position.TrainPositionEstimate;
 import com.traintrax.navigation.service.rest.client.RemoteTrainNavigationService;
 
@@ -43,9 +44,17 @@ public class TrainMonitorActivity extends AppCompatActivity {
             TrackSwitchInfo Switch = SharedObjectSingleton.getInstance().getTrackSwitchInfo();
             TrainPosInfo TrainPos = SharedObjectSingleton.getInstance().getTrainPosInfo();
 
+            ThreeDimensionalSpaceVector velocity = event.getPosition().getVelocity();
+
+            Float xVel = Float.valueOf((float) velocity.getX());
+            Float yVel = Float.valueOf((float) velocity.getY());
+
+
+            Float xPos = Float.valueOf((float) event.getPosition().getPosition().getX());
+            Float yPos = Float.valueOf((float) event.getPosition().getPosition().getY());
+
             //Update TrainPosInfo with the latest information for this train.
-            TrainPos.addOrUpdateTrain(event.getPosition().getTrainId(), Float.valueOf((float) event.getPosition().getPosition().getX()),
-                    Float.valueOf((float) event.getPosition().getPosition().getY()));
+            TrainPos.addOrUpdateTrain(event.getPosition().getTrainId(), xPos, yPos, xVel, yVel);
 
 /* Test CODE
             //test data the above code is meant to work with the actual navigation service remove #TODO

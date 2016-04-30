@@ -50,7 +50,7 @@ public class TrainPosInfo {
      * @param xposition X position of the train
      * @param yposition Y position of the train
      */
-    public void addOrUpdateTrain(String trainID, Float xposition, Float yposition){
+    public void addOrUpdateTrain(String trainID, Float xposition, Float yposition, Float xVel, Float yVel){
 
         TrainInfo trainInfo = find(trainID);
 
@@ -62,13 +62,9 @@ public class TrainPosInfo {
         }
         else{
 
-            // take the difference of the last position and current position
-            Float Xvelocity =  xposition - trainInfo.getXposition();
-            Float Yvelocity =  yposition - trainInfo.getYposition();
-
             //Update the existing velocity entry
-            trainInfo.setXvelocity(Xvelocity);
-            trainInfo.setYvelocity(Yvelocity);
+            trainInfo.setXvelocity(xVel);
+            trainInfo.setYvelocity(yVel);
 
             //Update the existing entry
             trainInfo.setXposition(xposition);

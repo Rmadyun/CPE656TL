@@ -112,7 +112,7 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_save) {
 
             savePreferences();
-            Toast.makeText(this, "AsITravel Preference File Saved.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Train Trax Preference File Saved.", Toast.LENGTH_SHORT).show();
 
             //TODO: Reiniitalize the Nav Sevice and Nav Database references here so that
             //data from the specified location is used.

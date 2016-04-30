@@ -54,7 +54,7 @@ public class ChangeSwitchStateTaskResult {
     public boolean isSwitchStateChanged(){
         boolean switchStateChanged = false;
 
-        switchStateChanged = ((failureMessage != null)&&(failureMessage != ""));
+        switchStateChanged = ((failureMessage != null)&&(failureMessage.isEmpty()));
 
         return switchStateChanged;
     }

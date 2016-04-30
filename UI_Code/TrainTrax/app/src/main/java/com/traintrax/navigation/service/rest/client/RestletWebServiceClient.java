@@ -1,6 +1,18 @@
 package com.traintrax.navigation.service.rest.client;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.ClientResource;
@@ -63,11 +75,33 @@ public class RestletWebServiceClient implements RestfulWebServiceClientInterface
 	@Override
 	public void post(String requestUrl, String message) {
 		
-		StringRepresentation stringRep = new StringRepresentation(message);
+		//StringRepresentation stringRep = new StringRepresentation(message);
 		
-		RestClientInterface clientInterface = connectToServer(requestUrl);
+		//RestClientInterface clientInterface = connectToServer(requestUrl);
 		
-		clientInterface.postResults(stringRep);
+		//clientInterface.postResults(stringRep);
+
+		// Create a new HttpClient and Post Header
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpPost httppost = new HttpPost(requestUrl);
+
+		try {
+			// Add your data
+/*			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+			nameValuePairs.add(new BasicNameValuePair("id", "12345"));
+			nameValuePairs.add(new BasicNameValuePair("stringdata", "Hi"));
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs)); */
+
+			httppost.setEntity(new StringEntity(message));
+
+			// Execute HTTP Post Request
+			HttpResponse response = httpclient.execute(httppost);
+
+		} catch (ClientProtocolException exception) {
+			exception.printStackTrace();
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
 		
 	}
 
