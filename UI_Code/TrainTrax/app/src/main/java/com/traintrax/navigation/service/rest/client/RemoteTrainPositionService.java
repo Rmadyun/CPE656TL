@@ -52,10 +52,10 @@ import com.traintrax.navigation.service.rest.data.TrainPositionUpdateMessage;
 	 *            IP port of the target server
 	 * @return URL used for Restful web requests
 	 */
-	private static String createTrainPositionRequestUrl(String host, int port, int trainId) {
+	private static String createTrainPositionRequestUrl(String host, int port, String trainId) {
 		String baseUrl = createTrainPositionRequestUrl(host, port);
 
-		String finalUrl = baseUrl + "?id=" + Integer.toString(trainId);
+		String finalUrl = baseUrl + "?id=" + trainId;
 
 		return finalUrl;
 	}
@@ -124,7 +124,7 @@ import com.traintrax.navigation.service.rest.data.TrainPositionUpdateMessage;
 	 */
 	public TrainPositionEstimate getLastKnownTrainPosition(String id) {
 
-		String requestUrl = createTrainPositionRequestUrl(hostName, port, Integer.parseInt(id));
+		String requestUrl = createTrainPositionRequestUrl(hostName, port, id);
 		
 		TrainPositionEstimate match = null;
 		String response = webServiceClient.sendRequest(requestUrl);
