@@ -191,6 +191,7 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 	}
 
 	private void decodeMduPackets() {
+		boolean debugEnabled = false;
 
 		do {
 
@@ -211,33 +212,38 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 			// Decode packet
 			byte[] mduPacket = this.mduProtocolParser.getPacketBytesStored(mduPacketBuffer);
 
-			System.out.println("Decoding MDU Packet");
+			if(debugEnabled)
+			    System.out.println("Decoding MDU Packet");
 			Train train = FetchTrain(mduPacket[MduProtocolSrcIdOffset]);
 
 			GyroscopeMeasurement gyroscopeMeasurement = TryDecodeGyroscopeMeasurement(mduPacket,
 					train.getLastGyroscopeMeasurement());
 			if (gyroscopeMeasurement != null) {
-				System.out.println("GYR Measurement Received");
+				if(debugEnabled)
+				    System.out.println("GYR Measurement Received");
 				train.add(gyroscopeMeasurement);
 			}
 
 			AccelerometerMeasurement accelerometerMeasurement = TryDecodeAccelerometerMeasurement(mduPacket,
 					train.getLastAccelerometerMeasurement());
 			if (accelerometerMeasurement != null) {
-				System.out.println("ACC Measurement Received");
+				if(debugEnabled)
+				    System.out.println("ACC Measurement Received");
 				train.add(accelerometerMeasurement);
 			}
 
 			RfidTagDetectedNotification rfidTagDetectedNotification = TryDecodeRfidTagDetectedNotification(mduPacket);
 			if (rfidTagDetectedNotification != null) {
-				System.out.println("RFID Tag Detection Notification Received");
+				if(debugEnabled)
+				    System.out.println("RFID Tag Detection Notification Received");
 				train.add(rfidTagDetectedNotification);
 			}
 
 			TrainIdentificationMessage trainIdentificationMessage = TryDecodeTrainIdentification(mduPacket);
 
 			if (trainIdentificationMessage != null) {
-				System.out.println("Train Identification Request Received");
+				if(debugEnabled)
+				    System.out.println("Train Identification Request Received");
 				// Send train identification reply
 
 				try {
@@ -249,7 +255,8 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 
 					outputStream.write(responsePacket);
 					outputStream.flush();
-					System.out.println("Train Identification Reply Sent");
+					if(debugEnabled)
+					    System.out.println("Train Identification Reply Sent");
 
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -260,7 +267,8 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 			RoundTripTimeRequestMessage roundTripTimeRequestMessage = TryDecodeRoundTripTimeRequest(mduPacket);
 
 			if (roundTripTimeRequestMessage != null) {
-				System.out.println("RTT Request Received");
+				if(debugEnabled)
+				    System.out.println("RTT Request Received");
 
 				// Send train identification reply
 
@@ -274,7 +282,8 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 
 					outputStream.write(responsePacket);
 					outputStream.flush();
-					System.out.println("Round Trip Time Reply Sent");
+					if(debugEnabled)
+					    System.out.println("Round Trip Time Reply Sent");
 
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -285,7 +294,8 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 			TimeSyncRequestMessage timeSyncRequestMessage = TimeSyncRequestMessage.TryDecodeTimeSyncRequest(mduPacket);
 
 			if (timeSyncRequestMessage != null) {
-				System.out.println("Time Sync Request Received");
+				if(debugEnabled)
+				    System.out.println("Time Sync Request Received");
 
 				// Send train identification reply
 
@@ -298,7 +308,8 @@ public class MotionDetectionUnit implements MotionDetectionUnitInterface {
 
 					outputStream.write(responsePacket);
 					outputStream.flush();
-					System.out.println("Time Sync Reply Sent");
+					if(debugEnabled)
+					    System.out.println("Time Sync Reply Sent");
 
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

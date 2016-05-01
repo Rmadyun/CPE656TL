@@ -31,6 +31,11 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 	 * Size of the header that is a part of every MDU Protocol message
 	 */
 	private static final int MduProtocolHeaderSize = 3;
+	
+	/**
+	 * Unique ID used by the protocol to refer to the PC end of MDU Protocol communication.
+	 */
+	private static final byte BaseStationId = 0x00;
 
 	// MDU Protocol fields
 	private static final byte ImuReading = 0x03;
@@ -49,6 +54,7 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 	private static final int TimeSyncRequestPacketSize = 4;
 	private static final int TimeSyncReplyPacketSize = 8;
 
+	private static final int MessageTargetId = 0;
 	private static final int MessageTypeOffset = 2;
 
 	//DEBUG:
@@ -177,7 +183,7 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 
 						if (expectedLen < 0) {
 							// Do Nothing
-						} else if (packetBufferSize > expectedLen) {
+						} else if ((packetBufferSize > expectedLen)||(packetBuffer[MessageTargetId] != BaseStationId)) { //Ignore non-sensical msgs / those not intended for base station
 							// Look for the first occurrence of the new line and
 							// start the buffer there.
 							int firstNewLineIndex = -1;
