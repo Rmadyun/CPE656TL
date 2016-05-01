@@ -1,5 +1,6 @@
 package com.traintrax.navigation.service.mdu;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -49,6 +50,10 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 	private static final int TimeSyncReplyPacketSize = 8;
 
 	private static final int MessageTypeOffset = 2;
+
+	//DEBUG:
+	private static FileWriter fileWriter;
+	
 
 	/**
 	 * Assigns the contents of the packet buffer header
@@ -139,6 +144,18 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 
 				if (readValue >= 0) {
 					byte readByte = (byte) readValue;
+					
+					
+					if(fileWriter == null)
+					{
+						fileWriter = new FileWriter("C:\\TrainTrax\\rawBytes.txt");
+					}
+					
+					char[] temp = new char[1];
+					temp[0] = (char) readByte;
+					
+					fileWriter.write(temp);
+					
 
 					// Store byte
 					if ((packetBufferSize + PacketBufferHeaderSize) == packetBuffer.length) {
@@ -190,6 +207,7 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 							// Mark to Save Buffer
 							appendingMduMessage = false;
 							packetBufferSize = 0;
+                            fileWriter.write('\n');
 						} else { // packetBufferSize < expectedLen
 
 							// Do Nothing

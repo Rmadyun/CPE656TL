@@ -72,11 +72,11 @@ public class TimeSyncResponseMessage {
 	/**
 	 * Encodes the train identification message into a MDU protocol packet
 	 * 
-	 * @param roundtripReplyMessage
+	 * @param timeSyncReplyMessage
 	 *            Message to encode
 	 * @return MDU Packet
 	 */
-	public static byte[] EncodeTimeSyncReply(TimeSyncResponseMessage roundtripReplyMessage) {
+	public static byte[] EncodeTimeSyncReply(TimeSyncResponseMessage timeSyncReplyMessage) {
 		byte[] encodedMessage = new byte[TimeSyncResponseMessage.TimeSyncResponsePacketSize];
 
 		int DestinationOffset = 0;
@@ -86,23 +86,25 @@ public class TimeSyncResponseMessage {
 		int MessageTailOffset = 7;
 		
 		// Decode values
-		encodedMessage[DestinationOffset] = roundtripReplyMessage.getDestination();
-		encodedMessage[SourceOffset] = roundtripReplyMessage.getSource();
-		encodedMessage[MessageTypeOffset] = roundtripReplyMessage.getMessageType();
+		encodedMessage[DestinationOffset] = timeSyncReplyMessage.getDestination();
+		encodedMessage[SourceOffset] = timeSyncReplyMessage.getSource();
+		encodedMessage[MessageTypeOffset] = timeSyncReplyMessage.getMessageType();
 		
-		Calendar timeMeasured = (Calendar) roundtripReplyMessage.getTimestamp().clone();
+		Calendar timeMeasured = (Calendar) timeSyncReplyMessage.getTimestamp().clone();
 		int year = timeMeasured.get(Calendar.YEAR);
 		int month = timeMeasured.get(Calendar.MONTH);
 		int date = timeMeasured.get(Calendar.DAY_OF_MONTH);
 
 		timeMeasured.set(year, month, date, 0, 0, 0);
 		
-		long time = ((roundtripReplyMessage.getTimestamp().getTimeInMillis() - timeMeasured.getTimeInMillis())*1000);
+		long now = timeSyncReplyMessage.getTimestamp().getTimeInMillis();
+		long startOfDay = timeMeasured.getTimeInMillis();
+		long diff = (now - startOfDay)/1000;
 		
-		encodedMessage[TimeOffset] = (byte) ((time >> 24)&0xFF);
-		encodedMessage[TimeOffset+1] = (byte) ((time >> 16)&0xFF);
-		encodedMessage[TimeOffset+2] = (byte) ((time >> 8)&0xFF);
-		encodedMessage[TimeOffset+3] = (byte) ((time)&0xFF);
+		encodedMessage[TimeOffset] = (byte) ((diff >> 24)&0xFF);
+		encodedMessage[TimeOffset+1] = (byte) ((diff >> 16)&0xFF);
+		encodedMessage[TimeOffset+2] = (byte) ((diff >> 8)&0xFF);
+		encodedMessage[TimeOffset+3] = (byte) ((diff)&0xFF);
 		
 		encodedMessage[MessageTailOffset] = 0x0A;
 

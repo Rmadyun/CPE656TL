@@ -44,6 +44,11 @@ public class TrainPositionResource extends ServerResource {
 
                 throw new Exception("No ID specified");
 			}
+			
+			if(trainPosition == null)
+			{
+			    throw new Exception("No position for requested train " + idQuery + " is available");
+			}
 
 			TrainPositionUpdateMessage response = new TrainPositionUpdateMessage(idQuery, trainPosition.getPosition().getX(),
 					trainPosition.getPosition().getY(), trainPosition.getPosition().getZ(),

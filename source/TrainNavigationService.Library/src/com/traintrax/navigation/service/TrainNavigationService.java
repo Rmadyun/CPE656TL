@@ -65,7 +65,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	private TrackSwitchControllerInterface trackSwitchController;
 	private PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher;
 	private static final int POLL_RATE_IN_MS = 50;
-	private final Map<String, TrainPositionEstimate> trainPositionLut = new HashMap<>();
+	private final Map<String, TrainPositionEstimate> trainPositionLut = new ConcurrentHashMap<>();
 	private final Map<String, TrainMonitorInterface> trainMonitorLut = new ConcurrentHashMap<>();
 	private TrainNavigationDatabaseInterface trainNavigationDatabase;
 	private MotionDetectionUnitInterface motionDetectionUnit;
@@ -349,9 +349,19 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 
 	@Override
 	public List<String> GetKnownTrainIdentifiers() {
-		List<String> knownTrainIdentifers = new LinkedList<String>(trainPositionLut.keySet());
+		List<String> knownTrainIdentifiers = new LinkedList<String>();
 
-		return knownTrainIdentifers;
+		for(String key : trainPositionLut.keySet()){
+			
+			TrainPositionEstimate trainPositionEstimate = trainPositionLut.get(key);
+			
+			if(trainPositionEstimate != null)
+			{
+				knownTrainIdentifiers.add(key);
+			}
+		}
+
+		return knownTrainIdentifiers;
 	}
 
 	@Override
