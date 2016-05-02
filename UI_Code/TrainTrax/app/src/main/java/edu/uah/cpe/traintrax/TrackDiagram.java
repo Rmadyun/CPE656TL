@@ -39,7 +39,6 @@ public class TrackDiagram {
 
         //GetCoordinate data from somewhere
         int num_cords = 0;
-        Boolean state = false;
         Float xPos = 0.0f;
         Float yPos = 0.0f;
 
@@ -119,7 +118,6 @@ public class TrackDiagram {
                 coordinates.set(shapecount, temp_coord);
                 shapecount++;
             }
-            NavData = true;
         } catch (Exception exception) {
             exception.printStackTrace();
 
@@ -172,6 +170,7 @@ public class TrackDiagram {
         this.num_shapes = 0;
         xmax = 0;
         ymax = 0;
+        NavData = false;
 
         //DEBUG: This test implementation will use test data for the track
         //if track geometry data is not provided
@@ -188,11 +187,13 @@ public class TrackDiagram {
 
             //Load all of the test data to define the shape (i.e. geometry) of the track
             trackGeometry = new TrackGeometry(trackBlocks, trackPoints, adjacentPoints, trackSwitches);
+
         }
 
         //Set diagram data if we were able to read data from
         //the track geometry database
         if (trackGeometry != null) {
+            NavData = true;
             SetAllDiagramData(trackGeometry);
         }
         //xmax = 210;

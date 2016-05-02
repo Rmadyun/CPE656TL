@@ -1,5 +1,6 @@
 package edu.uah.cpe.traintrax;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 
 
@@ -30,6 +32,10 @@ import java.util.List;
 
 public class MainView extends View {
 
+    MainActivity myActivity = (MainActivity) getContext();
+    TrackDiagram TrackDig = SharedObjectSingleton.getInstance().getTrackDiagram();
+
+
     public MainView(Context context) {
         super(context);
     }
@@ -45,17 +51,11 @@ public class MainView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
-        TrackDiagram TrackDig = SharedObjectSingleton.getInstance().getTrackDiagram();
-        // get default values for Track Diagram
 
-        //nothing to do if null this may need to be tweaked #TODO
-        //what does TrackDig null mean?
-
+        //return if TrackDig class has not been set yet
         if (TrackDig == null) {
             return;
         }
-
-        //no track diagram data set yet
 
         int xmax = TrackDig.getXmax();
         int ymax = TrackDig.getYmax();
@@ -82,28 +82,9 @@ public class MainView extends View {
         // TODO Auto-generated method stub
 
         Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL);
+
+        paint.setStyle(Paint.Style.STROKE);
         paint.setColor(Color.WHITE);
-
-
-        if (TrackDig != null) {
-            if (!TrackDig.GetNavData()) {
-
-                /* Display error image and message on screen */
-
-                Bitmap error_screen = BitmapFactory.decodeResource(getResources(),
-                        R.drawable.trackgeo);
-                canvas.drawBitmap(error_screen, null, new Rect(0, 50, 2300, 1100), null);
-                canvas.drawPaint(paint);
-                paint.setColor(Color.BLACK);
-                paint.setTextSize(100);
-                canvas.drawText("Track Geometry Data Not Found!", 350, 1200, paint);
-                return;
-            }
-        }
-
-        super.onDraw(canvas);
-
         canvas.drawPaint(paint);
 
         //Add Path, will replace the coordinates in here with the ArrayLists once
@@ -158,6 +139,20 @@ public class MainView extends View {
 
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(legend, 450, 300, false);
         canvas.drawBitmap(resizedBitmap, (xpixel / 2) - 150, ypixel - 400, paint);
+
+        //unable to get Track Digagram data from Train Navigation Database
+        if (TrackDig.GetNavData() == false) {
+
+                // Display error message on screen letting them know default data is loaded
+
+                paint.setTextSize(45);
+                paint.setColor(Color.BLACK);
+                paint.setStyle(Paint.Style.FILL);
+                //canvas.drawText("Track Geometry Data Not Found!", 350, 500, paint);
+                canvas.drawText("Error:  Unable to connect to Train Navigation Database, default track data loaded", 100, 200, paint);
+            } 
     }
+
+
 }
 
