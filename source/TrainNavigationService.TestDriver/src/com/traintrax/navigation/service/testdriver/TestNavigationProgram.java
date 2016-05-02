@@ -3,6 +3,7 @@ package com.traintrax.navigation.service.testdriver;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -50,6 +51,7 @@ import com.traintrax.navigation.service.position.AccelerometerMeasurement;
 import com.traintrax.navigation.service.position.Coordinate;
 import com.traintrax.navigation.service.position.GyroscopeMeasurement;
 import com.traintrax.navigation.service.position.InertialMotionPositionAlgorithmInterface;
+import com.traintrax.navigation.service.position.RfidTagDetectedNotification;
 import com.traintrax.navigation.service.position.Train;
 import com.traintrax.navigation.service.position.TrainPosition2DAlgorithm;
 import com.traintrax.navigation.service.position.TrainPositionEstimate;
@@ -130,36 +132,41 @@ public class TestNavigationProgram {
 		 * MotionDetectionUnit(mduCommunicationChannel, mduProtocolParser);
 		 */
 
-		//Generates a test case where the train moves in a diagonal line and accelerates for 1 second,
-		//then moves at a constant speed for 10 seconds
+		// Generates a test case where the train moves in a diagonal line and
+		// accelerates for 1 second,
+		// then moves at a constant speed for 10 seconds
 		double initialSpeedInMetersPerSecond = 1;
 		double accelerationInMetersPerSecondSquared = 0;
 		int numberOfSeconds = 10;
 		int numSamplesBeforeTagEvent = 3;
 		double kineticFrictionOffset = 0.35;
 		Calendar startTime = Calendar.getInstance();
-		
-		//Stay still for 50 samples so that calibration can complete.
-		PositionTestCase calibrationTestCase = MduMeasurementGenerator
-				.generateStraightLine(currentOrientation.getRadiansRotationAlongZAxis(), currentPosition, 0,
-						0, 50, startTime, Integer.MAX_VALUE,0);
 
-		startTime.add(Calendar.SECOND,  50);
+		// Stay still for 50 samples so that calibration can complete.
+		PositionTestCase calibrationTestCase = MduMeasurementGenerator.generateStraightLine(
+				currentOrientation.getRadiansRotationAlongZAxis(), currentPosition, 0, 0, 50, startTime,
+				Integer.MAX_VALUE, 0);
 
-		//Accelerate the train for 1 second so that it reaches the constant speed needed
-		PositionTestCase startupTestCase = MduMeasurementGenerator
-				.generateStraightLine(currentOrientation.getRadiansRotationAlongZAxis(), currentPosition, 0,
-						1, 1, startTime, Integer.MAX_VALUE, kineticFrictionOffset);
-		PositionTestSample lastStartupSample = startupTestCase.getSamples().get(startupTestCase.getSamples().size()-1);
+		startTime.add(Calendar.SECOND, 50);
 
-		startTime.add(Calendar.SECOND,  1);
-		PositionTestCase testCase = MduMeasurementGenerator
-				.generateStraightLine(currentOrientation.getRadiansRotationAlongZAxis(), lastStartupSample.getExpectedPosition().getValue(), initialSpeedInMetersPerSecond,
-						accelerationInMetersPerSecondSquared, numberOfSeconds, startTime, numSamplesBeforeTagEvent, kineticFrictionOffset);
-		
-		PositionTestCase straightLineWithInitialAccTestCase = new PositionTestCase("Train straightline with initial acceleration", currentPosition, currentOrientation, currentVelocity);
-		
-		//straightLineWithInitialAccTestCase.appendTestCase(calibrationTestCase);
+		// Accelerate the train for 1 second so that it reaches the constant
+		// speed needed
+		PositionTestCase startupTestCase = MduMeasurementGenerator.generateStraightLine(
+				currentOrientation.getRadiansRotationAlongZAxis(), currentPosition, 0, 1, 1, startTime,
+				Integer.MAX_VALUE, kineticFrictionOffset);
+		PositionTestSample lastStartupSample = startupTestCase.getSamples()
+				.get(startupTestCase.getSamples().size() - 1);
+
+		startTime.add(Calendar.SECOND, 1);
+		PositionTestCase testCase = MduMeasurementGenerator.generateStraightLine(
+				currentOrientation.getRadiansRotationAlongZAxis(), lastStartupSample.getExpectedPosition().getValue(),
+				initialSpeedInMetersPerSecond, accelerationInMetersPerSecondSquared, numberOfSeconds, startTime,
+				numSamplesBeforeTagEvent, kineticFrictionOffset);
+
+		PositionTestCase straightLineWithInitialAccTestCase = new PositionTestCase(
+				"Train straightline with initial acceleration", currentPosition, currentOrientation, currentVelocity);
+
+		// straightLineWithInitialAccTestCase.appendTestCase(calibrationTestCase);
 		straightLineWithInitialAccTestCase.appendTestCase(startupTestCase);
 		straightLineWithInitialAccTestCase.appendTestCase(testCase);
 
@@ -181,11 +188,12 @@ public class TestNavigationProgram {
 				gdi);
 
 		trainNavigationDatabase = new TrainNavigationDatabase(trackPointRepository, accelerometerMeasurementRepository,
-				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository, trackSwitchRepository);
+				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository,
+				trackSwitchRepository);
 
 		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(currentPosition,
 				currentOrientation, currentVelocity);
-		
+
 		TrackSwitchControllerInterface trainController = null;
 
 		trainController = new TestTrackSwitchController();
@@ -201,14 +209,14 @@ public class TestNavigationProgram {
 		// ReadTrainPositionsFromTrainNavigationService(trainNavigationService);
 
 		String selectedTrain = "1";
-		
-		//Get the calibration out of the way.
+
+		// Get the calibration out of the way.
 		motionDetectionUnit.enqueueSamples(calibrationTestCase.getSamples());
-		
+
 		for (PositionTestSample sample : straightLineWithInitialAccTestCase.getSamples()) {
 			List<PositionTestSample> tempSamples = new LinkedList<PositionTestSample>();
 			tempSamples.add(sample);
-			//TODO: Figure out a way to fake the tag position lookup.
+			// TODO: Figure out a way to fake the tag position lookup.
 			motionDetectionUnit.enqueueSamples(tempSamples);
 
 			TrainPositionEstimate trainPositionEstimate;
@@ -239,7 +247,8 @@ public class TestNavigationProgram {
 		double degreeChangePerSample = degreeChange / numberOfSamples;
 
 		for (int i = 0; i < numberOfSamples; i++) {
-			GyroscopeMeasurement measurement = new GyroscopeMeasurement(DefaultTrainId, degreeChangePerSample, 0, 0, 1, timeMeasured);
+			GyroscopeMeasurement measurement = new GyroscopeMeasurement(DefaultTrainId, degreeChangePerSample, 0, 0, 1,
+					timeMeasured);
 
 			measurements.add(measurement);
 		}
@@ -508,7 +517,7 @@ public class TestNavigationProgram {
 	private static void TestPositionAlgorithm() {
 		List<ValueUpdate<Tuple<GyroscopeMeasurement, AccelerometerMeasurement>>> imuReadings;
 		List<ValueUpdate<Coordinate>> positionReadings;
-		List<ValueUpdate<Tuple<Coordinate,Velocity>>> finalPositions = new LinkedList<ValueUpdate<Tuple<Coordinate, Velocity>>>();
+		List<ValueUpdate<Tuple<Coordinate, Velocity>>> finalPositions = new LinkedList<ValueUpdate<Tuple<Coordinate, Velocity>>>();
 
 		imuReadings = ImuMeasurementsReader
 				.ReadFile("/home/death/Documents/CPE658/sample-imu-data/02-17-2016/ImuUpdates.csv");
@@ -546,7 +555,7 @@ public class TestNavigationProgram {
 		// NOTE: Ball Parked an initial position based on the 02-17-16 data.
 		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(
 				new Coordinate(42.5 * inchesToMeters, 61.1875 * inchesToMeters, 0),
-				new EulerAngleRotation(0, 0, -Math.PI), new Velocity(0,0,0));
+				new EulerAngleRotation(0, 0, -Math.PI), new Velocity(0, 0, 0));
 
 		try {
 			FileWriter fileWriter = new FileWriter("/home/death/debug_log.txt");
@@ -554,7 +563,7 @@ public class TestNavigationProgram {
 
 			for (ValueUpdate<Object> timePoint : timeline) {
 
-				ValueUpdate<Tuple<Coordinate,Velocity>> positionUpdate = null;
+				ValueUpdate<Tuple<Coordinate, Velocity>> positionUpdate = null;
 				if (timePoint.getValue() instanceof Tuple<?, ?>) {
 					bw.write("IMU Processed\n");
 					Tuple<GyroscopeMeasurement, AccelerometerMeasurement> imuReading = (Tuple<GyroscopeMeasurement, AccelerometerMeasurement>) timePoint
@@ -633,6 +642,48 @@ public class TestNavigationProgram {
 
 	}
 
+	private static void TestMduProtocol() {
+		String portName = "/dev/ttyUSB0";
+		SerialPort sp = null;
+
+		try {
+			CommPortIdentifier commPortIdentifier = CommPortIdentifier.getPortIdentifier(portName);
+			CommPort serialPort = commPortIdentifier.open("Test Serial Port", 3000);
+
+			sp = (SerialPort) serialPort;
+
+			int baudRate = 9600; // 9600bps
+			sp.setSerialPortParams(baudRate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+		} catch (Exception exception) {
+
+		}
+
+		if (sp != null) {
+
+			OutputStream txStream = null;
+			try {
+				txStream = sp.getOutputStream();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			if (txStream != null) {
+				// TODO: Write test output here.
+				
+				RfidTagDetectedNotification rfidTagNotification = new RfidTagDetectedNotification("1","00:00:01", Calendar.getInstance());
+				RfidTagDetectedMessage rfidTagDetectedMessage = new RfidTagDetectedMessage((byte) 0x00, (byte) 0x1a, rfidTagNotification);
+				byte[] mduPrototocolMessage = RfidTagDetectedMessage.Encode(rfidTagDetectedMessage);
+				
+				try {
+					txStream.write(mduPrototocolMessage);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 	/**
 	 * @param args
 	 */
@@ -649,10 +700,11 @@ public class TestNavigationProgram {
 		// TestJmri();
 		// TestPositionAlgorithm();
 
-		//TestMduMeasurementRead();
-		
-		PositionTestCase testCase = PositionTestCaseFileReader.Read("C:\\TrainTrax\\CPE656TL-master\\prototypes\\TestNavigation\\PositionTestCaseTemplate.csv");
-		
+		// TestMduMeasurementRead();
+
+		PositionTestCase testCase = PositionTestCaseFileReader
+				.Read("C:\\TrainTrax\\CPE656TL-master\\prototypes\\TestNavigation\\PositionTestCaseTemplate.csv");
+
 		System.out.println(testCase.getDescription());
 
 	}

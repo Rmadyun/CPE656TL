@@ -8,7 +8,7 @@ import java.util.Calendar;
  * @author Corey Sanders
  *
  */
-public class TimeSyncResponseMessage {
+public class TimeSyncResponseMessage extends BaseMduMessage {
 	
 	/**
 	 * MDU Protocol Message Type
@@ -89,18 +89,10 @@ public class TimeSyncResponseMessage {
 		encodedMessage[DestinationOffset] = timeSyncReplyMessage.getDestination();
 		encodedMessage[SourceOffset] = timeSyncReplyMessage.getSource();
 		encodedMessage[MessageTypeOffset] = timeSyncReplyMessage.getMessageType();
-		
-		Calendar timeMeasured = (Calendar) timeSyncReplyMessage.getTimestamp().clone();
-		int year = timeMeasured.get(Calendar.YEAR);
-		int month = timeMeasured.get(Calendar.MONTH);
-		int date = timeMeasured.get(Calendar.DAY_OF_MONTH);
-
-		timeMeasured.set(year, month, date, 0, 0, 0);
-		
-		long now = timeSyncReplyMessage.getTimestamp().getTimeInMillis();
-		long startOfDay = timeMeasured.getTimeInMillis();
-		long diff = (now - startOfDay)/1000;
-		
+				
+		int millisecondsSinceDayStart = getNumberOfMillisecondsSinceStartOfDay(timeSyncReplyMessage.getTimestamp());
+		long diff = (millisecondsSinceDayStart/1000);
+				
 		encodedMessage[TimeOffset] = (byte) ((diff >> 24)&0xFF);
 		encodedMessage[TimeOffset+1] = (byte) ((diff >> 16)&0xFF);
 		encodedMessage[TimeOffset+2] = (byte) ((diff >> 8)&0xFF);
