@@ -93,8 +93,9 @@ void measurementRelay::listenForMeasurements()
             Rmsg[1] = TRAIN_ID;
             Rmsg[2] = RFID;
 
-            unsigned long measureTime = millis() - millisOffset;
-            measureTime = timeOfDay + measureTime * 1000;
+            //unsigned long measureTime = millis() - millisOffset;
+            //measureTime = timeOfDay + measureTime * 1000;
+            unsigned long measureTime = timeOfDay + millis();
 
             Rmsg[6] = (byte) measureTime;
             Rmsg[5] = (byte) measureTime >> 8;
@@ -131,8 +132,9 @@ void measurementRelay::listenForMeasurements()
   msg[1] = TRAIN_ID;
   msg[2] = IMU;
 
-  unsigned long measureTime = millis() - millisOffset;
-  measureTime = timeOfDay + measureTime * 1000;
+  //unsigned long measureTime = millis() - millisOffset;
+  //measureTime = timeOfDay + measureTime * 1000;
+  unsigned long measureTime = timeOfDay + millis();
 
   msg[6] = (byte) measureTime;
   msg[5] = (byte) measureTime >> 8;
@@ -155,8 +157,8 @@ void measurementRelay::listenForMeasurements()
   msg[17] = Wire.read(); msg[18] = Wire.read();   //GyZ
   msg[19] = '\n';
 
-  Serial.print(Serial.write(msg, 20));
-  //Serial.write(msg, 20);
+  //Serial.print(Serial.write(msg, 20));
+  Serial.write(msg, 20);
 }
 
 
@@ -281,8 +283,10 @@ void measurementRelay::timeLink(unsigned long RTT)
       
     }
   
+  //timeOfDay = regTime * 1000; //calculate ofset value for millis()
+  //millisOffset = startTime + (endTime - startTime)/2;
   timeOfDay = regTime * 1000; //calculate ofset value for millis()
-  millisOffset = startTime + (endTime - startTime)/2;
+  timeOfDay = timeOfDay - (startTime + (endTime - startTime)/2);
 }
 
 
