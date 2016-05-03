@@ -111,6 +111,8 @@ public class Service {
 		//Initialize the service for use
 		TrainNavigationServiceSingleton.initialize(serviceConfiguration);
 
+		System.out.printf("Launching Navigation Service with HTTP port: %d\n", serviceConfiguration.getHostPort());
+		
 		//Initializes the Service
 		 // Create a new Restlet component and add a HTTP server connector to it
 	    Component component = new Component();

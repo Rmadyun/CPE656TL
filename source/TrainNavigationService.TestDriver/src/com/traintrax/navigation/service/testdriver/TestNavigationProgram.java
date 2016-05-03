@@ -643,7 +643,7 @@ public class TestNavigationProgram {
 	}
 
 	private static void TestMduProtocol() {
-		String portName = "/dev/ttyUSB0";
+		String portName = "/dev/ttyUSB1";
 		SerialPort sp = null;
 
 		try {
@@ -668,17 +668,35 @@ public class TestNavigationProgram {
 			}
 
 			if (txStream != null) {
-				// TODO: Write test output here.
-				
-				RfidTagDetectedNotification rfidTagNotification = new RfidTagDetectedNotification("1","00:00:01", Calendar.getInstance());
-				RfidTagDetectedMessage rfidTagDetectedMessage = new RfidTagDetectedMessage((byte) 0x00, (byte) 0x1a, rfidTagNotification);
-				byte[] mduPrototocolMessage = RfidTagDetectedMessage.Encode(rfidTagDetectedMessage);
-				
-				try {
-					txStream.write(mduPrototocolMessage);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				// Load sample test case file
+				String filename = "/home/death/repositories/CPE656TL/test/Train Demo_Test Track_On 02-17-2016_Test Casev2.csv";
+				PositionTestCase testCase = PositionTestCaseFileReader.Read(filename);
+
+				// RfidTagDetectedNotification rfidTagNotification = new
+				// RfidTagDetectedNotification("1","00:00:01",
+				// Calendar.getInstance());
+
+				for (PositionTestSample sample : testCase.getSamples()) {
+					RfidTagDetectedNotification rfidTagNotification = sample.getRfidTagDetectedNotification();
+
+					if (rfidTagNotification != null) {
+						RfidTagDetectedMessage rfidTagDetectedMessage = new RfidTagDetectedMessage((byte) 0x00,
+								(byte) 0x1a, rfidTagNotification);
+						byte[] mduProtocolMessage = RfidTagDetectedMessage.Encode(rfidTagDetectedMessage);
+
+						try {
+							txStream.write(mduProtocolMessage);
+							Thread.sleep(1000); // Wait 1 second before
+												// reporting the next RFID tag.
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					}
 				}
 			}
 		}
@@ -702,10 +720,12 @@ public class TestNavigationProgram {
 
 		// TestMduMeasurementRead();
 
-		PositionTestCase testCase = PositionTestCaseFileReader
+		/*PositionTestCase testCase = PositionTestCaseFileReader
 				.Read("C:\\TrainTrax\\CPE656TL-master\\prototypes\\TestNavigation\\PositionTestCaseTemplate.csv");
 
-		System.out.println(testCase.getDescription());
+		System.out.println(testCase.getDescription()); */
+		
+		TestMduProtocol();
 
 	}
 
