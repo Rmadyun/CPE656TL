@@ -34,9 +34,6 @@ import java.util.logging.Handler;
  * Class controls the train monitor display of the TrainMonitorView.
  */
 public class MonitorView extends View {
-    TrackDiagram TrackDig = SharedObjectSingleton.getInstance().getTrackDiagram();
-    TrackSwitchInfo Switch = SharedObjectSingleton.getInstance().getTrackSwitchInfo();
-    TrainPosInfo TrainPos = SharedObjectSingleton.getInstance().getTrainPosInfo();
 
     //get default values for TrackDiagram
     int xmax;
@@ -117,6 +114,13 @@ public class MonitorView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
+        //The value of the singleton changes once the task of reading track geometry data from the
+        //network has been completed.
+        //If you do not read the current value of the singleton, then it will have the initial value
+        //(null) forever, even after the track data has been loaded.
+        TrackDiagram TrackDig = SharedObjectSingleton.getInstance().getTrackDiagram();
+        TrackSwitchInfo Switch = SharedObjectSingleton.getInstance().getTrackSwitchInfo();
+        TrainPosInfo TrainPos = SharedObjectSingleton.getInstance().getTrainPosInfo();
 
         if (TrackDig == null)
             return;
@@ -333,6 +337,17 @@ public class MonitorView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        //The value of the singleton changes once the task of reading track geometry data from the
+        //network has been completed.
+        //If you do not read the current value of the singleton, then it will have the initial value
+        //(null) forever, even after the track data has been loaded.
+        TrackSwitchInfo Switch = SharedObjectSingleton.getInstance().getTrackSwitchInfo();
+
+        if(Switch == null){
+            //Immediately return if you do not have switch info.
+            return false;
+        }
+
         int x = (int) event.getX();
         int y = (int) event.getY();
         switch (event.getAction()) {

@@ -56,6 +56,17 @@ public class TrainMonitorActivity extends AppCompatActivity {
             //Update TrainPosInfo with the latest information for this train.
             TrainPos.addOrUpdateTrain(event.getPosition().getTrainId(), xPos, yPos, xVel, yVel);
 
+            //Make sure to run in the UI thread since this is invoked from a timer (i.e. separate thread)
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //Add any code here that needs to make changes to the UI
+                    //Trigger the display to be referenced for the train monitor view
+                    myView.invalidate();
+                }
+            });
+
+
 /* Test CODE
             //test data the above code is meant to work with the actual navigation service remove #TODO
             Boolean passTest = Boolean.FALSE;

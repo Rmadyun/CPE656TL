@@ -27,7 +27,7 @@ public class RemoteTrainNavigationService implements TrainNavigationServiceInter
 
     private final Timer timer;
     private final PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher;
-    private static final int POLL_RATE_IN_MS = 100; //assuming a low latency network
+    private static final int POLL_RATE_IN_MS = 1000; //assuming a low latency network
 
 
     /**

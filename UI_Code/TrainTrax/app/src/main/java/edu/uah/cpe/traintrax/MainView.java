@@ -32,8 +32,6 @@ import java.util.List;
 
 public class MainView extends View {
 
-    TrackDiagram TrackDig = SharedObjectSingleton.getInstance().getTrackDiagram();
-
 
     public MainView(Context context) {
         super(context);
@@ -50,6 +48,11 @@ public class MainView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
+        //The value of the singleton changes once the task of reading track geometry data from the
+        //network has been completed.
+        //If you do not read the current value of the singleton, then it will have the initial value
+        //(null) forever, even after the track data has been loaded.
+        TrackDiagram TrackDig = SharedObjectSingleton.getInstance().getTrackDiagram();
 
         //return if TrackDig class has not been set yet
         if (TrackDig == null) {
