@@ -257,7 +257,7 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 							lastKnownTrainOrientation.getValue(), thresholdFilter);
 
 					this.lastKnownTrainAcceleration = new ValueUpdate<Acceleration>(
-							adjustedMeasurement.getAccelerationMeasurement(), adjustedMeasurement.getTimeMeasured());
+							adjustedMeasurement.getAcceleration(), adjustedMeasurement.getTimeMeasured());
 				}
 
 				imuPositionResults = calculatePositionFromImu(rfidTagPositionResults.getLastKnownTrainPosition(),
@@ -686,8 +686,8 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 			EulerAngleRotation orientation, ThresholdFilter frictionThresholdFilter) {
 		AccelerometerMeasurement inertialFrameMeasurement;
 
-		double adjustedX = (measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongXAxis());
-		double adjustedY = (measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongYAxis());
+		double adjustedX = (measurement.getAcceleration().getMetersPerSecondSquaredAlongXAxis());
+		double adjustedY = (measurement.getAcceleration().getMetersPerSecondSquaredAlongYAxis());
 		double sqX = adjustedX * adjustedX;
 		double sqY = adjustedY * adjustedY;
 		double scalarAcceleration = Math.sqrt(sqX + sqY);

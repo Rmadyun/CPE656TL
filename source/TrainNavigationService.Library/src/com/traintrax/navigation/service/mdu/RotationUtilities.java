@@ -584,7 +584,7 @@ public class RotationUtilities {
 	 */
 	public static AccelerometerMeasurement changeToInertialFrame(AccelerometerMeasurement measurement, Matrix bodyFrameToInertialFrameRotationMatrix){
 		
-		ThreeDimensionalSpaceVector accelerationVector = Acceleration.ToThreeDimensionalSpaceVector(measurement.getAccelerationMeasurement());
+		ThreeDimensionalSpaceVector accelerationVector = Acceleration.ToThreeDimensionalSpaceVector(measurement.getAcceleration());
 		
 		ThreeDimensionalSpaceVector inertialFrameAccelerationVector = changeToInertialFrame(
 				accelerationVector, bodyFrameToInertialFrameRotationMatrix);

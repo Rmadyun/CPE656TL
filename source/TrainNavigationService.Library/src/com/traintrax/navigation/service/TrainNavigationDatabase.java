@@ -127,9 +127,9 @@ public class TrainNavigationDatabase implements TrainNavigationDatabaseInterface
 		
 		com.traintrax.navigation.database.library.AccelerometerMeasurement entry = new
 				com.traintrax.navigation.database.library.AccelerometerMeasurement(
-						measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongXAxis(),
-						measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongYAxis(),
-						measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongZAxis(),
+						measurement.getAcceleration().getMetersPerSecondSquaredAlongXAxis(),
+						measurement.getAcceleration().getMetersPerSecondSquaredAlongYAxis(),
+						measurement.getAcceleration().getMetersPerSecondSquaredAlongZAxis(),
 						measurement.getTimeMeasured());
 		
 		accelerometerMeasurementRepository.add(entry);

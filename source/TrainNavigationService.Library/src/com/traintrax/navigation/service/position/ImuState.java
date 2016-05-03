@@ -20,7 +20,7 @@ public class ImuState implements Comparable<ImuState> {
 	public ImuState(AccelerometerMeasurement accelerometerMeasurement, ValueUpdate<EulerAngleRotation> orientationUpdate){
 		timeMeasured = (Calendar) accelerometerMeasurement.getTimeMeasured().clone();
 		numberOfSecondsSinceLastUpdate = accelerometerMeasurement.getNumberOfSecondsSinceLastMeasurement();
-		correctedAcceleration = accelerometerMeasurement.getAccelerationMeasurement();
+		correctedAcceleration = accelerometerMeasurement.getAcceleration();
 		correctedOrientation = orientationUpdate.getValue();
 	}
 	

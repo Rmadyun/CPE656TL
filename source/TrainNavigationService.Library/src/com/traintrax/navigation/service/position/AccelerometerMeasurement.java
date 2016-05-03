@@ -35,7 +35,7 @@ public class AccelerometerMeasurement implements Comparable<AccelerometerMeasure
      * Measurement of acceleration from the accelerometer
      * @return Measurement of acceleration from the accelerometer
      */
-	public Acceleration getAccelerationMeasurement() {
+	public Acceleration getAcceleration() {
 		return accelerationMeasurement;
 	}
 

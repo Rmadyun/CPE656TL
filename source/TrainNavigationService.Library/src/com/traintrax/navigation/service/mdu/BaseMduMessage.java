@@ -1,5 +1,6 @@
 package com.traintrax.navigation.service.mdu;
 
+import java.nio.ByteBuffer;
 import java.util.Calendar;
 
 /**
@@ -99,19 +100,7 @@ public abstract class BaseMduMessage {
 		return trainId;
 	}
 	
-	
-	protected static Calendar decodeTimestamp(int numberOfMillisecondsSinceStartOfDay){
-		Calendar timeMeasured = Calendar.getInstance();
-		int year = timeMeasured.get(Calendar.YEAR);
-		int month = timeMeasured.get(Calendar.MONTH);
-		int date = timeMeasured.get(Calendar.DAY_OF_MONTH);
-
-		timeMeasured.set(year, month, date, 0, 0, 0);
-		timeMeasured.add(Calendar.MILLISECOND, numberOfMillisecondsSinceStartOfDay);
 		
-		return timeMeasured;
-	}
-	
 	protected static int getNumberOfMillisecondsSinceStartOfDay(Calendar timestamp){
 		Calendar timeMeasured = (Calendar) timestamp.clone();
 		int year = timeMeasured.get(Calendar.YEAR);
@@ -127,6 +116,18 @@ public abstract class BaseMduMessage {
 		return (int) (diff&0xFFFFFFFF);
 	}
 	
+	protected static Calendar decodeTimestamp(int numberOfMillisecondsSinceStartOfDay){
+		Calendar timeMeasured = Calendar.getInstance();
+		int year = timeMeasured.get(Calendar.YEAR);
+		int month = timeMeasured.get(Calendar.MONTH);
+		int date = timeMeasured.get(Calendar.DAY_OF_MONTH);
+
+		timeMeasured.set(year, month, date, 0, 0, 0);
+		timeMeasured.add(Calendar.MILLISECOND, numberOfMillisecondsSinceStartOfDay);
+		
+		return timeMeasured;
+	}
+	
 	protected static byte[] encodeTimestamp(int timestamp){
 		byte[] binaryTimestamp = new byte[4];
 		int offset = 0;
@@ -137,6 +138,25 @@ public abstract class BaseMduMessage {
 		
 		return binaryTimestamp;
 	}
+	
+	protected static Calendar readTimestamp(byte[] mduPacket){
+		// Decode values
+		ByteBuffer bb = ByteBuffer.wrap(mduPacket);
+
+		int numberOfMillisecondsSinceStartOfDay = bb.getInt(MduProtocolTimestampOffset);
+
+		return decodeTimestamp(numberOfMillisecondsSinceStartOfDay);
+	}
+	
+	protected static byte[] encodeShort(short value){
+		byte[] binaryTimestamp = new byte[2];
+		int offset = 0;
+		binaryTimestamp[offset] = (byte) ((value >> 8)&0xFF);
+		binaryTimestamp[offset+1] = (byte) ((value)&0xFF);
+		
+		return binaryTimestamp;
+	}
+	
 
 	/**
 	 * Writes to the packet a timestamp (based on the number of milliseconds since start of the day
@@ -162,6 +182,7 @@ public abstract class BaseMduMessage {
 		mduPacket[MduProtocolTimestampOffset + 2] = timestamp[2];
 		mduPacket[MduProtocolTimestampOffset + 3] = timestamp[3];
 	}
+	
 
 	/**
 	 * Write the packets that mark the end of the packet

@@ -54,9 +54,9 @@ public class ImuCalibrator {
 		
 		if(numberOfAccMeasurements < MaximumNumberOfAccMeasurements)
 		{
-			accXTotal += measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongXAxis();
-			accYTotal += measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongYAxis();
-			accZTotal += measurement.getAccelerationMeasurement().getMetersPerSecondSquaredAlongZAxis();
+			accXTotal += measurement.getAcceleration().getMetersPerSecondSquaredAlongXAxis();
+			accYTotal += measurement.getAcceleration().getMetersPerSecondSquaredAlongYAxis();
+			accZTotal += measurement.getAcceleration().getMetersPerSecondSquaredAlongZAxis();
 
 			numberOfAccMeasurements++;
 			
