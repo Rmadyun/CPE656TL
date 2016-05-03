@@ -78,7 +78,7 @@ public class DiscretePositionCalculator {
 							temp.getTimeObserved());
 
 					ValueUpdate<Velocity> velocity = calculateVelocity(previousPosition, currentPosition,
-							newOrientationEstimate.getValue());
+							newOrientationEstimate.getValue(), lastKnownVelocity);
 					
 					additionalTrainStateInfo = new Tuple<EulerAngleRotation, Velocity>(newOrientationEstimate.getValue(),
 							velocity.getValue());
@@ -89,7 +89,7 @@ public class DiscretePositionCalculator {
 					//estimate orientation
 					ValueUpdate<EulerAngleRotation> fallbackOrientationEstimate = estimateOrientation(currentPosition, lastKnownOrientation, lastKnownAngularVelocity);
 					ValueUpdate<Velocity> velocity = calculateVelocity(previousPosition, currentPosition,
-							fallbackOrientationEstimate.getValue());
+							fallbackOrientationEstimate.getValue(), lastKnownVelocity);
 					
 					if(deltaYaw > (Math.PI/2))
 					{
@@ -109,7 +109,7 @@ public class DiscretePositionCalculator {
 				//estimate orientation
 				ValueUpdate<EulerAngleRotation> fallbackOrientationEstimate = estimateOrientation(currentPosition, lastKnownOrientation, lastKnownAngularVelocity);
 				ValueUpdate<Velocity> velocity = calculateVelocity(previousPosition, currentPosition,
-						fallbackOrientationEstimate.getValue());
+						fallbackOrientationEstimate.getValue(), lastKnownVelocity);
 				additionalTrainStateInfo = new Tuple<EulerAngleRotation, Velocity>(fallbackOrientationEstimate.getValue(),
 						velocity.getValue());
 			}
@@ -156,8 +156,17 @@ public class DiscretePositionCalculator {
 		double yaw = (lastKnownAngularVelocity.getValue().getZ() * dt)
 				+ lastKnownOrientation.getValue().getRadiansRotationAlongZAxis();
 
-		ValueUpdate<EulerAngleRotation> estimatedOrientation = new ValueUpdate<EulerAngleRotation>(
+		ValueUpdate<EulerAngleRotation> estimatedOrientation;
+
+		if(dt == 0)
+		{
+		    estimatedOrientation = new ValueUpdate<EulerAngleRotation>(
+				lastKnownOrientation.getValue(), endPosition.getTimeObserved());
+		}
+		else {
+		    estimatedOrientation = new ValueUpdate<EulerAngleRotation>(
 				new EulerAngleRotation(roll, pitch, yaw), endPosition.getTimeObserved());
+		}
 
 		return estimatedOrientation;
 	}
@@ -212,10 +221,11 @@ public class DiscretePositionCalculator {
 	 *            Final position of the train
 	 * @param finalOrientation
 	 *            Final orientation of the train when at the final position
+	 * @param lastKnownVelocity 
 	 * @return An estimate on the velocity of the train.
 	 */
 	public static ValueUpdate<Velocity> calculateVelocity(ValueUpdate<Coordinate> initialPosition,
-			ValueUpdate<Coordinate> finalPosition, EulerAngleRotation finalOrientation) {
+			ValueUpdate<Coordinate> finalPosition, EulerAngleRotation finalOrientation, ValueUpdate<Velocity> lastKnownVelocity) {
 
 		double dx = finalPosition.getValue().getX() - initialPosition.getValue().getX();
 		double dy = finalPosition.getValue().getY() - initialPosition.getValue().getY();
@@ -223,11 +233,22 @@ public class DiscretePositionCalculator {
 		double dt = (finalPosition.getTimeObserved().getTimeInMillis()
 				- initialPosition.getTimeObserved().getTimeInMillis()) / 1000.0;
 
-		double dVx = (distance / dt) * Math.cos(finalOrientation.getRadiansRotationAlongZAxis());
-		double dVy = (distance / dt) * Math.sin(finalOrientation.getRadiansRotationAlongZAxis());
+		double dVx = (dt == 0) ? 0 : (distance / dt) * Math.cos(finalOrientation.getRadiansRotationAlongZAxis());
+		double dVy = (dt == 0) ? 0 : (distance / dt) * Math.sin(finalOrientation.getRadiansRotationAlongZAxis());
 
-		ValueUpdate<Velocity> velocityUpdate = new ValueUpdate<Velocity>(new Velocity(dVx, dVy, 0),
+		ValueUpdate<Velocity> velocityUpdate;
+		
+		if(dt == 0)
+		{
+			velocityUpdate = new ValueUpdate<Velocity>(lastKnownVelocity.getValue(),
+					finalPosition.getTimeObserved());
+ 
+		}
+		else
+		{
+		    velocityUpdate = new ValueUpdate<Velocity>(new Velocity(dVx, dVy, 0),
 				finalPosition.getTimeObserved());
+		}
 
 		return velocityUpdate;
 	}
@@ -242,7 +263,7 @@ public class DiscretePositionCalculator {
 	}
 	
 	public static ValueUpdate<Triplet<Coordinate, EulerAngleRotation, Velocity>> analyzePosition(ValueUpdate<Coordinate> initialPosition,
-			ValueUpdate<Coordinate> finalPosition, EulerAngleRotation originalOrientation, ThreeDimensionalSpaceVector lastKnownAngularVelocity) {
+			ValueUpdate<Coordinate> finalPosition, EulerAngleRotation originalOrientation, ThreeDimensionalSpaceVector lastKnownAngularVelocity, ValueUpdate<Velocity> lastKnownVelocity) {
 
 		double dx = finalPosition.getValue().getX() - initialPosition.getValue().getX();
 		double dy = finalPosition.getValue().getY() - initialPosition.getValue().getY();
@@ -259,11 +280,22 @@ public class DiscretePositionCalculator {
 		double angZ = lastKnownAngularVelocity.getZ()*dt + originalOrientation.getRadiansRotationAlongZAxis();
 		EulerAngleRotation finalOrientation = new EulerAngleRotation(angX, angY, angZ);
 
-		double dVx = (distance / dt) * Math.cos(finalOrientation.getRadiansRotationAlongZAxis());
-		double dVy = (distance / dt) * Math.sin(finalOrientation.getRadiansRotationAlongZAxis());
-
-		ValueUpdate<Velocity> velocityUpdate = new ValueUpdate<Velocity>(new Velocity(dVx, dVy, 0),
+		double dVx = (dt==0) ? 0 : (distance / dt) * Math.cos(finalOrientation.getRadiansRotationAlongZAxis());
+		double dVy = (dt == 0) ? 0 : (distance / dt) * Math.sin(finalOrientation.getRadiansRotationAlongZAxis());
+		
+        ValueUpdate<Velocity> velocityUpdate;
+		
+		if(dt == 0)
+		{
+			velocityUpdate = new ValueUpdate<Velocity>(lastKnownVelocity.getValue(),
+					finalPosition.getTimeObserved());
+ 
+		}
+		else
+		{
+		    velocityUpdate = new ValueUpdate<Velocity>(new Velocity(dVx, dVy, 0),
 				finalPosition.getTimeObserved());
+		}
 
 		return new ValueUpdate<Triplet<Coordinate, EulerAngleRotation, Velocity>>(new Triplet<Coordinate, EulerAngleRotation, Velocity>(finalPosition.getValue(), finalOrientation, velocityUpdate.getValue()), finalPosition.getTimeObserved());
 	}

@@ -45,7 +45,7 @@ public abstract class BaseMduMessage {
 	
 	protected static void writeMessageType(byte[] mduPacket, byte messageType) {
 
-		mduPacket[MduProtocolDestIdOffset] = messageType;
+		mduPacket[MduProtocolMessageTypeOffset] = messageType;
 	}
 	
 	/**

@@ -108,7 +108,7 @@ public class TrackSwitchController implements TrackSwitchControllerInterface {
 			    ChangeSwitchState(trackSwitch.getSwitchName(), SwitchState.Pass);
 			    
 			    try{
-			    	Thread.sleep(100000); //Sleep for 100 ms between switching to minimize spamming requests
+			    	Thread.sleep(100); //Sleep for 100 ms between switching to minimize spamming requests
 			    }
 			    catch(Exception exception){
 			    	
