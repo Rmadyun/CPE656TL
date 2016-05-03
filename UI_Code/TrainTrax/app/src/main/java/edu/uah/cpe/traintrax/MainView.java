@@ -32,7 +32,6 @@ import java.util.List;
 
 public class MainView extends View {
 
-    MainActivity myActivity = (MainActivity) getContext();
     TrackDiagram TrackDig = SharedObjectSingleton.getInstance().getTrackDiagram();
 
 
@@ -82,16 +81,11 @@ public class MainView extends View {
         // TODO Auto-generated method stub
 
         Paint paint = new Paint();
-
-        paint.setStyle(Paint.Style.STROKE);
         paint.setColor(Color.WHITE);
         canvas.drawPaint(paint);
 
         //Add Path, will replace the coordinates in here with the ArrayLists once
         // the TrackDiagram model class works correctly
-
-        //Use Color.parseColor to define HTML colors
-        paint.setColor(Color.parseColor("#CCCfff"));
 
         //set paint style
         paint.setStyle(Paint.Style.STROKE);
@@ -141,18 +135,19 @@ public class MainView extends View {
         canvas.drawBitmap(resizedBitmap, (xpixel / 2) - 150, ypixel - 400, paint);
 
         //unable to get Track Digagram data from Train Navigation Database
-        if (TrackDig.GetNavData() == false) {
+          if (!TrackDig.GetNavData()) {
 
                 // Display error message on screen letting them know default data is loaded
 
                 paint.setTextSize(45);
                 paint.setColor(Color.BLACK);
                 paint.setStyle(Paint.Style.FILL);
-                //canvas.drawText("Track Geometry Data Not Found!", 350, 500, paint);
+                //canvas.drawText("Track Geometry Data Not Found!", 100, 200, paint);
                 canvas.drawText("Error:  Unable to connect to Train Navigation Database, default track data loaded", 100, 200, paint);
-            } 
+             }
     }
 
 
 }
+
 
