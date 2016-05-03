@@ -190,10 +190,16 @@ public class TrackDiagram {
 
         }
 
+        else
+        {
+            //we were successfully able to connect to the database
+            NavData = true;
+
+        }
+
         //Set diagram data if we were able to read data from
         //the track geometry database
         if (trackGeometry != null) {
-            NavData = true;
             SetAllDiagramData(trackGeometry);
         }
         //xmax = 210;
