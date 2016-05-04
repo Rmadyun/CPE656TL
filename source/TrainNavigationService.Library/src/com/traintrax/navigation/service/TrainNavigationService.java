@@ -166,11 +166,12 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 			String dbUsername, String dbPassword) throws Exception {
 		MduCommunicationChannelInterface mduCommChannel = new SerialPortMduCommunicationChannel(mduSerialPort);
 		MduProtocolParserInterface mduProtocolParser = new MduProtocolParser();
-		MotionDetectionUnitInterface motionDetectionUnit = new MotionDetectionUnit(mduCommChannel, mduProtocolParser, this);
+		MotionDetectionUnitInterface motionDetectionUnit = new MotionDetectionUnit(mduCommChannel, mduProtocolParser,
+				this);
 
 		TrainNavigationDatabaseInterface trainNavigationDatabase;
 		GenericDatabaseInterface gdi = new MySqlDatabaseAdapter(dbUsername, dbPassword, dbName, dbHost, dbPort);
-		
+
 		gdi.connect();
 
 		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> trackPointRepository = new TrackPointRepository(
@@ -203,73 +204,91 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 
 		PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher = new GenericPublisher<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent>(
 				eventNotifier);
-		
-		
-		//Default position estimation algorithm
+
+		// Default position estimation algorithm
 		Coordinate currentPosition = DefaultTrainPosition;
 		EulerAngleRotation currentOrientation = new EulerAngleRotation(0, 0, 0);
-		Velocity currentVelocity = new Velocity(0,0,0);
+		Velocity currentVelocity = new Velocity(0, 0, 0);
 
 		InertialMotionPositionAlgorithmInterface positionAlgorithm = new TrainPosition2DAlgorithm(currentPosition,
 				currentOrientation, currentVelocity);
 
-
-		Initialize(motionDetectionUnit, trackSwitchController, trainNavigationDatabase, eventPublisher, positionAlgorithm );
+		Initialize(motionDetectionUnit, trackSwitchController, trainNavigationDatabase, eventPublisher,
+				positionAlgorithm);
 	}
-	
+
 	/**
 	 * Constructor
 	 * 
-	 * @param motionDetectionUnit Contacts MDU. Provides train position information
+	 * @param motionDetectionUnit
+	 *            Contacts MDU. Provides train position information
 	 * @param trackSwitchController
 	 *            Controls the train and track
-	 * @param trainNavigationDatabase Contacts the Train Navigation Database. Provides Track Geometry information. Saves measurements and estimates.
-	 * @param eventPublisher Notifies clients about Train Navigation Service changes
-	 * @param trainPositionAlgorithm Estimates train movement
+	 * @param trainNavigationDatabase
+	 *            Contacts the Train Navigation Database. Provides Track
+	 *            Geometry information. Saves measurements and estimates.
+	 * @param eventPublisher
+	 *            Notifies clients about Train Navigation Service changes
+	 * @param trainPositionAlgorithm
+	 *            Estimates train movement
 	 */
-	public TrainNavigationService(MotionDetectionUnitInterface motionDetectionUnit, TrackSwitchControllerInterface trackSwitchController, TrainNavigationDatabaseInterface trainNavigationDatabase,
-			PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher, InertialMotionPositionAlgorithmInterface trainPositionAlgorithm) {
+	public TrainNavigationService(MotionDetectionUnitInterface motionDetectionUnit,
+			TrackSwitchControllerInterface trackSwitchController,
+			TrainNavigationDatabaseInterface trainNavigationDatabase,
+			PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher,
+			InertialMotionPositionAlgorithmInterface trainPositionAlgorithm) {
 
-		Initialize(motionDetectionUnit, trackSwitchController, trainNavigationDatabase, eventPublisher, trainPositionAlgorithm );
+		Initialize(motionDetectionUnit, trackSwitchController, trainNavigationDatabase, eventPublisher,
+				trainPositionAlgorithm);
 	}
-	
+
 	/**
 	 * Constructor
 	 * 
-	 * @param motionDetectionUnit Contacts MDU. Provides train position information
+	 * @param motionDetectionUnit
+	 *            Contacts MDU. Provides train position information
 	 * @param trackSwitchController
 	 *            Controls the train and track
-	 * @param trainNavigationDatabase Contacts the Train Navigation Database. Provides Track Geometry information. Saves measurements and estimates.
-	 * @param eventPublisher Notifies clients about Train Navigation Service changes
-     * @param trainPositionAlgorithm Estimates train movement 
+	 * @param trainNavigationDatabase
+	 *            Contacts the Train Navigation Database. Provides Track
+	 *            Geometry information. Saves measurements and estimates.
+	 * @param eventPublisher
+	 *            Notifies clients about Train Navigation Service changes
+	 * @param trainPositionAlgorithm
+	 *            Estimates train movement
 	 */
-	public void Initialize(MotionDetectionUnitInterface motionDetectionUnit, TrackSwitchControllerInterface trackSwitchController, TrainNavigationDatabaseInterface trainNavigationDatabase,
-			PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher, InertialMotionPositionAlgorithmInterface trainPositionAlgorithm) {
+	public void Initialize(MotionDetectionUnitInterface motionDetectionUnit,
+			TrackSwitchControllerInterface trackSwitchController,
+			TrainNavigationDatabaseInterface trainNavigationDatabase,
+			PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher,
+			InertialMotionPositionAlgorithmInterface trainPositionAlgorithm) {
 
-		
 		this.motionDetectionUnit = motionDetectionUnit;
 		this.trackSwitchController = trackSwitchController;
 		this.eventPublisher = eventPublisher;
 		this.trainNavigationDatabase = trainNavigationDatabase;
 		this.positionAlgorithm = trainPositionAlgorithm;
 		this.timer = new Timer();
-		
-		//Assign the callback to here to know about detected trains
+
+		// Assign the callback to here to know about detected trains
 		this.motionDetectionUnit.setMduCallback(this);
 		setupTimer();
 	}
-	
+
 	/**
-	 * Method is responsible for creating a new train monitor to track
-	 * position updates for a train.
-	 * @param Object keeping track of train state
-	 * @param 
+	 * Method is responsible for creating a new train monitor to track position
+	 * updates for a train.
+	 * 
+	 * @param Object
+	 *            keeping track of train state
+	 * @param
 	 * @return
 	 */
-	private TrainMonitorInterface CreateTrainMonitor(Train train, TrainNavigationDatabaseInterface trainNavigationDatabase){
-		
+	private TrainMonitorInterface CreateTrainMonitor(Train train,
+			TrainNavigationDatabaseInterface trainNavigationDatabase) {
+
 		TrainMonitorInterface trainMonitor = new TrainMonitor(train, positionAlgorithm, trainNavigationDatabase);
-		
+
 		return trainMonitor;
 	}
 
@@ -282,15 +301,24 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 			public void run() {
 
 				for (TrainMonitorInterface trainMonitor : trainMonitorLut.values()) {
-					
-					//Try to read new position updates for each train being monitored
-					TrainPositionEstimate positionUpdate = trainMonitor.tryFetchNextPositionUpdate();
-					if (positionUpdate != null) {
-						TrainPositionUpdatedEvent updatedEvent = new TrainPositionUpdatedEvent(
-								trainMonitor.getTrainId(), positionUpdate);
 
-						trainPositionLut.put(updatedEvent.getTrainIdentifier(), updatedEvent.getPosition());
-						eventPublisher.PublishEvent(updatedEvent);
+					try {
+						// Try to read new position updates for each train being
+						// monitored
+						TrainPositionEstimate positionUpdate = trainMonitor.tryFetchNextPositionUpdate();
+						if (positionUpdate != null) {
+							TrainPositionUpdatedEvent updatedEvent = new TrainPositionUpdatedEvent(
+									trainMonitor.getTrainId(), positionUpdate);
+
+							trainPositionLut.put(updatedEvent.getTrainIdentifier(), updatedEvent.getPosition());
+							eventPublisher.PublishEvent(updatedEvent);
+						}
+					} catch (Exception exception) {
+						//Adding a catch-all here to make sure that polling for position updates doesn't stop due to
+						//a fluke error.
+						System.out.println(
+								"An error was received was polling for position updates: " + exception.getMessage());
+						exception.printStackTrace();
 					}
 				}
 			}
@@ -351,12 +379,11 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	public List<String> GetKnownTrainIdentifiers() {
 		List<String> knownTrainIdentifiers = new LinkedList<String>();
 
-		for(String key : trainPositionLut.keySet()){
-			
+		for (String key : trainPositionLut.keySet()) {
+
 			TrainPositionEstimate trainPositionEstimate = trainPositionLut.get(key);
-			
-			if(trainPositionEstimate != null)
-			{
+
+			if (trainPositionEstimate != null) {
 				knownTrainIdentifiers.add(key);
 			}
 		}
@@ -366,12 +393,12 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 
 	@Override
 	public void TrainAdded(Train train) {
-		//Handles a new train being detected from a MDU channel
-		
-		//Create a new train monitor for track position changes
+		// Handles a new train being detected from a MDU channel
+
+		// Create a new train monitor for track position changes
 		TrainMonitorInterface trainMonitor = CreateTrainMonitor(train, trainNavigationDatabase);
-		
-		//Add train monitor to LUT
+
+		// Add train monitor to LUT
 		trainMonitorLut.put(trainMonitor.getTrainId(), trainMonitor);
 	}
 
