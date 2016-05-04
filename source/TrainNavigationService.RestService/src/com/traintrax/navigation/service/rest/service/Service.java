@@ -43,6 +43,10 @@ public class Service {
 				.build();
 		Option locoNetPortOption = Option.builder("t").required(false).argName("pr3 serial port").hasArg().longOpt("pr3-port")
 				.build();
+		Option disablePr3Option = Option.builder().required(false).argName("DEBUG: disable using pr3 for switch control").longOpt("disable-pr3")
+				.build();
+		Option disableMduOption = Option.builder().required(false).argName("DEBUG: disable communication with MDUs").longOpt("disable-mdu")
+				.build();
 
 		Option helpOption = Option.builder("h").required(false).longOpt("help").build();
 
@@ -54,6 +58,8 @@ public class Service {
 		commandlineOptions.addOption(dbPortOption);
 		commandlineOptions.addOption(mduPortOption);
 		commandlineOptions.addOption(locoNetPortOption);
+		commandlineOptions.addOption(disablePr3Option);
+		commandlineOptions.addOption(disableMduOption);
 		commandlineOptions.addOption(helpOption);
 
 		DefaultParser defaultParser = new DefaultParser();
@@ -66,12 +72,18 @@ public class Service {
 		String dbPortValue = "";
 		String mduPort = "";
 		String pr3Port = "";
+		boolean disableMdu = false;
+		boolean disablePr3 = false;
 		//Retrieve the current service configuration
 		TrainNavigationServiceConfiguration serviceConfiguration = new TrainNavigationServiceConfiguration(); 
-
+        
+		
 
 		try {
 			CommandLine parsedCommandLine = defaultParser.parse(commandlineOptions, args);
+			
+			disableMdu = parsedCommandLine.hasOption(disableMduOption.getOpt());
+			disablePr3 = parsedCommandLine.hasOption(disablePr3Option.getOpt());
 
 			if (parsedCommandLine.hasOption(helpOption.getOpt())) {
 				showHelp = true;
@@ -107,6 +119,8 @@ public class Service {
 		serviceConfiguration.setDbPort(Integer.parseInt(dbPortValue));
 		serviceConfiguration.setMduSerialPort(mduPort);
 		serviceConfiguration.setPr3SerialPort(pr3Port);
+		serviceConfiguration.setPr3Disabled(disablePr3);
+		serviceConfiguration.setMduDisabled(disableMdu);
 		
 		//Initialize the service for use
 		TrainNavigationServiceSingleton.initialize(serviceConfiguration);

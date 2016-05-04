@@ -48,6 +48,17 @@ public class TrainNavigationServiceConfiguration {
 	 */
 	public static final int DefaultDbPort = 3306;
 	
+	/**
+	 * Default setting for enabling/disabling using the MDU port
+	 */
+	public static final boolean DefaultDisableMduValue = false;
+	
+	
+	/**
+	 * Default setting for enabling/disabling using the PR3 port
+	 */
+	public static final boolean DefaultDisablePr3Value = false;
+	
 	private int hostPort;
 	private String pr3SerialPort;
 	private String mduSerialPort;
@@ -56,6 +67,8 @@ public class TrainNavigationServiceConfiguration {
 	private String dbName;
 	private String dbHost;
 	private int dbPort;
+	private boolean mduDisabled;
+	private boolean pr3Disabled;
 	
 	/**
 	 * Default Constructor
@@ -69,7 +82,8 @@ public class TrainNavigationServiceConfiguration {
 		this.dbName = DefaultDbName;
 		this.dbHost = DefaultHost;
 		this.dbPort = DefaultDbPort;
-
+		this.mduDisabled = DefaultDisableMduValue;
+		this.pr3Disabled = DefaultDisablePr3Value;
 	}
 	
 	
@@ -212,4 +226,38 @@ public class TrainNavigationServiceConfiguration {
 		this.dbPort = dbPort;
 	}
 
+
+	/**
+	 * @return the disableMdu
+	 */
+	public boolean isMduDisabled() {
+		return mduDisabled;
+	}
+
+
+	/**
+	 * @param mduDisabled the disableMdu to set
+	 */
+	public void setMduDisabled(boolean mduDisabled) {
+		this.mduDisabled = mduDisabled;
+	}
+
+
+	/**
+	 * @return the disablePr3
+	 */
+	public boolean isPr3Disabled() {
+		return pr3Disabled;
+	}
+
+
+	/**
+	 * @param pr3Disabled the disablePr3 to set
+	 */
+	public void setPr3Disabled(boolean pr3Disabled) {
+		this.pr3Disabled = pr3Disabled;
+	}
+
+	
+	
 }

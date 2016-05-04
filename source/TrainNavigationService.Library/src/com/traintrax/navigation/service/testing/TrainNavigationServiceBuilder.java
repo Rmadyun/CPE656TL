@@ -168,6 +168,46 @@ public class TrainNavigationServiceBuilder {
 	public void setTrainNavigationDatabase(TrainNavigationDatabaseInterface trainNavigationDatabase) {
 		this.trainNavigationDatabase = trainNavigationDatabase;
 	}
+	
+	/**
+	 * Assigns the train Navigation Database to the system
+	 * 
+	 * @param dbUsername
+	 *            Username to use to contact the database
+	 * @param dbPassword
+	 *            Password to use to access the database
+	 * @param dbName
+	 *            Name of the database to access
+	 * @param dbHost
+	 *            Network hostname or address to use to access the database
+	 * @param dbPort
+	 *            Network port to use to access the database
+	 * @throws Exception
+	 *             Fires exception if external dependencies cannot be configured
+	 */
+	public void setTrainNavigationDatabase(String dbHost, int dbPort, String dbName,
+			String dbUsername, String dbPassword) {
+		TrainNavigationDatabaseInterface trainNavigationDatabase;
+		GenericDatabaseInterface gdi = new MySqlDatabaseAdapter(dbUsername, dbPassword, dbName, dbHost, dbPort);
+		gdi.connect();
+		FilteredSearchRepositoryInterface<TrackPoint, TrackPointSearchCriteria> trackPointRepository = new TrackPointRepository(
+				gdi);
+		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.AccelerometerMeasurement, AccelerometerMeasurementSearchCriteria> accelerometerMeasurementRepository = new AccelerometerMeasurementRepository(
+				gdi);
+		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.RfidTagDetectedNotification, RfidTagDetectedNotificationSearchCriteria> rfidTagNotificationRepository = new RfidTagDetectedNotificationRepository(
+				gdi);
+		FilteredSearchRepositoryInterface<com.traintrax.navigation.database.library.GyroscopeMeasurement, GyroscopeMeasurementSearchCriteria> gyroscopeMeasurementRepository = new GyroscopeMeasurementRepository(
+				gdi);
+		FilteredSearchRepositoryInterface<TrainPosition, TrainPositionSearchCriteria> trainPositionRepository = new TrainPositionRepository(
+				gdi);
+		FilteredSearchRepositoryInterface<TrackSwitch, TrackSwitchSearchCriteria> trackSwitchRepository = new TrackSwitchRepository(
+				gdi);
+
+		trainNavigationDatabase = new TrainNavigationDatabase(trackPointRepository, accelerometerMeasurementRepository,
+				gyroscopeMeasurementRepository, rfidTagNotificationRepository, trainPositionRepository, trackSwitchRepository);
+		
+		this.trainNavigationDatabase = trainNavigationDatabase;
+	}
 
 	/**
 	 * Creates a new Train Navigation Service instance
