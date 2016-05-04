@@ -72,6 +72,8 @@ public class TrainNavigationDatabase implements TrainNavigationDatabaseInterface
 		Coordinate tagPosition = null;
 		TrackPointSearchCriteria searchCriteria = new TrackPointSearchCriteria();
 		
+		searchCriteria.setTagName(rfidTagIdentifier);
+		
 		List<RepositoryEntry<TrackPoint>> matches = trackPointRepository.find(searchCriteria);
 		
 		if(matches.size() > 0){
