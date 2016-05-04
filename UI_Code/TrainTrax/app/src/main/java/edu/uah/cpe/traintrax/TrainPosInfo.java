@@ -83,7 +83,7 @@ public class TrainPosInfo {
 
         for(TrainInfo trainInfo : trainList){
 
-            if(trainInfo.getTrainID() == trainID){
+            if(trainInfo.getTrainID().equals(trainID)){
                 firstMatch = trainInfo;
                 break;
             }
