@@ -195,10 +195,10 @@ public class TrainPosition2DAlgorithm implements InertialMotionPositionAlgorithm
 
 						// Reset known orientation, position, velocity
 
-						this.lastKnownTrainPosition = rfidTagDetectedLocation;
-						this.lastKnownTrainOrientation = new ValueUpdate<EulerAngleRotation>(trainStateInfo.getItem1(),
+						lastKnownTrainPosition = rfidTagDetectedLocation;
+						lastKnownTrainOrientation = new ValueUpdate<EulerAngleRotation>(trainStateInfo.getItem1(),
 								rfidTagDetectedLocation.getTimeObserved());
-						this.lastKnownTrainVelocity = new ValueUpdate<Velocity>(trainStateInfo.getItem2(),
+						lastKnownTrainVelocity = new ValueUpdate<Velocity>(trainStateInfo.getItem2(),
 								rfidTagDetectedLocation.getTimeObserved());
 						
 						rfidTagPositionResults.setLastKnownTrainOrientation(lastKnownTrainOrientation);
