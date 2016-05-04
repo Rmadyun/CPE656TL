@@ -155,7 +155,13 @@ public class PositionTestCaseFileReader {
 		
 		//Assigning to epoch since we don't really are about the actual date.
 		Calendar measurementTime = Calendar.getInstance();
-		measurementTime.setTimeInMillis((long) (timestampInSeconds*1000));
+		int year = measurementTime.get(Calendar.YEAR);
+		int month = measurementTime.get(Calendar.MONTH);
+		int date = measurementTime.get(Calendar.DAY_OF_MONTH);
+
+		measurementTime.set(year, month, date, 0, 0, 0);
+		measurementTime.add(Calendar.MILLISECOND, (int) (timestampInSeconds*1000));
+		//measurementTime.setTimeInMillis((long) (timestampInSeconds*1000));
 		
 		String accXString = record.get(AccXColumnIndex).trim();
 		String accYString = record.get(AccYColumnIndex).trim();
