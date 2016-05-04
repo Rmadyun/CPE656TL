@@ -325,7 +325,7 @@ public class MonitorView extends View {
 
             //calculate speed and orientation
             Double Speed = (Math.sqrt(xvelocity*xvelocity + yvelocity*yvelocity));
-            Double orientation = Math.asin((xvelocity/(Math.sqrt(xvelocity*xvelocity + yvelocity*yvelocity))));
+            Double orientation = (Speed == 0) ? 0 : Math.asin((xvelocity/(Math.sqrt(xvelocity*xvelocity + yvelocity*yvelocity))));
 
             paint.setColor(Color.WHITE);
             paint.setStyle(Paint.Style.FILL);
