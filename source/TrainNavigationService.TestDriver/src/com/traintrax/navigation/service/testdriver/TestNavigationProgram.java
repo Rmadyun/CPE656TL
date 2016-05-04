@@ -685,9 +685,9 @@ public class TestNavigationProgram {
 						byte[] mduProtocolMessage = RfidTagDetectedMessage.Encode(rfidTagDetectedMessage);
 
 						try {
+							Thread.sleep(3000); // Wait 3 seconds before
+							// reporting the next RFID tag.
 							txStream.write(mduProtocolMessage);
-							Thread.sleep(1000); // Wait 1 second before
-												// reporting the next RFID tag.
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
