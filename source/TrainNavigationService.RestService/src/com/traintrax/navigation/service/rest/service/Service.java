@@ -82,8 +82,8 @@ public class Service {
 		try {
 			CommandLine parsedCommandLine = defaultParser.parse(commandlineOptions, args);
 			
-			disableMdu = parsedCommandLine.hasOption(disableMduOption.getOpt());
-			disablePr3 = parsedCommandLine.hasOption(disablePr3Option.getOpt());
+			disableMdu = parsedCommandLine.hasOption(disableMduOption.getLongOpt());
+			disablePr3 = parsedCommandLine.hasOption(disablePr3Option.getLongOpt());
 
 			if (parsedCommandLine.hasOption(helpOption.getOpt())) {
 				showHelp = true;
