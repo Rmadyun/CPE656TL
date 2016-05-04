@@ -688,6 +688,7 @@ public class TestNavigationProgram {
 							Thread.sleep(3000); // Wait 3 seconds before
 							// reporting the next RFID tag.
 							txStream.write(mduProtocolMessage);
+							txStream.flush();
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
