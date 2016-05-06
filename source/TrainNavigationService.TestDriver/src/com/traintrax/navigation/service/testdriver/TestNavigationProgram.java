@@ -1,6 +1,8 @@
 package com.traintrax.navigation.service.testdriver;
 
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -642,6 +644,35 @@ public class TestNavigationProgram {
 
 	}
 
+	private static void TestMduProtocolParser() {
+		String filename = "C:\\TrainTrax\\CPE656TL-master\\test\\MduProtocolRawBytes.bin";
+		try {
+			FileInputStream fileInputStream = new FileInputStream(filename);
+			
+			MduProtocolParser mduProtocolParser = new MduProtocolParser();
+			
+			while(fileInputStream.available() > 0){
+				
+				byte[] packetBuffer = mduProtocolParser.getNextMduPacket(fileInputStream);
+				
+				byte[] mduPacket = mduProtocolParser.getPacketBytesStored(packetBuffer);
+				
+				if(mduPacket!=null)
+				{
+					System.out.print("MDU Protocol Parsed Packet: ");
+					for(int i = 0; i < mduPacket.length; i++){
+						System.out.printf("%02X ", mduPacket[i]);
+					}
+					System.out.println();
+				}
+				
+			}
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
+
+	}
+
 	private static void TestMduProtocol() {
 		String portName = "/dev/ttyUSB1";
 		SerialPort sp = null;
@@ -680,7 +711,7 @@ public class TestNavigationProgram {
 					RfidTagDetectedNotification rfidTagNotification = sample.getRfidTagDetectedNotification();
 
 					if (rfidTagNotification != null) {
-						RfidTagDetectedMessage rfidTagDetectedMessage = new RfidTagDetectedMessage((byte) 0x00,
+						RfidTagDetectedMessage rfidTagDetectedMessage = new RfidTagDetectedMessage((byte) 0x63,
 								(byte) 0x1a, rfidTagNotification);
 						byte[] mduProtocolMessage = RfidTagDetectedMessage.Encode(rfidTagDetectedMessage);
 
@@ -721,12 +752,16 @@ public class TestNavigationProgram {
 
 		// TestMduMeasurementRead();
 
-		/*PositionTestCase testCase = PositionTestCaseFileReader
-				.Read("C:\\TrainTrax\\CPE656TL-master\\prototypes\\TestNavigation\\PositionTestCaseTemplate.csv");
+		/*
+		 * PositionTestCase testCase = PositionTestCaseFileReader .Read(
+		 * "C:\\TrainTrax\\CPE656TL-master\\prototypes\\TestNavigation\\PositionTestCaseTemplate.csv"
+		 * );
+		 * 
+		 * System.out.println(testCase.getDescription());
+		 */
 
-		System.out.println(testCase.getDescription()); */
-		
-		TestMduProtocol();
+		//TestMduProtocol();
+		TestMduProtocolParser();
 
 	}
 

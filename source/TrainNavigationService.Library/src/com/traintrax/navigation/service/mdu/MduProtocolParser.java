@@ -35,7 +35,7 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 	/**
 	 * Unique ID used by the protocol to refer to the PC end of MDU Protocol communication.
 	 */
-	private static final byte BaseStationId = 0x00;
+	private static final byte BaseStationId = 0x63;
 
 	// MDU Protocol fields
 	private static final byte ImuReading = 0x03;
@@ -157,10 +157,9 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 						fileWriter = new FileWriter("C:\\TrainTrax\\rawBytes.txt");
 					}
 					
-					char[] temp = new char[1];
-					temp[0] = (char) readByte;
-					
-					fileWriter.write(temp);
+
+					fileWriter.write(String.format("%02X ", readByte));
+					fileWriter.flush();
 					
 
 					// Store byte
@@ -183,7 +182,7 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 
 						if (expectedLen < 0) {
 							// Do Nothing
-						} else if ((packetBufferSize > expectedLen)||(packetBuffer[MessageTargetId] != BaseStationId)) { //Ignore non-sensical msgs / those not intended for base station
+						} else if ((packetBufferSize > expectedLen)||(packetBuffer[PacketBufferHeaderSize + MessageTargetId] != BaseStationId)) { //Ignore non-sensical msgs / those not intended for base station
 							// Look for the first occurrence of the new line and
 							// start the buffer there.
 							int firstNewLineIndex = -1;
@@ -214,6 +213,7 @@ public class MduProtocolParser implements MduProtocolParserInterface {
 							appendingMduMessage = false;
 							packetBufferSize = 0;
                             fileWriter.write('\n');
+                            fileWriter.flush();
 						} else { // packetBufferSize < expectedLen
 
 							// Do Nothing
