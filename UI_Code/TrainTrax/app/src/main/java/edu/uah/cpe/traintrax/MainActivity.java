@@ -34,24 +34,79 @@ public class MainActivity extends ActionBarActivity {
 
     private RetrieveTrackGeometryTask retrieveTrackGeometryTask = new RetrieveTrackGeometryTask() {
         @Override
-        protected void onPostExecute(TrackGeometry trackGeometry) {
-            super.onPostExecute(trackGeometry);
-            SharedObjectSingleton.getInstance().setTrackDiagram(new TrackDiagram(trackGeometry));
-            SharedObjectSingleton.getInstance().setTrackSwitchInfo(new TrackSwitchInfo(trackGeometry));
-            SharedObjectSingleton.getInstance().setTrainPosInfo(new TrainPosInfo());
+        protected void onPostExecute(RetrieveTrackGeometryTaskResult result) {
+            super.onPostExecute(result);
 
-            //Find the main diagram view associated with the view
-            View diagramView = activity.findViewById(R.id.myview);
+            TrackGeometry trackGeometry = result.getTrackGeometry();
 
-            if (diagramView != null) {
+            if(trackGeometry == null)
+            {
+                //Retry
+            }
+            else {
+                SharedObjectSingleton.getInstance().setTrackDiagram(new TrackDiagram(trackGeometry));
+                SharedObjectSingleton.getInstance().setTrackSwitchInfo(new TrackSwitchInfo(trackGeometry));
+                SharedObjectSingleton.getInstance().setTrainPosInfo(new TrainPosInfo());
 
-                //Force redrawing of the diagram now that we have retrieved
-                //track geometry information
+                //Find the main diagram view associated with the view
+                View diagramView = activity.findViewById(R.id.myview);
 
-                diagramView.invalidate();
+                if (diagramView != null) {
+
+                    //Force redrawing of the diagram now that we have retrieved
+                    //track geometry information
+
+                    diagramView.invalidate();
+                }
             }
         }
     };
+
+    private RetrieveTrackGeometryTask CreateRetrieveTrackGeometryTrack(){
+
+        RetrieveTrackGeometryTask retrieveTrackGeometryTask = new RetrieveTrackGeometryTask() {
+            @Override
+            protected void onPostExecute(RetrieveTrackGeometryTaskResult result) {
+                super.onPostExecute(result);
+
+                TrackGeometry trackGeometry = result.getTrackGeometry();
+
+                if(trackGeometry == null)
+                {
+                    //Notify about the failure
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage(result.getFailureMessage());
+                    builder.show();
+
+                    //Retry
+                    RetrieveTrackGeometryTask retryTask = CreateRetrieveTrackGeometryTrack();
+
+                    //Launches a task in a background thread to read all of the point and information about the
+                    //track from the Train Navigation Database so that the GUI is not locked while reading happens.
+                    //(p.s. Android throws exception if you don't do this)
+                    retryTask.execute(settings.getHostName(), Integer.toString(settings.getDatabasePortNumber()));
+                }
+                else {
+                    SharedObjectSingleton.getInstance().setTrackDiagram(new TrackDiagram(trackGeometry));
+                    SharedObjectSingleton.getInstance().setTrackSwitchInfo(new TrackSwitchInfo(trackGeometry));
+                    SharedObjectSingleton.getInstance().setTrainPosInfo(new TrainPosInfo());
+
+                    //Find the main diagram view associated with the view
+                    View diagramView = activity.findViewById(R.id.myview);
+
+                    if (diagramView != null) {
+
+                        //Force redrawing of the diagram now that we have retrieved
+                        //track geometry information
+
+                        diagramView.invalidate();
+                    }
+                }
+            }
+        };
+
+        return retrieveTrackGeometryTask;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

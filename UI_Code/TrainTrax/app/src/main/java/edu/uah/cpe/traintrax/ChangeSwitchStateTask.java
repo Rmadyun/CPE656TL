@@ -23,12 +23,10 @@ import java.util.List;
 public class ChangeSwitchStateTask extends AsyncTask<String,Void,ChangeSwitchStateTaskResult> {
     @Override
     protected ChangeSwitchStateTaskResult doInBackground(String... params) {
-
         String switchNumber = params[0];
         String switchStateString = params[1];
         String failureMessage = "";
         SwitchState switchState = SwitchState.Pass;
-
 
         try {
             TrainNavigationServiceInterface trainNavigationService = SharedObjectSingleton.getInstance().getTrainNavigationServiceInterface();
