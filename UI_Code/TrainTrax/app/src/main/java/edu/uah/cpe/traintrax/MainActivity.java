@@ -32,36 +32,6 @@ public class MainActivity extends ActionBarActivity {
     final MainActivity activity = this;
     MainSettings settings = new MainSettings();  //class for accessing settings
 
-    private RetrieveTrackGeometryTask retrieveTrackGeometryTask = new RetrieveTrackGeometryTask() {
-        @Override
-        protected void onPostExecute(RetrieveTrackGeometryTaskResult result) {
-            super.onPostExecute(result);
-
-            TrackGeometry trackGeometry = result.getTrackGeometry();
-
-            if(trackGeometry == null)
-            {
-                //Retry
-            }
-            else {
-                SharedObjectSingleton.getInstance().setTrackDiagram(new TrackDiagram(trackGeometry));
-                SharedObjectSingleton.getInstance().setTrackSwitchInfo(new TrackSwitchInfo(trackGeometry));
-                SharedObjectSingleton.getInstance().setTrainPosInfo(new TrainPosInfo());
-
-                //Find the main diagram view associated with the view
-                View diagramView = activity.findViewById(R.id.myview);
-
-                if (diagramView != null) {
-
-                    //Force redrawing of the diagram now that we have retrieved
-                    //track geometry information
-
-                    diagramView.invalidate();
-                }
-            }
-        }
-    };
-
     private RetrieveTrackGeometryTask CreateRetrieveTrackGeometryTrack(){
 
         RetrieveTrackGeometryTask retrieveTrackGeometryTask = new RetrieveTrackGeometryTask() {
@@ -140,6 +110,7 @@ public class MainActivity extends ActionBarActivity {
         //application
         SharedObjectSingleton.getInstance().setTrainNavigationServiceInterface(new RemoteTrainNavigationService(this.settings.getHostName(), this.settings.getNavigationServicePortNumber()));
 
+        RetrieveTrackGeometryTask retrieveTrackGeometryTask = CreateRetrieveTrackGeometryTrack();
         //Launches a task in a background thread to read all of the point and information about the
         //track from the Train Navigation Database so that the GUI is not locked while reading happens.
         //(p.s. Android throws exception if you don't do this)
