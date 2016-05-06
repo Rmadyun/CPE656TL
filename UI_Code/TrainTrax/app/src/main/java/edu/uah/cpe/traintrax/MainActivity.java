@@ -32,9 +32,11 @@ public class MainActivity extends ActionBarActivity {
     final MainActivity activity = this;
     MainSettings settings = new MainSettings();  //class for accessing settings
 
+    private AlertDialog retrieveTrackGeometryFailDialog = null;
+
     private RetrieveTrackGeometryTask CreateRetrieveTrackGeometryTrack(){
 
-        RetrieveTrackGeometryTask retrieveTrackGeometryTask = new RetrieveTrackGeometryTask() {
+        final RetrieveTrackGeometryTask retrieveTrackGeometryTask = new RetrieveTrackGeometryTask() {
             @Override
             protected void onPostExecute(RetrieveTrackGeometryTaskResult result) {
                 super.onPostExecute(result);
@@ -44,9 +46,11 @@ public class MainActivity extends ActionBarActivity {
                 if(trackGeometry == null)
                 {
                     //Notify about the failure
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage(result.getFailureMessage());
-                    builder.show();
+
+                    retrieveTrackGeometryFailDialog.setMessage(result.getFailureMessage());
+                    if(!retrieveTrackGeometryFailDialog.isShowing()){
+                        retrieveTrackGeometryFailDialog.show();
+                    }
 
                     //Retry
                     RetrieveTrackGeometryTask retryTask = CreateRetrieveTrackGeometryTrack();
@@ -105,6 +109,9 @@ public class MainActivity extends ActionBarActivity {
             this.settings.setHostName(host);
             //set the hostName to the value saved in preferences if it's been set
         }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        this.retrieveTrackGeometryFailDialog = builder.create();
 
         //Set the instance to the Train Navigation Service that will be used throughout the
         //application
