@@ -97,10 +97,10 @@ void measurementRelay::listenForMeasurements()
             //measureTime = timeOfDay + measureTime * 1000;
             unsigned long measureTime = timeOfDay + millis();
 
-            Rmsg[6] = (byte) measureTime;
-            Rmsg[5] = (byte) measureTime >> 8;
-            Rmsg[4] = (byte) measureTime >> 16;
-            Rmsg[3] = (byte) measureTime >> 24;
+            Rmsg[3] = (int)((measureTime >> 24) & 0xFF) ;
+            Rmsg[4] = (int)((measureTime >> 16) & 0xFF) ;
+            Rmsg[5] = (int)((measureTime >> 8) & 0XFF);
+            Rmsg[6] = (int)((measureTime & 0XFF));
 
             for (i=0; i<5; i++) {
               Rmsg[7+i] = code[i];
@@ -136,10 +136,10 @@ void measurementRelay::listenForMeasurements()
   //measureTime = timeOfDay + measureTime * 1000;
   unsigned long measureTime = timeOfDay + millis();
 
-  msg[6] = (byte) measureTime;
-  msg[5] = (byte) measureTime >> 8;
-  msg[4] = (byte) measureTime >> 16;
-  msg[3] = (byte) measureTime >> 24;
+  msg[3] = (int)((measureTime >> 24) & 0xFF) ;
+  msg[4] = (int)((measureTime >> 16) & 0xFF) ;
+  msg[5] = (int)((measureTime >> 8) & 0XFF);
+  msg[6] = (int)((measureTime & 0XFF));
   
   Wire.beginTransmission(MPU_addr);
   Wire.write(0x3B);  // starting with register 0x3B (ACCEL_XOUT_H)
