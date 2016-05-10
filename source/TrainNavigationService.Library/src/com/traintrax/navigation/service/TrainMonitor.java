@@ -28,6 +28,7 @@ public class TrainMonitor implements TrainMonitorInterface {
 	private final Train train; // The latest info about the train being
 								// monitored
 	private final TrainNavigationDatabaseInterface trainNavigationDatabase;
+	private final boolean useRfidTagsOnly;
 
 	/**
 	 * Constructor
@@ -40,12 +41,15 @@ public class TrainMonitor implements TrainMonitorInterface {
 	 *            Stores position and measurements. Provides RFID tag position
 	 *            information NOTE: Assuming that the train is a rest at
 	 *            initialization.
+	 * @param useRfidTagsOnly indicates that IMU measurements should be ignored and only
+	 * RFID tags should be used.
 	 */
 	public TrainMonitor(Train train, InertialMotionPositionAlgorithmInterface positionAlgorithm,
-			TrainNavigationDatabaseInterface trainNavigationDatabase) {
+			TrainNavigationDatabaseInterface trainNavigationDatabase, boolean useRfidTagsOnly) {
 		this.train = train;
 		this.positionAlgorithm = positionAlgorithm;
 		this.trainNavigationDatabase = trainNavigationDatabase;
+		this.useRfidTagsOnly = useRfidTagsOnly;
 		lastKnownTrainPosition = calculatePosition(null, null, null);
 	}
 
@@ -128,8 +132,16 @@ public class TrainMonitor implements TrainMonitorInterface {
 				}
 			}
 
-			latestPositionUpdate = calculatePosition(newGyroscopeMeasurements, newAccelerometerMeasurements,
+			if(useRfidTagsOnly)
+			{
+			    latestPositionUpdate = calculatePosition(new LinkedList<GyroscopeMeasurement>(),
+			    		new LinkedList<AccelerometerMeasurement>(),
 					positionUpdates);
+			}
+			else{
+			    latestPositionUpdate = calculatePosition(newGyroscopeMeasurements, newAccelerometerMeasurements,
+					positionUpdates);
+			}
 
 			if (positionAlgorithm.isInitialPositionFound()) {
 

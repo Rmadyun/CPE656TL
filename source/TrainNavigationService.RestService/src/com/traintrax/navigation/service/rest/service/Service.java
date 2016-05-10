@@ -47,6 +47,8 @@ public class Service {
 				.build();
 		Option disableMduOption = Option.builder().required(false).argName("DEBUG: disable communication with MDUs").longOpt("disable-mdu")
 				.build();
+		Option useRfidTagsOnlyOption = Option.builder().required(false).argName("DEBUG: Only RFID TAg notifications are used to determine position").longOpt("rfid-tag-only")
+				.build();
 
 		Option helpOption = Option.builder("h").required(false).longOpt("help").build();
 
@@ -60,6 +62,7 @@ public class Service {
 		commandlineOptions.addOption(locoNetPortOption);
 		commandlineOptions.addOption(disablePr3Option);
 		commandlineOptions.addOption(disableMduOption);
+		commandlineOptions.addOption(useRfidTagsOnlyOption);
 		commandlineOptions.addOption(helpOption);
 
 		DefaultParser defaultParser = new DefaultParser();
@@ -74,16 +77,16 @@ public class Service {
 		String pr3Port = "";
 		boolean disableMdu = false;
 		boolean disablePr3 = false;
+		boolean useRfidTagsOnly = false;
 		//Retrieve the current service configuration
 		TrainNavigationServiceConfiguration serviceConfiguration = new TrainNavigationServiceConfiguration(); 
-        
-		
 
 		try {
 			CommandLine parsedCommandLine = defaultParser.parse(commandlineOptions, args);
 			
 			disableMdu = parsedCommandLine.hasOption(disableMduOption.getLongOpt());
 			disablePr3 = parsedCommandLine.hasOption(disablePr3Option.getLongOpt());
+			useRfidTagsOnly = parsedCommandLine.hasOption(useRfidTagsOnlyOption.getLongOpt());
 
 			if (parsedCommandLine.hasOption(helpOption.getOpt())) {
 				showHelp = true;
@@ -121,6 +124,7 @@ public class Service {
 		serviceConfiguration.setPr3SerialPort(pr3Port);
 		serviceConfiguration.setPr3Disabled(disablePr3);
 		serviceConfiguration.setMduDisabled(disableMdu);
+		serviceConfiguration.setUseRfidTagsOnly(useRfidTagsOnly);
 		
 		//Initialize the service for use
 		TrainNavigationServiceSingleton.initialize(serviceConfiguration);

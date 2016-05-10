@@ -54,10 +54,12 @@ public class TrainNavigationServiceSingleton {
 			instance = new TrainNavigationService(serviceConfiguration.getMduSerialPort(),
 					serviceConfiguration.getPr3SerialPort(), serviceConfiguration.getDbHost(),
 					serviceConfiguration.getDbPort(), serviceConfiguration.getDbName(),
-					serviceConfiguration.getDbUsername(), serviceConfiguration.getDbPassword());
+					serviceConfiguration.getDbUsername(), serviceConfiguration.getDbPassword(), serviceConfiguration.isUseRfidTagsOnly());
 		} else {
 			TrainNavigationServiceBuilder builder = TrainNavigationServiceBuilder.getBuilder();
 
+			builder.setUseRfidTagsOnly(serviceConfiguration.isUseRfidTagsOnly());
+			
 			builder.setTrainNavigationDatabase(serviceConfiguration.getDbHost(), serviceConfiguration.getDbPort(), serviceConfiguration.getDbName(), serviceConfiguration.getDbUsername(), serviceConfiguration.getDbPassword());
 			
 			TrainNavigationDatabaseInterface trainNavigationDatabase = builder.getTrainNavigationDatabase();			

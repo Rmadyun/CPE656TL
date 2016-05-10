@@ -69,6 +69,7 @@ public class TrainNavigationServiceConfiguration {
 	private int dbPort;
 	private boolean mduDisabled;
 	private boolean pr3Disabled;
+	private boolean useRfidTagsOnly;
 	
 	/**
 	 * Default Constructor
@@ -258,6 +259,21 @@ public class TrainNavigationServiceConfiguration {
 		this.pr3Disabled = pr3Disabled;
 	}
 
-	
+
+	/**
+	 * @return the useRfidTagsOnly
+	 */
+	public boolean isUseRfidTagsOnly() {
+		return useRfidTagsOnly;
+	}
+
+
+	/**
+	 * @param useRfidTagsOnly the useRfidTagsOnly to set
+	 */
+	public void setUseRfidTagsOnly(boolean useRfidTagsOnly) {
+		this.useRfidTagsOnly = useRfidTagsOnly;
+	}
+
 	
 }

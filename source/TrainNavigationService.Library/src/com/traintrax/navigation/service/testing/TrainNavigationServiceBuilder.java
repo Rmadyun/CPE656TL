@@ -68,6 +68,8 @@ public class TrainNavigationServiceBuilder {
 	private MotionDetectionUnitInterface motionDetectionUnitInterface;
 	private InertialMotionPositionAlgorithmInterface positionAlgorithm;
 	private TrainNavigationDatabaseInterface trainNavigationDatabase;
+	private boolean useRfidTagsOnly;
+
 
 	/**
 	 * Default constructor
@@ -116,6 +118,7 @@ public class TrainNavigationServiceBuilder {
 		this.motionDetectionUnitInterface = motionDetectionUnit;
 		this.eventPublisher = eventPublisher;
 		this.trackSwitchController = trackSwitchController;
+		this.useRfidTagsOnly = false;
 	}
 	
 	/**
@@ -208,6 +211,21 @@ public class TrainNavigationServiceBuilder {
 		
 		this.trainNavigationDatabase = trainNavigationDatabase;
 	}
+	
+	/**
+	 * @return the useRfidTagsOnly
+	 */
+	public boolean isUseRfidTagsOnly() {
+		return useRfidTagsOnly;
+	}
+
+	/**
+	 * @param useRfidTagsOnly the useRfidTagsOnly to set
+	 */
+	public void setUseRfidTagsOnly(boolean useRfidTagsOnly) {
+		this.useRfidTagsOnly = useRfidTagsOnly;
+	}
+
 
 	/**
 	 * Creates a new Train Navigation Service instance
@@ -215,7 +233,7 @@ public class TrainNavigationServiceBuilder {
 	 */
 	public TrainNavigationServiceInterface build(){
 		TrainNavigationServiceInterface trainNavigationService = new TrainNavigationService(motionDetectionUnitInterface,
-				trackSwitchController, trainNavigationDatabase, eventPublisher, positionAlgorithm);
+				trackSwitchController, trainNavigationDatabase, eventPublisher, positionAlgorithm, useRfidTagsOnly);
 		
 		return trainNavigationService;
 	}

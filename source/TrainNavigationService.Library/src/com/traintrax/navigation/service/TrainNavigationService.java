@@ -70,6 +70,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	private TrainNavigationDatabaseInterface trainNavigationDatabase;
 	private MotionDetectionUnitInterface motionDetectionUnit;
 	private InertialMotionPositionAlgorithmInterface positionAlgorithm;
+	private boolean useRfidTagsOnly;
 
 	/**
 	 * Default train identifier to use if none are specified.
@@ -119,7 +120,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	 *             Reports failure to configure the service to run.
 	 */
 	public TrainNavigationService() throws Exception {
-		this(DEFAULT_MDU_SERIAL_PORT, DEFAULT_PR3_SERIAL_PORT);
+		this(DEFAULT_MDU_SERIAL_PORT, DEFAULT_PR3_SERIAL_PORT, false);
 	}
 
 	/**
@@ -134,10 +135,10 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	 * @throws Exception
 	 *             Reports failure to configure the service to run.
 	 */
-	public TrainNavigationService(String mduSerialPort, String pr3SerialPort) throws Exception {
+	public TrainNavigationService(String mduSerialPort, String pr3SerialPort, boolean useRfidTagsOnly) throws Exception {
 
 		this(mduSerialPort, pr3SerialPort, DefaultHost, DefaultDbPort, DefaultDbName, DefaultDbUsername,
-				DefaultDbPassword);
+				DefaultDbPassword, useRfidTagsOnly);
 	}
 
 	/**
@@ -163,7 +164,9 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	 *             Fires exception if external dependencies cannot be configured
 	 */
 	public TrainNavigationService(String mduSerialPort, String pr3SerialPort, String dbHost, int dbPort, String dbName,
-			String dbUsername, String dbPassword) throws Exception {
+			String dbUsername, String dbPassword, boolean useRfidTagsOnly) throws Exception {
+		
+		
 		MduCommunicationChannelInterface mduCommChannel = new SerialPortMduCommunicationChannel(mduSerialPort);
 		MduProtocolParserInterface mduProtocolParser = new MduProtocolParser();
 		MotionDetectionUnitInterface motionDetectionUnit = new MotionDetectionUnit(mduCommChannel, mduProtocolParser,
@@ -214,7 +217,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 				currentOrientation, currentVelocity);
 
 		Initialize(motionDetectionUnit, trackSwitchController, trainNavigationDatabase, eventPublisher,
-				positionAlgorithm);
+				positionAlgorithm, useRfidTagsOnly);
 	}
 
 	/**
@@ -236,10 +239,10 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 			TrackSwitchControllerInterface trackSwitchController,
 			TrainNavigationDatabaseInterface trainNavigationDatabase,
 			PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher,
-			InertialMotionPositionAlgorithmInterface trainPositionAlgorithm) {
+			InertialMotionPositionAlgorithmInterface trainPositionAlgorithm, boolean useRfidTagsOnly) {
 
 		Initialize(motionDetectionUnit, trackSwitchController, trainNavigationDatabase, eventPublisher,
-				trainPositionAlgorithm);
+				trainPositionAlgorithm, useRfidTagsOnly);
 	}
 
 	/**
@@ -256,18 +259,20 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	 *            Notifies clients about Train Navigation Service changes
 	 * @param trainPositionAlgorithm
 	 *            Estimates train movement
+	 * @param useRfidTagsOnly2 
 	 */
 	public void Initialize(MotionDetectionUnitInterface motionDetectionUnit,
 			TrackSwitchControllerInterface trackSwitchController,
 			TrainNavigationDatabaseInterface trainNavigationDatabase,
 			PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher,
-			InertialMotionPositionAlgorithmInterface trainPositionAlgorithm) {
+			InertialMotionPositionAlgorithmInterface trainPositionAlgorithm, boolean useRfidTagsOnly2) {
 
 		this.motionDetectionUnit = motionDetectionUnit;
 		this.trackSwitchController = trackSwitchController;
 		this.eventPublisher = eventPublisher;
 		this.trainNavigationDatabase = trainNavigationDatabase;
 		this.positionAlgorithm = trainPositionAlgorithm;
+		this.useRfidTagsOnly = useRfidTagsOnly;
 		this.timer = new Timer();
 
 		// Assign the callback to here to know about detected trains
@@ -287,7 +292,7 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	private TrainMonitorInterface CreateTrainMonitor(Train train,
 			TrainNavigationDatabaseInterface trainNavigationDatabase) {
 
-		TrainMonitorInterface trainMonitor = new TrainMonitor(train, positionAlgorithm, trainNavigationDatabase);
+		TrainMonitorInterface trainMonitor = new TrainMonitor(train, positionAlgorithm, trainNavigationDatabase, useRfidTagsOnly);
 
 		return trainMonitor;
 	}
