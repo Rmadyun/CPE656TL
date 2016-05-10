@@ -1,3 +1,4 @@
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
@@ -151,7 +152,39 @@ public class DatabaseImportProgram {
 	}
 
 	private static void importTrackMeasurements(String filename, GenericDatabaseInterface databaseInterface) {
-		List<TrackPointMeasurement> measurements = TrackMeasurementsReader.ReadFile(filename);
+		
+		//Find track switches
+		TrackBlockRepository trackBlockRepository = new TrackBlockRepository(databaseInterface);
+		TrackPointRepository trackPointRepository = new TrackPointRepository(databaseInterface);
+		
+		TrackPointSearchCriteria searchCriteria = new TrackPointSearchCriteria();
+		
+		searchCriteria.setType("Switch");
+		List<RepositoryEntry<TrackPoint>> matchesForSwitch = trackPointRepository.find(searchCriteria);
+		
+		List<TrackPointMeasurement> switchPointMeasurements = new LinkedList<TrackPointMeasurement>();
+		for(RepositoryEntry<TrackPoint> point : matchesForSwitch){
+			TrackPointMeasurement trackPointMeasurement;
+			
+			RepositoryEntry<TrackBlock> trackBlock = trackBlockRepository.find(point.getValue().getBlockId());
+			
+			//Create a track point measurement entry for each switch so that 
+			//point can link directly to switches in graph.
+			trackPointMeasurement = new TrackPointMeasurement();
+			
+			trackPointMeasurement.setBlockName(trackBlock.getValue().getBlockName());
+			trackPointMeasurement.setPointName(point.getValue().getPointName());
+			trackPointMeasurement.setPointType(point.getValue().getType());
+			trackPointMeasurement.setRfidTagId(point.getValue().getTagName());
+			trackPointMeasurement.setxInches(point.getValue().getX());
+			trackPointMeasurement.setyInches(point.getValue().getY());
+
+			switchPointMeasurements.add(trackPointMeasurement);
+		}
+		
+		
+		
+		List<TrackPointMeasurement> measurements = TrackMeasurementsReader.ReadFile(filename, switchPointMeasurements);
 
 		// Save Measurements
 		for (TrackPointMeasurement measurement : measurements) {

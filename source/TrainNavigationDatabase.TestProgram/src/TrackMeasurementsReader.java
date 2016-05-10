@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class TrackMeasurementsReader {
 
-	public static List<TrackPointMeasurement> ReadFile(String filename) {
+	public static List<TrackPointMeasurement> ReadFile(String filename, List<TrackPointMeasurement> existingMeasurements) {
 		List<TrackPointMeasurement> measurements = new ArrayList<TrackPointMeasurement>();
 		try {
 
@@ -88,6 +88,15 @@ public class TrackMeasurementsReader {
 						}
 					}
 				} while (currentRow != null && !currentRow.isEmpty());
+				
+				//Add in the existing measurements to the list.
+				for(TrackPointMeasurement existingMeasurement : existingMeasurements){
+					
+					Entry entry = new Entry();
+					entry.Measurement = existingMeasurement;
+					entry.AdjacentPointNames = "";
+				    trackMeasurementEntries.add(entry);
+				}
 
 				// Stage 2: Associate related/adjacent measurements
 				for (Entry entry : trackMeasurementEntries) {
@@ -95,6 +104,17 @@ public class TrackMeasurementsReader {
 							entry.AdjacentPointNames, trackMeasurementEntries);
 					TrackPointMeasurement measurement = entry.Measurement;
 					measurement.setAdjacentPoints(adjacentMeasurements);
+					
+					for(TrackPointMeasurement adjacentMeasurement : adjacentMeasurements){
+						if(adjacentMeasurement.getPointName().contains("SW"))
+						{
+							System.out.println("Adjacent switch found!");
+							
+							//Work-around for switches since loaded in a separate file.
+							
+							adjacentMeasurement.getAdjacentPoints().add(measurement);
+						}
+					}
 
 					measurements.add(measurement);
 				}
