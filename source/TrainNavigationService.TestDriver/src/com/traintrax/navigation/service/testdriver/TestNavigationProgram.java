@@ -206,7 +206,7 @@ public class TestNavigationProgram {
 				eventNotifier);
 
 		TrainNavigationServiceInterface trainNavigationService = new TrainNavigationService(motionDetectionUnit,
-				trainController, trainNavigationDatabase, eventPublisher, positionAlgorithm);
+				trainController, trainNavigationDatabase, eventPublisher, positionAlgorithm, false);
 
 		// ReadTrainPositionsFromTrainNavigationService(trainNavigationService);
 
@@ -760,8 +760,8 @@ public class TestNavigationProgram {
 		 * System.out.println(testCase.getDescription());
 		 */
 
-		//TestMduProtocol();
-		TestMduProtocolParser();
+		TestMduProtocol();
+		//TestMduProtocolParser();
 
 	}
 
