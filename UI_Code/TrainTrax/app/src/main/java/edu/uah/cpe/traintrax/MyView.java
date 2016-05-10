@@ -99,7 +99,7 @@ public class MyView extends View {
 
             //set paint style
             paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(15);
+            paint.setStrokeWidth(SharedObjectSingleton.getInstance().getTrackPixelStrokeWidth());
 
             //Creates a path based on a collection of lines.
             Path testPath = new Path();

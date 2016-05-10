@@ -15,6 +15,8 @@ public class SharedObjectSingleton {
     private TrackSwitchInfo trackSwitchInfo;
     private TrainPosInfo trainPosInfo;
     private TrainNavigationServiceInterface trainNavigationServiceInterface;
+    private int trackPixelStrokeWidth = 7; //8; //(8 is recommended)
+
 
     /**
      * Default Constructor
@@ -90,5 +92,9 @@ public class SharedObjectSingleton {
      */
     public void setTrainNavigationServiceInterface(TrainNavigationServiceInterface trainNavigationServiceInterface) {
         this.trainNavigationServiceInterface = trainNavigationServiceInterface;
+    }
+
+    public int getTrackPixelStrokeWidth() {
+        return trackPixelStrokeWidth;
     }
 }
