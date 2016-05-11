@@ -132,6 +132,8 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	 * @param pr3SerialPort
 	 *            the serial port to use to contact the PR3 LocoNet Computer
 	 *            Interface
+	 * @param useRfidTagsOnly indicates that IMU measurements should be ignored and only
+	 * RFID tags should be used.            
 	 * @throws Exception
 	 *             Reports failure to configure the service to run.
 	 */
@@ -160,6 +162,8 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	 *            Network hostname or address to use to access the database
 	 * @param dbPort
 	 *            Network port to use to access the database
+	 * @param useRfidTagsOnly indicates that IMU measurements should be ignored and only
+	 * RFID tags should be used.            
 	 * @throws Exception
 	 *             Fires exception if external dependencies cannot be configured
 	 */
@@ -234,6 +238,8 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	 *            Notifies clients about Train Navigation Service changes
 	 * @param trainPositionAlgorithm
 	 *            Estimates train movement
+	 * @param useRfidTagsOnly indicates that IMU measurements should be ignored and only
+	 * RFID tags should be used.            
 	 */
 	public TrainNavigationService(MotionDetectionUnitInterface motionDetectionUnit,
 			TrackSwitchControllerInterface trackSwitchController,
@@ -259,13 +265,14 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	 *            Notifies clients about Train Navigation Service changes
 	 * @param trainPositionAlgorithm
 	 *            Estimates train movement
-	 * @param useRfidTagsOnly2 
+	 * @param useRfidTagsOnly indicates that IMU measurements should be ignored and only
+	 * RFID tags should be used.
 	 */
 	public void Initialize(MotionDetectionUnitInterface motionDetectionUnit,
 			TrackSwitchControllerInterface trackSwitchController,
 			TrainNavigationDatabaseInterface trainNavigationDatabase,
 			PublisherInterface<TrainNavigationServiceEventSubscriber, TrainNavigationServiceEvent> eventPublisher,
-			InertialMotionPositionAlgorithmInterface trainPositionAlgorithm, boolean useRfidTagsOnly2) {
+			InertialMotionPositionAlgorithmInterface trainPositionAlgorithm, boolean useRfidTagsOnly) {
 
 		this.motionDetectionUnit = motionDetectionUnit;
 		this.trackSwitchController = trackSwitchController;
@@ -284,10 +291,10 @@ public class TrainNavigationService implements TrainNavigationServiceInterface, 
 	 * Method is responsible for creating a new train monitor to track position
 	 * updates for a train.
 	 * 
-	 * @param Object
+	 * @param train
 	 *            keeping track of train state
-	 * @param
-	 * @return
+	 * @param trainNavigationDatabase stores info about the state of the train and track
+	 * @return a new train monitor instance to track the position of a given train.
 	 */
 	private TrainMonitorInterface CreateTrainMonitor(Train train,
 			TrainNavigationDatabaseInterface trainNavigationDatabase) {
