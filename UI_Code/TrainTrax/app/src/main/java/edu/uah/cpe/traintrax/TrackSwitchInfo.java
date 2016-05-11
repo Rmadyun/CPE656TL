@@ -1,5 +1,6 @@
 package edu.uah.cpe.traintrax;
 
+import com.traintrax.navigation.database.library.AdjacentPoint;
 import com.traintrax.navigation.database.library.RepositoryEntry;
 import com.traintrax.navigation.database.library.TrackBlock;
 import com.traintrax.navigation.database.library.TrackPoint;
@@ -55,17 +56,17 @@ public class TrackSwitchInfo {
 
         //get the track points really need to only do this once
         // (being done in track switch and track diagram class )
-        TestTrackPointRepository trackPointRepository = new TestTrackPointRepository();
-        List<RepositoryEntry<TrackPoint>> trackPoints = trackPointRepository.findAll();
 
+        //test data
+        /*TestTrackPointRepository trackPointRepository = new TestTrackPointRepository();
         TestTrackSwitchRepository switchRepository = new TestTrackSwitchRepository();
-        List<RepositoryEntry<TrackSwitch>> trackSwitches = switchRepository.findAll();
+        TestTrackBlockRepository trackBlockRepository = new TestTrackBlockRepository(); */
 
-        TestTrackBlockRepository trackBlockRepository = new TestTrackBlockRepository();
-        List<RepositoryEntry<TrackBlock>> trackBlocks = trackBlockRepository.findAll();
+        List<RepositoryEntry<TrackBlock>> trackBlocks = trackGeometry.getTrackBlocks();
+        List<RepositoryEntry<TrackPoint>> trackPoints = trackGeometry.getTrackPoints();
+        List<RepositoryEntry<TrackSwitch>> trackSwitches = trackGeometry.getSwitches();
 
         int index = 0;
-
         num_switches = trackSwitches.size();
         CreateSwitchArray(num_switches);
 
