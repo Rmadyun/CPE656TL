@@ -47,10 +47,10 @@ public class MainActivity extends ActionBarActivity {
                 {
                     //Notify about the failure
 
-                    retrieveTrackGeometryFailDialog.setMessage(result.getFailureMessage());
-                    if(!retrieveTrackGeometryFailDialog.isShowing()){
+                     retrieveTrackGeometryFailDialog.setMessage(result.getFailureMessage());
+                   /* if(!retrieveTrackGeometryFailDialog.isShowing()){
                         retrieveTrackGeometryFailDialog.show();
-                    }
+                    } */
 
                     //Retry
                     RetrieveTrackGeometryTask retryTask = CreateRetrieveTrackGeometryTrack();
@@ -261,3 +261,4 @@ public class MainActivity extends ActionBarActivity {
         startActivityForResult(i, 1);
     }
 }
+
