@@ -291,8 +291,16 @@ public class MonitorView extends View {
                         R.drawable.bypass);
             }
 
+            //test dispalying switch number
+            paint.setTextSize(9);
+            paint.setColor(Color.YELLOW);
+            paint.setStyle(Paint.Style.FILL);
+
             Bitmap resizedBitmap = Bitmap.createScaledBitmap(switchstate, 30, 30, false);
             canvas.drawBitmap(resizedBitmap, xcord, ycord, paint);
+            canvas.drawText(" "+ Switch.getswitchName(i), xcord, ycord, paint);
+
+
         }
 
 
