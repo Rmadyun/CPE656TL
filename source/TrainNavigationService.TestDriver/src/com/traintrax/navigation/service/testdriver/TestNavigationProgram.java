@@ -709,6 +709,28 @@ public class TestNavigationProgram {
 
 				for (PositionTestSample sample : testCase.getSamples()) {
 					RfidTagDetectedNotification rfidTagNotification = sample.getRfidTagDetectedNotification();
+					
+					GyroscopeMeasurement gyroscopeMeasurement = sample.getGyroscopeMeasurement();
+					AccelerometerMeasurement accelerometerMeasurement = sample.getAccelerometerMeasurement();
+					
+					if(gyroscopeMeasurement != null && accelerometerMeasurement != null)
+					{
+						ImuReadingMessage imuReadingMessage = new ImuReadingMessage((byte) 0x63,
+								(byte) 0x1a, accelerometerMeasurement, gyroscopeMeasurement);
+						
+						
+						byte[] mduProtocolMessage = ImuReadingMessage.Encode(imuReadingMessage);
+						
+						try {
+							//Thread.sleep(3000); // Wait 3 seconds before
+							// reporting the next RFID tag.
+							txStream.write(mduProtocolMessage);
+							txStream.flush();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 
 					if (rfidTagNotification != null) {
 						RfidTagDetectedMessage rfidTagDetectedMessage = new RfidTagDetectedMessage((byte) 0x63,
@@ -716,19 +738,25 @@ public class TestNavigationProgram {
 						byte[] mduProtocolMessage = RfidTagDetectedMessage.Encode(rfidTagDetectedMessage);
 
 						try {
-							Thread.sleep(3000); // Wait 3 seconds before
+							//Thread.sleep(3000); // Wait 3 seconds before
 							// reporting the next RFID tag.
 							txStream.write(mduProtocolMessage);
 							txStream.flush();
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
 						}
 
 					}
+					
+					try {
+						Thread.sleep(100); // Wait before proceeding
+					}
+	                catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
 				}
 			}
 		}
